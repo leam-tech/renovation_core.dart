@@ -1,1 +1,1 @@
-## [0.5.4] - Decoupling of Controllers
+# v1.0.0

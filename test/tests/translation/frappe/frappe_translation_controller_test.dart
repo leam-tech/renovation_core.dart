@@ -1,5 +1,5 @@
-import 'package:lts_renovation_core/core.dart';
-import 'package:lts_renovation_core/translation.dart';
+import 'package:renovation_core/core.dart';
+import 'package:renovation_core/translation.dart';
 import 'package:test/test.dart';
 
 import '../../../test_manager.dart';

@@ -1,4 +1,4 @@
-import 'package:lts_renovation_core/core.dart';
+import 'package:renovation_core/core.dart';
 
 class TestManager {
   /// Holds the test instance of Renovation

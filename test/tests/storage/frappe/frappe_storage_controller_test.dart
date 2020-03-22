@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:lts_renovation_core/core.dart';
-import 'package:lts_renovation_core/storage.dart';
+import 'package:renovation_core/core.dart';
+import 'package:renovation_core/storage.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
