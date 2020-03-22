@@ -1,7 +1,7 @@
 import 'dart:core';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lts_renovation_core/core.dart';
+import 'package:renovation_core/core.dart';
 
 import '../../core/jsonable.dart';
 import '../../model/frappe/document.dart';

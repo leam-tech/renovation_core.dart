@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:lts_renovation_core/auth.dart';
-import 'package:lts_renovation_core/core.dart';
-import 'package:lts_renovation_core/model.dart';
+import 'package:renovation_core/auth.dart';
+import 'package:renovation_core/core.dart';
+import 'package:renovation_core/model.dart';
 import 'package:test/test.dart';
 
 import '../../../test_manager.dart';

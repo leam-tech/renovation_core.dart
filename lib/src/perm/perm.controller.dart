@@ -157,7 +157,7 @@ abstract class PermissionController<K extends RenovationDocument>
       return false;
     } else if (basicPerms != null &&
         basicPerms.user != config.coreInstance.auth.currentUser) {
-      config.logger.e('lts_renovation_core: Basic Perm Mismatch');
+      config.logger.e('renovation_core: Basic Perm Mismatch');
       basicPerms = null;
       return false;
     }

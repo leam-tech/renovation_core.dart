@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lts_renovation_core/model.dart';
+import 'package:renovation_core/model.dart';
 
 part 'models.g.dart';
 
