@@ -658,6 +658,17 @@ void main() {
         expect(response.data, true);
       });
 
+      test('should successfully assign a doc to a user without description parameter', () async {
+        final response = await frappeModelController.assignDoc(
+            assignTo: null,
+            myself: true,
+            docName: '1234',
+            doctype: 'Item',
+            priority: Priority.High);
+        expect(response.isSuccess, true);
+        expect(response.data, true);
+      });
+
       test('should successfully assign multiple docs to a user', () async {
         final response = await frappeModelController.assignDoc(
             assignTo: null,
