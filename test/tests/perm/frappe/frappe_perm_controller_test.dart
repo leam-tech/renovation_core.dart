@@ -33,7 +33,7 @@ void main() {
       expect(frappePermissionController.basicPerms, isNotNull);
     });
 
-    test('should successfully load basic permissions of <password>', () async {
+    test('should successfully load basic permissions of <username>', () async {
       await frappeAuthController.login(testEmail, testPwd);
 
       final response = await frappePermissionController.loadBasicPerms();
