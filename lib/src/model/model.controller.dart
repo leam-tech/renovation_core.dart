@@ -114,10 +114,10 @@ abstract class ModelController<K extends RenovationDocument>
   /// Assigns a doc or a list of docs to a particular user.
   Future<RequestResponse<bool>> assignDoc(
       {@required String assignTo,
-      @required String description,
+      @required String doctype,
       bool myself,
       DateTime dueDate,
-      String doctype,
+      String description,
       String docName,
       List<String> docNames,
       bool notify = false,

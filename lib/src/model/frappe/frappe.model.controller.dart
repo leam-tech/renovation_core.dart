@@ -556,10 +556,10 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   @override
   Future<RequestResponse<bool>> assignDoc(
       {@required String assignTo,
-      @required String description,
+      @required String doctype,
       bool myself = false,
       DateTime dueDate,
-      String doctype,
+      String description,
       String docName,
       List<String> docNames,
       bool notify = false,
