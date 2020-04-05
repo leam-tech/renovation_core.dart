@@ -43,7 +43,7 @@ void main() {
       });
       test('failed logging basic info on empty content', () async {
         expect(() => log.info(content: ''),
-            throwsA(TypeMatcher<ContentError>()));
+            throwsA(TypeMatcher<EmptyContentError>()));
       });
     });
 
@@ -72,7 +72,7 @@ void main() {
       });
       test('failed logging basic error on empty content', () async {
         expect(() => log.error(content: ''),
-            throwsA(TypeMatcher<ContentError>()));
+            throwsA(TypeMatcher<EmptyContentError>()));
       });
     });
 
@@ -101,7 +101,7 @@ void main() {
       });
       test('failed logging basic warning on empty content', () async {
         expect(() => log.warning(content: ''),
-            throwsA(TypeMatcher<ContentError>()));
+            throwsA(TypeMatcher<EmptyContentError>()));
       });
     });
 
@@ -122,7 +122,7 @@ void main() {
       });
       test('Request Log on empty response', () async {
         expect(() => log.logRequest(r: response = null),
-            throwsA(TypeMatcher<ResponseError>()));
+            throwsA(TypeMatcher<EmptyResponseError>()));
       });
     });
   });
