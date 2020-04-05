@@ -22,7 +22,7 @@ void main() {
       test('logging basic info', () async {
         var response = await log.info(content: 'Test Info 1');
 
-        FrappeLog logged = response.data;
+        var logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Info');
@@ -32,7 +32,7 @@ void main() {
         var response = await log.info(
             content: 'Test Info 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
-        FrappeLog logged = response.data;
+        var logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Info');
@@ -51,7 +51,7 @@ void main() {
       test('logging basic error', () async {
         var response = await log.error(content: 'Test error 1');
 
-        FrappeLog logged = response.data;
+        var logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Error');
@@ -61,7 +61,7 @@ void main() {
         var response = await log.error(
             content: 'Test error 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
-        FrappeLog logged = response.data;
+        var logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Error');
@@ -80,7 +80,7 @@ void main() {
       test('logging basic warning', () async {
         var response = await log.warning(content: 'Test warning 1');
 
-        FrappeLog logged = response.data;
+        var logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Warning');
@@ -90,7 +90,7 @@ void main() {
         var response = await log.warning(
             content: 'Test warning 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
-        FrappeLog logged = response.data;
+        var logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Warning');
@@ -115,7 +115,7 @@ void main() {
       test('Successful Request Log', () async {
         var r = await log.logRequest(r: response);
         expect(r.isSuccess, true);
-        FrappeLog logged = r.data;
+        var logged = r.data;
         expect(logged?.type, 'Request');
         expect(logged?.request != null, true);
         expect(logged?.response != null, true);

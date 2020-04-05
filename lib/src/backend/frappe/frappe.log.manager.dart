@@ -39,7 +39,7 @@ class FrappeLogManager extends RenovationController implements LogManager {
   }
 
   @override
-  Future<RequestResponse> info(
+  Future<RequestResponse<FrappeLog>> info(
       {@required String content, String title, List<String> tags}) {
     if (content == null || content.isEmpty) {
       throw EmptyContentError();
@@ -52,7 +52,7 @@ class FrappeLogManager extends RenovationController implements LogManager {
   }
 
   @override
-  Future<RequestResponse> warning(
+  Future<RequestResponse<FrappeLog>> warning(
       {@required String content, String title, List<String> tags}) {
     if (content == null || content.isEmpty) {
       throw EmptyContentError();
@@ -65,7 +65,7 @@ class FrappeLogManager extends RenovationController implements LogManager {
   }
 
   @override
-  Future<RequestResponse> logRequest(
+  Future<RequestResponse<FrappeLog>> logRequest(
       {@required RequestResponse<dynamic> r, List<String> tags}) {
     if (r == null) {
       throw EmptyResponseError();
@@ -128,8 +128,7 @@ class FrappeLogManager extends RenovationController implements LogManager {
           FrappeLog.fromJson(logResponse.data.message),
           rawResponse: logResponse.rawResponse);
     } else {
-      return RequestResponse.fail<dynamic>(
-          handleError(null, logResponse.error));
+      return RequestResponse.fail(handleError(null, logResponse.error));
     }
   }
 }
