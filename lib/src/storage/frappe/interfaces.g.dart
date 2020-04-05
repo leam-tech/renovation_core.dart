@@ -147,7 +147,7 @@ Map<String, dynamic> _$FrappeFileToJson(FrappeFile instance) {
 
 FrappeUploadStatus _$FrappeUploadStatusFromJson(Map<String, dynamic> json) {
   return FrappeUploadStatus()
-    ..status = _$enumDecodeNullable(_$StatusEnumMap, json['status'])
+    ..status = _$enumDecodeNullable(_$UploadingStatusEnumMap, json['status'])
     ..hasProgress = json['hasProgress'] as bool
     ..progress = json['progress'] as num
     ..error = _$enumDecodeNullable(_$ErrorEventEnumMap, json['error'])
@@ -163,7 +163,7 @@ Map<String, dynamic> _$FrappeUploadStatusToJson(FrappeUploadStatus instance) {
     }
   }
 
-  writeNotNull('status', _$StatusEnumMap[instance.status]);
+  writeNotNull('status', _$UploadingStatusEnumMap[instance.status]);
   writeNotNull('hasProgress', instance.hasProgress);
   writeNotNull('progress', instance.progress);
   writeNotNull('error', _$ErrorEventEnumMap[instance.error]);
@@ -203,12 +203,12 @@ T _$enumDecodeNullable<T>(
   return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
 }
 
-const _$StatusEnumMap = {
-  Status.ready: 'ready',
-  Status.uploading: 'uploading',
-  Status.completed: 'completed',
-  Status.error: 'error',
-  Status.detail_error: 'detail_error',
+const _$UploadingStatusEnumMap = {
+  UploadingStatus.ready: 'ready',
+  UploadingStatus.uploading: 'uploading',
+  UploadingStatus.completed: 'completed',
+  UploadingStatus.error: 'error',
+  UploadingStatus.detail_error: 'detail_error',
 };
 
 const _$ErrorEventEnumMap = {
