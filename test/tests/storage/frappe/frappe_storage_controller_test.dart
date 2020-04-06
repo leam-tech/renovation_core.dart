@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
 import 'package:renovation_core/core.dart';
 import 'package:renovation_core/storage.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../../../test_manager.dart';
@@ -143,9 +143,10 @@ void main() {
       // A 512 KB will be divided into 21 chunks
       // So we generate a list of uploading status (21 of them) and concluded by a .completedStatus
 
-      final statusProgress = List<Status>.generate(21, (i) => Status.uploading);
+      final statusProgress =
+          List<UploadingStatus>.generate(21, (i) => UploadingStatus.uploading);
 
-      statusProgress.add(Status.completed);
+      statusProgress.add(UploadingStatus.completed);
 
       final file = File(path.absolute('test/assets/socketio_image.jpg'));
       await expectLater(

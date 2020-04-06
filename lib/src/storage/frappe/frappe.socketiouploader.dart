@@ -35,7 +35,7 @@ class FrappeSocketIOUploader implements IErrorHandler {
   /// The subject to subscribe updates about the upload
   BehaviorSubject<FrappeUploadStatus> uploadStatus =
       BehaviorSubject<FrappeUploadStatus>.seeded(
-          FrappeUploadStatus()..status = Status.ready);
+          FrappeUploadStatus()..status = UploadingStatus.ready);
 
   /// The file as a buffer being uploaded
   Uint8List file;
@@ -126,7 +126,7 @@ class FrappeSocketIOUploader implements IErrorHandler {
     if (currentSlice > 0) {
       var progress = (((currentSlice * chunkSize) / fileSize) * 100).round();
       uploadStatus.add(FrappeUploadStatus()
-        ..status = Status.uploading
+        ..status = UploadingStatus.uploading
         ..filename = args.fileName
         ..progress = progress
         ..hasProgress = true);
@@ -167,7 +167,7 @@ class FrappeSocketIOUploader implements IErrorHandler {
   /// @param event The name of the event emitted
   void _onError(ErrorEvent event) {
     uploadStatus.add(FrappeUploadStatus()
-      ..status = Status.error
+      ..status = UploadingStatus.error
       ..error = event);
 
     _getCore().config.logger.w(
@@ -209,7 +209,8 @@ class FrappeSocketIOUploader implements IErrorHandler {
     }
 
     uploadStatus.add(FrappeUploadStatus()
-      ..status = r.isSuccess ? Status.completed : Status.detail_error
+      ..status = r.isSuccess ? UploadingStatus.completed : UploadingStatus
+          .detail_error
       ..progress = 100
       ..filename = args.fileName
       ..r = uploadResponse);

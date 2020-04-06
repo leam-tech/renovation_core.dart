@@ -53,14 +53,14 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
       FrappeUploadFileParams uploadFileParams) {
     validateUploadFileArgs(uploadFileParams);
     var obs = BehaviorSubject<FrappeUploadStatus>.seeded(FrappeUploadStatus()
-      ..status = Status.uploading
+      ..status = UploadingStatus.uploading
       ..hasProgress = true);
     var realtimeUploader = FrappeSocketIOUploader();
     realtimeUploader.uploadStatus.listen((uploadStatus) async {
       switch (uploadStatus.status) {
-        case Status.ready:
+        case UploadingStatus.ready:
           break;
-        case Status.error:
+        case UploadingStatus.error:
           config.coreInstance.config.logger.w([
             'LTS-Renovation-Core',
             'Frappe SocketIO Upload error',
@@ -68,34 +68,36 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
           ]);
           // revert to http upload
           obs.add(FrappeUploadStatus()
-            ..status = Status.uploading
+            ..status = UploadingStatus.uploading
             ..hasProgress = false
             ..filename = uploadFileParams.fileName);
           var response = await uploadViaHTTP(uploadFileParams);
           obs.add(FrappeUploadStatus()
-            ..status = response.isSuccess ? Status.completed : Status.error
+            ..status = response.isSuccess
+                ? UploadingStatus.completed
+                : UploadingStatus.error
             ..r = response);
           await obs.close();
           break;
-        case Status.uploading:
+        case UploadingStatus.uploading:
           config.coreInstance.config.logger
               .i(['Upload Progress', uploadStatus.progress.toString()]);
           obs.add(FrappeUploadStatus()
             ..filename = uploadStatus.filename
-            ..status = Status.uploading
+            ..status = UploadingStatus.uploading
             ..hasProgress = true
             ..progress = uploadStatus.progress);
           break;
-        case Status.completed:
+        case UploadingStatus.completed:
           obs.add(FrappeUploadStatus()
             ..filename = uploadStatus.filename
-            ..status = Status.completed
+            ..status = UploadingStatus.completed
             ..hasProgress = true
             ..progress = 100
             ..r = uploadStatus.r);
           await obs.close();
           break;
-        case Status.detail_error:
+        case UploadingStatus.detail_error:
         default:
           RequestResponse<FrappeUploadFileResponse> response;
           if (uploadStatus.r != null) {
@@ -104,7 +106,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
             response = RequestResponse.fail(handleError(null, null));
           }
           obs.add(FrappeUploadStatus()
-            ..status = Status.error
+            ..status = UploadingStatus.error
             ..r = response);
 
           await obs.close();
