@@ -8,13 +8,14 @@ import '../../../test_manager.dart';
 
 void main() {
   FrappeLogManager log;
+  final validUser = TestManager.primaryUser;
+  final validPwd = TestManager.primaryUserPwd;
+
   setUpAll(() async {
     await TestManager.getTestInstance();
     log = getFrappeLogManager();
     // Login the user to have permission to get the document
-    await getFrappeAuthController().login(
-        TestManager.getTestUserCredentials()['email'],
-        TestManager.getTestUserCredentials()['password']);
+    await getFrappeAuthController().login(validUser, validPwd);
   });
 
   group('Log Manager', () {
@@ -22,7 +23,7 @@ void main() {
       test('logging basic info', () async {
         var response = await log.info(content: 'Test Info 1');
 
-        var logged = response.data;
+        final logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Info');
@@ -32,7 +33,7 @@ void main() {
         var response = await log.info(
             content: 'Test Info 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
-        var logged = response.data;
+        final logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Info');
@@ -51,7 +52,7 @@ void main() {
       test('logging basic error', () async {
         var response = await log.error(content: 'Test error 1');
 
-        var logged = response.data;
+        final logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Error');
@@ -61,7 +62,7 @@ void main() {
         var response = await log.error(
             content: 'Test error 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
-        var logged = response.data;
+        final logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Error');
@@ -80,7 +81,7 @@ void main() {
       test('logging basic warning', () async {
         var response = await log.warning(content: 'Test warning 1');
 
-        var logged = response.data;
+        final logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Warning');
@@ -90,7 +91,7 @@ void main() {
         var response = await log.warning(
             content: 'Test warning 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
-        var logged = response.data;
+        final logged = response.data;
         expect(response.isSuccess, true);
         expect(response.data, isA<FrappeLog>());
         expect(logged?.type, 'Warning');
@@ -108,14 +109,13 @@ void main() {
     group('Request Log', () {
       RequestResponse<User> response;
       setUpAll(() async {
-        response =
-            await getFrappeModelController().getDoc(User(), '<admin_user>');
+        response = await getFrappeModelController().getDoc(User(), validUser);
       });
 
       test('Successful Request Log', () async {
         var r = await log.logRequest(r: response);
         expect(r.isSuccess, true);
-        var logged = r.data;
+        final logged = r.data;
         expect(logged?.type, 'Request');
         expect(logged?.request != null, true);
         expect(logged?.response != null, true);

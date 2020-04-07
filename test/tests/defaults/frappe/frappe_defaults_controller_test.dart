@@ -7,13 +7,15 @@ import '../../../test_manager.dart';
 
 void main() {
   FrappeDefaultsController frappeDefaultsController;
+
+  final validUser = TestManager.primaryUser;
+  final validPwd = TestManager.primaryUserPwd;
+
   setUpAll(() async {
     await TestManager.getTestInstance();
     frappeDefaultsController = getFrappeDefaultsController();
     // Login the user to have permission to get the document
-    await getFrappeAuthController().login(
-        TestManager.getTestUserCredentials()['email'],
-        TestManager.getTestUserCredentials()['password']);
+    await getFrappeAuthController().login(validUser, validPwd);
     // To be used for getDefaults
     await frappeDefaultsController.setDefaults(
         key: 'testing_key', value: 'testing_value');
@@ -24,7 +26,7 @@ void main() {
       final response =
           await frappeDefaultsController.getDefault(key: 'setup_complete');
       expect(response.isSuccess, true);
-      expect(response.data != null, true);
+      expect(response.data, isNotNull);
       expect(response.data, isA<String>());
     });
 
@@ -32,7 +34,7 @@ void main() {
       final response =
           await frappeDefaultsController.getDefault(key: 'non-existing-key');
       expect(response.isSuccess, true);
-      expect(response.data, null);
+      expect(response.data, isNull);
     });
   });
 

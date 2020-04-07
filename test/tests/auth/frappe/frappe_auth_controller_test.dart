@@ -7,10 +7,11 @@ import '../../../test_manager.dart';
 void main() {
   final skip = false;
   FrappeAuthController frappeAuthController;
-  final mobileNo = '<mobile_number>';
+  final mobileNo = TestManager.mobileNumber;
 
-  final validEmail = '<username>';
-  final validPwd = '<password>';
+  final validUser = TestManager.secondaryUser;
+  final validPwd = TestManager.secondaryUserPwd;
+  final validPin = TestManager.getVariable(EnvVariables.PinNumber);
 
   setUp(() async {
     await TestManager.getTestInstance();
@@ -21,7 +22,7 @@ void main() {
     group('with Incorrect Credentials', () {
       test('should not login successfully with wrong credentials', () async {
         final response =
-            await frappeAuthController.login(validEmail, 'wrong_password');
+            await frappeAuthController.login(validUser, 'wrong_password');
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 401);
@@ -31,7 +32,7 @@ void main() {
 
       test('should not login successfully for non-existing user', () async {
         final response =
-            await frappeAuthController.login('<username>', validPwd);
+            await frappeAuthController.login('nonexisting@abc.com', validPwd);
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
@@ -42,7 +43,7 @@ void main() {
 
     group('with Correct Credentials', () {
       test('should login successfully with correct credentials', () async {
-        final response = await frappeAuthController.login(validEmail, validPwd);
+        final response = await frappeAuthController.login(validUser, validPwd);
         expect(response.isSuccess, true);
         expect(response.httpCode, 200);
         expect(frappeAuthController.isLoggedIn, true);
@@ -57,7 +58,7 @@ void main() {
 
       test('should verify login status for test account as authenticated',
           () async {
-        await frappeAuthController.login(validEmail, validPwd);
+        await frappeAuthController.login(validUser, validPwd);
         final response = await frappeAuthController.checkLogin();
         expect(response.isSuccess, true);
         expect(response.data.loggedIn, true);
@@ -67,15 +68,15 @@ void main() {
 
   group('pinLogin', () {
     test('should successfully login and set the session', () async {
-      final response = await frappeAuthController.pinLogin(validEmail, '<OTP>');
+      final response = await frappeAuthController.pinLogin(validUser, validPin);
 
       expect(response.isSuccess, true);
-      expect(response.data.currentUser, validEmail);
+      expect(response.data.currentUser, validUser);
       expect(frappeAuthController.isLoggedIn, true);
     });
 
     test('should not successfully login for wrong pin', () async {
-      final response = await frappeAuthController.pinLogin(validEmail, '0000');
+      final response = await frappeAuthController.pinLogin(validUser, '0000');
 
       expect(response.isSuccess, false);
       expect(response.error.title, 'Incorrect Pin');
@@ -104,7 +105,7 @@ void main() {
     });
     test('should fail for invalid pin', () async {
       final response =
-          await frappeAuthController.verifyOTP(mobileNo, '<OTP>', false);
+          await frappeAuthController.verifyOTP(mobileNo, '000000', false);
       expect(response.isSuccess, false);
       expect(response.data, isNull);
       expect(response.error.info.httpCode, 401);
@@ -113,7 +114,7 @@ void main() {
     });
     test('should fail for non-existing user/mobile', () async {
       final response =
-          await frappeAuthController.verifyOTP('+9710000000', '<OTP>', false);
+          await frappeAuthController.verifyOTP('+9710000000', '000000', false);
       expect(response.isSuccess, false);
       expect(response.data, isNull);
       expect(response.error.info.httpCode, 404);
@@ -127,7 +128,7 @@ void main() {
 
   group('getCurrentUserRoles', () {
     test('should get the signed in user roles', () async {
-      await frappeAuthController.login(validEmail, validPwd);
+      await frappeAuthController.login(validUser, validPwd);
       final response = await frappeAuthController.getCurrentUserRoles();
 
       expect(response.isSuccess, true);
@@ -144,7 +145,7 @@ void main() {
 
   group('logout', () {
     test('should logout successfully', () async {
-      await frappeAuthController.login(validEmail, validPwd);
+      await frappeAuthController.login(validUser, validPwd);
       expect(frappeAuthController.isLoggedIn, true);
       await frappeAuthController.logout();
       expect(frappeAuthController.isLoggedIn, false);
@@ -153,7 +154,7 @@ void main() {
 
   group('changeUserLanguage', () {
     test('should successfully change the language of current user', () async {
-      await frappeAuthController.login(validEmail, validPwd);
+      await frappeAuthController.login(validUser, validPwd);
       final response = await frappeAuthController.changeUserLanguage('ar');
       expect(response, true);
       expect(frappeAuthController.getSession().lang, 'ar');
@@ -171,7 +172,7 @@ void main() {
   group('clearAuthToken', () {
     test('should clearAuthToken successfully & remove Authorization headers',
         () async {
-      await frappeAuthController.login(validEmail, validPwd);
+      await frappeAuthController.login(validUser, validPwd);
 
       expect(frappeAuthController.getCurrentToken(), isNotNull);
       expect(
@@ -193,7 +194,7 @@ void main() {
 
   group('resetSession', () {
     test('should reset the session to not logged in', () async {
-      await frappeAuthController.login(validEmail, validPwd);
+      await frappeAuthController.login(validUser, validPwd);
       expect(frappeAuthController.getSession().loggedIn, true);
       frappeAuthController.resetSession();
       expect(frappeAuthController.getSession().loggedIn, false);
@@ -202,7 +203,7 @@ void main() {
 
   group('clearCache', () {
     test('should reset currentUserRoles on clearCache', () async {
-      await frappeAuthController.login(validEmail, validPwd);
+      await frappeAuthController.login(validUser, validPwd);
       await frappeAuthController.getCurrentUserRoles();
       expect(frappeAuthController.currentUserRoles.isNotEmpty, true);
       frappeAuthController.clearCache();

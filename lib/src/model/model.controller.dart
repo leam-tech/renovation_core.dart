@@ -32,7 +32,7 @@ abstract class ModelController<K extends RenovationDocument>
   /// Returns a new instance of [T] document with a new name based on [getNewName].
   T newDoc<T extends K>(T doc);
 
-  /// Returns a new name for a doctype. For instance, `New Sales Invoice 1`.
+  /// Returns a new name for a doctype. For instance, `New Renovation Review 1`.
   @protected
   String getNewName(String doctype);
 

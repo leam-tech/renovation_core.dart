@@ -133,7 +133,7 @@ class Frappe extends RenovationController implements FCMController {
   ///
   /// If the token is already registered, the backend will silently returning a success.
   @override
-  Future<RequestResponse<FrappeResponse>> registerFCMToken(String token) async {
+  Future<RequestResponse<String>> registerFCMToken(String token) async {
     final response = await Request.initiateRequest(
         url: config.hostUrl,
         method: HttpMethod.POST,
@@ -144,11 +144,11 @@ class Frappe extends RenovationController implements FCMController {
         });
 
     if (response.isSuccess == true) {
-      return RequestResponse.success(response.data,
+      return RequestResponse.success(response.data.message,
           rawResponse: response.rawResponse);
     }
     response.isSuccess = false;
-    return RequestResponse.fail<FrappeResponse>(handleError(
+    return RequestResponse.fail(handleError(
         'fcm_register_client',
         response.error ??
             ErrorDetail(
@@ -176,7 +176,7 @@ class Frappe extends RenovationController implements FCMController {
           rawResponse: response.rawResponse);
     }
     response.isSuccess = false;
-    return RequestResponse.fail<FrappeResponse>(handleError(
+    return RequestResponse.fail(handleError(
         'fcm_unregister_client',
         response.error ??
             ErrorDetail(

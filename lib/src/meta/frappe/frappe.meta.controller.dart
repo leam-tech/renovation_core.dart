@@ -124,15 +124,10 @@ class FrappeMetaController extends MetaController {
           metas[dmeta.name] = dmeta;
           // append __messages for translations
 
-          config.coreInstance.translate.extendDictionary(dict: dmeta.messages);
-          //FIXME: Core-Dart doesn't support renovation scripts yet
-          // Renovation Scripts
-          // if (dmeta['renovation_scripts'] != null) {
-          // for (RenovationScripts s in dmeta['renovation_scripts']) {
-          // config.coreInstance.scriptManager
-          // .addScript(doctype, s.code, s.name);
-          // }
-          // }
+          config.coreInstance.translate.extendDictionary(
+              dict: dmeta.messages != null
+                  ? dmeta.messages.cast<String, String>()
+                  : null);
         }
       }
       docTypeCache.addAll(metas);
@@ -155,7 +150,7 @@ class FrappeMetaController extends MetaController {
   ///
   /// If the field exists withing the [doctype], the title case equivalent is returned.
   ///
-  /// For example, item_group of Item doctype will return 'Item Group'.
+  /// For example, full_name of User doctype will return 'Full Name'.
   ///
   /// If the doctype or the field doesn't exist, [fieldName] is returned.
   @override

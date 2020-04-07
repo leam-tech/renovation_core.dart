@@ -819,29 +819,41 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// Optionally specify filters using [likeTag] which can be used in the form of SQL's LIKE statements.
   ///
   /// Returns failure if the doctype.
-  @Deprecated('Frappe has now made Tag Links Doctype')
   @override
   Future<RequestResponse<List<String>>> getTags(
       {@required String doctype, String likeTag}) async {
-    final response = await Request.initiateRequest(
-        url: config.hostUrl,
-        method: HttpMethod.POST,
-        contentType: ContentTypeLiterals.APPLICATION_JSON,
-        data: <String, dynamic>{
-          'cmd': config.coreInstance.frappe.frappeVersion.major == 12
-              ? 'frappe.desk.doctype.tag.tag.get_tags'
-              : 'frappe.desk.tags.get_tags',
-          'doctype': doctype,
-          'txt': likeTag ?? '',
-          'cat_tags': jsonEncode(<dynamic>[])
-        });
+    if (config.coreInstance.frappe.frappeVersion.major < 12) {
+      final response = await Request.initiateRequest(
+          url: config.hostUrl,
+          method: HttpMethod.POST,
+          contentType: ContentTypeLiterals.APPLICATION_JSON,
+          data: <String, dynamic>{
+            'cmd': 'frappe.desk.tags.get_tags',
+            'doctype': doctype,
+            'txt': likeTag ?? '',
+            'cat_tags': jsonEncode(<dynamic>[])
+          });
 
-    if (response.isSuccess) {
-      List result = response.data.message;
-      return RequestResponse.success(List<String>.from(result),
-          rawResponse: response.rawResponse);
+      if (response.isSuccess) {
+        List result = response.data.message;
+        return RequestResponse.success(List<String>.from(result),
+            rawResponse: response.rawResponse);
+      } else {
+        return RequestResponse.fail(handleError('get_tags', response.error));
+      }
     } else {
-      return RequestResponse.fail(handleError('get_tags', response.error));
+      final response = await getList(TagLink(), filters: [
+        ['document_type', 'LIKE', doctype],
+        ['tag', 'LIKE', '%${likeTag ?? ''}%']
+      ], fields: [
+        'tag'
+      ]);
+
+      if (response.isSuccess) {
+        final tags = response.data.map((_tag) => _tag.tag).toList();
+        return RequestResponse.success(tags, rawResponse: response.rawResponse);
+      }
+      return RequestResponse.fail(handleError('get_tag', response.error));
     }
   }
 

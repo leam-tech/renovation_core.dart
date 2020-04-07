@@ -14,7 +14,7 @@ class FrappeUploadFileParams extends UploadFileParams with FrappeAPI {
       {@required dynamic file,
       @required String fileName,
       this.isPrivate,
-      this.folder = 'Home',
+      @deprecated this.folder = 'Home',
       @deprecated this.doctype,
       @deprecated this.docname,
       @deprecated this.docField})

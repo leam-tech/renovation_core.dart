@@ -7,18 +7,20 @@ import '../../../test_manager.dart';
 
 void main() {
   FrappeMetaController frappeMetaController;
+
+  final validUser = TestManager.primaryUser;
+  final validPwd = TestManager.primaryUserPwd;
+
   setUpAll(() async {
     await TestManager.getTestInstance();
     frappeMetaController = getFrappeMetaController();
     // Login the user to have permission to get the document
-    await getFrappeAuthController().login(
-        TestManager.getTestUserCredentials()['email'],
-        TestManager.getTestUserCredentials()['password']);
+    await getFrappeAuthController().login(validUser, validPwd);
   });
 
   group('Get Document Count', () {
     test('should get document count successfully', () async {
-      final response = await frappeMetaController.getDocCount(doctype: 'Item');
+      final response = await frappeMetaController.getDocCount(doctype: 'User');
 
       expect(response.isSuccess, true);
       expect(response.data is int, true);
@@ -26,15 +28,15 @@ void main() {
     });
     test('should get document count as 0 if there none', () async {
       final response =
-          await frappeMetaController.getDocCount(doctype: 'Payment Entry');
+          await frappeMetaController.getDocCount(doctype: 'Milestone');
 
       expect(response.isSuccess, true);
       expect(response.data, 0);
     });
-    test('should get document count successfully with Filters', () async {
-      final response =
-          await frappeMetaController.getDocCount(doctype: 'Item', filters: {
-        'name': ['LIKE', '%RED%']
+    test('should get document count successfully with filters', () async {
+      final response = await frappeMetaController
+          .getDocCount(doctype: 'Chat Profile', filters: {
+        'name': ['LIKE', validUser]
       });
 
       expect(response.isSuccess, true);
@@ -44,7 +46,7 @@ void main() {
     test('should throw "InvalidFrappeFilter" for invalid filters', () async {
       expect(
           () async => await frappeMetaController.getDocCount(
-              doctype: 'Item', filters: 'invalid-filter'),
+              doctype: 'User', filters: 'invalid-filter'),
           throwsA(TypeMatcher<InvalidFrappeFilter>()));
     });
 
@@ -60,9 +62,10 @@ void main() {
   });
 
   group('Get Document Info', () {
-    test('should successfully get document info', () async {
+    test('should successfully get document info of an existing document',
+        () async {
       final response = await frappeMetaController.getDocInfo(
-          doctype: 'Item', docname: '1234');
+          doctype: 'User', docname: validUser);
       expect(response.isSuccess, true);
       expect(response.data is FrappeDocInfo, true);
     });
@@ -78,7 +81,7 @@ void main() {
 
     test('should return a failure for non-existing docname', () async {
       final response = await frappeMetaController.getDocInfo(
-          doctype: 'Item', docname: 'NON EXISTING');
+          doctype: 'Renovation Review', docname: 'NON EXISTING');
       expect(response.isSuccess, false);
       expect(response.error.info.httpCode, 404);
       expect(
@@ -87,21 +90,25 @@ void main() {
   });
 
   group('Get Doc Meta', () {
-    test('should successfully get a doctype meta of Item', () async {
-      final response = await frappeMetaController.getDocMeta(doctype: 'Item');
+    test('should successfully get a doctype meta of Renovation Review',
+        () async {
+      final response =
+          await frappeMetaController.getDocMeta(doctype: 'Renovation Review');
       expect(response.isSuccess, true);
-      expect(response.data.name, 'Item');
-      expect(response.data.isSubmittable, false);
+      expect(response.data.name, 'Renovation Review');
+      expect(response.data.isSubmittable, true);
       expect(response.data.isSingle, false);
     });
 
     test(
-        'should successfully get a doctype meta of Item and save it in docTypeCache',
+        'should successfully get a doctype meta of Renovation Review and save it in docTypeCache',
         () async {
-      final response = await frappeMetaController.getDocMeta(doctype: 'Item');
+      final response =
+          await frappeMetaController.getDocMeta(doctype: 'Renovation Review');
       expect(response.isSuccess, true);
-      expect(response.data.name, 'Item');
-      expect(frappeMetaController.docTypeCache['Item'], isA<DocType>());
+      expect(response.data.name, 'Renovation Review');
+      expect(frappeMetaController.docTypeCache['Renovation Review'],
+          isA<DocType>());
       expect(frappeMetaController.docTypeCache.keys.length > 1, true);
     });
 
@@ -116,27 +123,28 @@ void main() {
   group('Get Field Label', () {
     test('should successfully get a field label', () async {
       final response = await frappeMetaController.getFieldLabel(
-          doctype: 'Item', fieldName: 'item_group');
-      expect(response, 'Item Group');
+          doctype: 'Renovation Review', fieldName: 'reviewed_by');
+      expect(response, 'Reviewed By');
     });
 
-    test('should get the standard field for doctype Item', () async {
+    test('should get the standard field for doctype Renovation Review',
+        () async {
       final response = await frappeMetaController.getFieldLabel(
-          doctype: 'Item', fieldName: 'name');
+          doctype: 'Renovation Review', fieldName: 'name');
       expect(response, 'Name');
     });
 
     test('should return the field name as-is if the doctype does not exist ',
         () async {
       final response = await frappeMetaController.getFieldLabel(
-          doctype: 'NON EXISTING', fieldName: 'item_group');
-      expect(response, 'item_group');
+          doctype: 'NON EXISTING', fieldName: 'reviewed_by');
+      expect(response, 'reviewed_by');
     });
 
     test('should return the field name as-is if the field does not exist ',
         () async {
       final response = await frappeMetaController.getFieldLabel(
-          doctype: 'Item', fieldName: 'non_existing_field');
+          doctype: 'Renovation Review', fieldName: 'non_existing_field');
       expect(response, 'non_existing_field');
     });
   });

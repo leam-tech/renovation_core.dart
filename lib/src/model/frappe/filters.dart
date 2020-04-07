@@ -19,7 +19,7 @@ class DBFilter {
   /// [
   /// ['name', 'LIKE', 'test']
   /// ]
-  /// ```w
+  /// ```
   ///
   /// 3. Type3:
   /// ```
