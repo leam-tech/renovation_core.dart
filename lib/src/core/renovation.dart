@@ -149,11 +149,11 @@ class Renovation {
 
   /// Clears the cache of the renovation controllers. Involved controllers:
   ///
-  /// - `FrappeModelController`
-  /// - `FrappeMetaController`
-  /// - `FrappeAuthController`
-  /// - `ScriptManager`
-  /// - `FrappeUIController`
+  /// - [FrappeModelController]
+  /// - [FrappeMetaController]
+  /// - [FrappeAuthController]
+  /// - [FrappePermissionController]
+  /// - [Frappe]
   void clearCache() {
     for (final renovationController in <RenovationController>[
       model,

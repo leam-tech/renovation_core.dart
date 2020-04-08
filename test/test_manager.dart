@@ -11,8 +11,6 @@ class TestManager {
     if (renovation == null) {
       renovation = Renovation();
 
-//      print(_envVariables);
-
       await renovation.init(_envVariables[EnvVariables.HostURL],
           disableLog: true);
     }

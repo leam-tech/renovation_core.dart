@@ -31,16 +31,4 @@ abstract class MetaController extends RenovationController {
   ///
   /// Can specify the return within [RequestResponse] in the extending class.
   Future<RequestResponse<dynamic>> getReportMeta({@required String report});
-
-//FIXME: Since Dart doesn't support the Scripts yet
-//  Future<RequestResponse<bool>> loadDocTypeScripts(
-//      dynamic doctype) async {
-//    dynamic dt;
-//    if (doctype.runtimeType == String) {
-//      dt = doctype;
-//    } else {
-//      dt = doctype.doctype;
-//    }
-//    return config.coreInstance.scriptManager.loadScripts(dt);
-//  }
 }
