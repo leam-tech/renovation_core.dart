@@ -16,7 +16,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - env: 
+    - name: Install dependencies
+      run: pub get
+    - name: Run tests
+      run: pub run test
+      env: 
         CORE_DART_HOST_URL: ${{ secrets.CORE_DART_HOST_URL }}
         CORE_DART_PRIMARY_USER: ${{ secrets.CORE_DART_PRIMARY_USER }}
         CORE_DART_PRIMARY_USER_NAME: ${{ secrets.CORE_DART_PRIMARY_USER_NAME }}
@@ -27,7 +31,3 @@ jobs:
         CORE_DART_MOBILE_NUMBER: ${{ secrets.CORE_DART_MOBILE_NUMBER }}
         CORE_DART_PIN_NUMBER: ${{ secrets.CORE_DART_PIN_NUMBER }}
         CORE_DART_EXISTING_FOLDER: ${{ secrets.CORE_DART_EXISTING_FOLDER }}
-    - name: Install dependencies
-      run: pub get
-    - name: Run tests
-      run: pub run test
