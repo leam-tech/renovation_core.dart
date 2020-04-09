@@ -130,7 +130,11 @@ User _$UserFromJson(Map<String, dynamic> json) {
     ..lastLogin = json['last_login'] == null
         ? null
         : DateTime.parse(json['last_login'] as String)
-    ..userImage = json['user_image'] as String;
+    ..userImage = json['user_image'] as String
+    ..blockModules = (json['block_modules'] as List)
+        ?.map((e) =>
+            e == null ? null : BlockModule.fromJson(e as Map<String, dynamic>))
+        ?.toList();
 }
 
 Map<String, dynamic> _$UserToJson(User instance) {
@@ -174,5 +178,63 @@ Map<String, dynamic> _$UserToJson(User instance) {
   writeNotNull('mobile_no', instance.mobileNo);
   writeNotNull('last_login', instance.lastLogin?.toIso8601String());
   writeNotNull('user_image', instance.userImage);
+  writeNotNull('block_modules',
+      instance.blockModules?.map((e) => e?.toJson())?.toList());
+  return val;
+}
+
+BlockModule _$BlockModuleFromJson(Map<String, dynamic> json) {
+  return BlockModule()
+    ..doctype = json['doctype'] as String
+    ..name = json['name'] as String
+    ..owner = json['owner'] as String
+    ..docStatus =
+        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
+    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
+    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
+    ..amendedFrom = json['amended_from'] as String
+    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+    ..parent = json['parent'] as String
+    ..parentType = json['parenttype'] as String
+    ..creation = json['creation'] == null
+        ? null
+        : DateTime.parse(json['creation'] as String)
+    ..parentField = json['parentfield'] as String
+    ..modified = json['modified'] == null
+        ? null
+        : DateTime.parse(json['modified'] as String)
+    ..modifiedBy = json['modified_by'] as String
+    ..module = json['module'] as String;
+}
+
+Map<String, dynamic> _$BlockModuleToJson(BlockModule instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('doctype', instance.doctype);
+  writeNotNull('name', instance.name);
+  writeNotNull('owner', instance.owner);
+  writeNotNull('docstatus',
+      FrappeDocFieldConverter.frappeDocStatusToInt(instance.docStatus));
+  writeNotNull(
+      '__islocal', FrappeDocFieldConverter.boolToCheck(instance.isLocal));
+  writeNotNull(
+      '__unsaved', FrappeDocFieldConverter.boolToCheck(instance.unsaved));
+  writeNotNull('amended_from', instance.amendedFrom);
+  writeNotNull('idx', instance.idx);
+  writeNotNull('parent', instance.parent);
+  writeNotNull('parenttype', instance.parentType);
+  writeNotNull(
+      'creation', FrappeDocFieldConverter.toFrappeDateTime(instance.creation));
+  writeNotNull('parentfield', instance.parentField);
+  writeNotNull(
+      'modified', FrappeDocFieldConverter.toFrappeDateTime(instance.modified));
+  writeNotNull('modified_by', instance.modifiedBy);
+  writeNotNull('module', instance.module);
   return val;
 }

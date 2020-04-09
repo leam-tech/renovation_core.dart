@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:renovation_core/core.dart';
 
 import 'request.dart' show RenovationError;
 

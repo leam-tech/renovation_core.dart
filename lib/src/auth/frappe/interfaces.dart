@@ -1,7 +1,6 @@
 import 'dart:core';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:renovation_core/core.dart';
 
 import '../../core/jsonable.dart';
 import '../../model/frappe/document.dart';
@@ -120,9 +119,29 @@ class User extends FrappeDocument {
   @JsonKey(name: 'user_image')
   String userImage;
 
+  @JsonKey(name: 'block_modules')
+  List<BlockModule> blockModules;
+
   @override
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   @override
   T fromJson<T>(Map<String, dynamic> json) => User.fromJson(json) as T;
+}
+
+@JsonSerializable()
+class BlockModule extends FrappeDocument {
+  BlockModule() : super('Block Module');
+
+  factory BlockModule.fromJson(Map<String, dynamic> json) =>
+      _$BlockModuleFromJson(json);
+
+  @JsonKey(name: 'module')
+  String module;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) => BlockModule.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$BlockModuleToJson(this);
 }

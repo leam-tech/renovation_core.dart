@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:renovation_core/auth.dart';
 import 'package:renovation_core/core.dart';
+import 'package:renovation_core/meta.dart';
 import 'package:renovation_core/model.dart';
 import 'package:test/test.dart';
 
@@ -11,40 +12,44 @@ import '../../../test_models/models.dart';
 void main() {
   FrappeModelController frappeModelController;
   FrappeAuthController frappeAuthController;
+
+  final validUser = TestManager.primaryUser;
+  final validPwd = TestManager.primaryUserPwd;
+
+  final validSecondUser = TestManager.secondaryUser;
+
   setUpAll(() async {
     await TestManager.getTestInstance();
     frappeModelController = getFrappeModelController();
     frappeAuthController = getFrappeAuthController();
     // Login the user to have permission to get the document
-    await frappeAuthController.login(
-        TestManager.getTestUserCredentials()['email'],
-        TestManager.getTestUserCredentials()['password']);
+    await frappeAuthController.login(validUser, validPwd);
   });
 
   group('Getting Documents', () {
     test('should get a document successfully', () async {
-      final response =
-          await frappeModelController.getDoc(User(), '<admin_user>');
+      final response = await frappeModelController.getDoc(User(), validUser);
 
       expect(response.isSuccess, true);
-      expect(response.data.fullName, '<admin_user>');
+      expect(response.data.fullName,
+          TestManager.getVariable(EnvVariables.PrimaryUserName));
       expect(response.httpCode, 200);
       expect(response.data, isA<User>());
     });
 
     test('should add to local cache if successful', () async {
-      final response =
-          await frappeModelController.getDoc(User(), '<admin_user>');
-      final User user = frappeModelController.locals['User']['<admin_user>'];
+      final response = await frappeModelController.getDoc(User(), validUser);
+      final User user = frappeModelController.locals['User'][validUser];
       expect(response.isSuccess, true);
       expect(user, isA<User>());
-      expect(user.fullName, '<admin_user>');
+      expect(
+          user.fullName, TestManager.getVariable(EnvVariables.PrimaryUserName));
     });
 
     test('should throw error for doctype unspecified', () async {
       expect(
           () async => await frappeModelController.getDoc(
-              User()..doctype = null, '<username>'),
+              User()..doctype = null, validUser),
           throwsA(TypeMatcher<EmptyDoctypeError>()));
     });
     test('should return failure for non-existing doctype', () async {
@@ -119,14 +124,13 @@ void main() {
     });
     test('should return tableField details', () async {
       final response =
-          await frappeModelController.getList(ItemAttribute(), tableFields: {
-        'item_attribute_values': ['*']
+          await frappeModelController.getList(User(), tableFields: {
+        'block_modules': ['*']
       });
       expect(response.isSuccess, true);
       expect(response.httpCode, 200);
       expect(response.data.isNotEmpty, true);
-      expect(response.data.first.itemAttributeValues,
-          isA<List<ItemAttributeValue>>());
+      expect(response.data.first.blockModules, isA<List<BlockModule>>());
     });
     test('should return all fields', () async {
       final response =
@@ -140,59 +144,57 @@ void main() {
 
     test('should return list with name and linkfields document within',
         () async {
-      final response = await frappeModelController.getList(ItemGroup(),
-          fields: ['name, parent_item_group'],
-          withLinkFields: ['parent_item_group']);
+      final response = await frappeModelController.getList(RenovationReview(),
+          fields: ['name', 'reviewed_by_doctype'],
+          withLinkFields: ['reviewed_by_doctype']);
 
       expect(response.isSuccess, true);
-      expect(response.data.every((itemGroup) => itemGroup.name != null), true);
+      expect(response.data.every((review) => review.name != null), true);
       expect(
-          response.data.any((itemGroup) =>
-              itemGroup.parentItemGroupDoc != null &&
-              itemGroup.parentItemGroupDoc is ParentItemGroup),
+          response.data.any((review) =>
+              review.reviewedByDoctypeDoc != null &&
+              review.reviewedByDoctypeDoc is DocType),
           true);
     });
 
     test('should return list without non-existing linkfields', () async {
-      final response = await frappeModelController.getList(ItemGroup(),
-          fields: ['name, parent_item_group'],
+      final response = await frappeModelController.getList(RenovationReview(),
+          fields: ['name', 'reviewed_by_doctype'],
           withLinkFields: ['NON-EXISTING']);
 
       expect(response.isSuccess, true);
-      expect(response.data.every((itemGroup) => itemGroup is ItemGroup), true);
-      expect(
-          response.data
-              .any((itemGroup) => itemGroup.parentItemGroupDoc == null),
+      expect(response.data.every((review) => review is RenovationReview), true);
+      expect(response.data.any((review) => review.reviewedByDoctypeDoc == null),
           true);
     });
 
     test('should return list of user with filters type 1', () async {
       final response = await frappeModelController
-          .getList(User(), filters: {'name': '<admin_user>', 'enabled': 1});
+          .getList(User(), filters: {'name': validUser, 'enabled': 1});
 
       expect(response.isSuccess, true);
       expect(response.data.length, 1);
-      expect(response.data.first.name, '<admin_user>');
+      expect(response.data.first.name, validUser);
     });
 
     test('should return list of user with filters type 2', () async {
       final response = await frappeModelController.getList(User(), filters: [
-        ['name', '=', '<admin_user>']
+        ['name', '=', validUser]
       ]);
 
       expect(response.isSuccess, true);
       expect(response.data.length, 1);
-      expect(response.data.first.name, '<admin_user>');
+      expect(response.data.first.name, validUser);
     });
 
     test('should return list of user with filters type 3', () async {
       final response = await frappeModelController.getList(User(), filters: {
-        'name': ['=', '<admin_user>']
+        'name': ['=', validUser]
       });
 
       expect(response.isSuccess, true);
       expect(response.data.length, 1);
-      expect(response.data.first.name, '<admin_user>');
+      expect(response.data.first.name, validUser);
     });
 
     // More tests will be added to filters.dart in a separate group.
@@ -202,7 +204,7 @@ void main() {
       expect(
           () async => await frappeModelController.getList(User(), filters: {
                 'user': {
-                  'field': {'name': '<admin_user>'}
+                  'field': {'name': validUser}
                 }
               }),
           throwsA(TypeMatcher<InvalidFrappeFilter>()));
@@ -238,7 +240,7 @@ void main() {
 
     test("should fail to delete a doctype that doesn't exist", () async {
       final response = await frappeModelController.deleteDoc(
-          'NONEXISTING', 'TESTING SUBMISSION');
+          'NONEXISTING', 'TESTING DELETIION');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(response.error.title,
@@ -283,15 +285,16 @@ void main() {
 
   group('Get Value', () {
     test('should return a Map<String, dynamic> successfully', () async {
-      final response = await frappeModelController.getValue(
-          'User', '<admin_user>', 'email');
+      final response =
+          await frappeModelController.getValue('User', validUser, 'email');
       expect(response.isSuccess, true);
       expect(response.data, isA<Map<String, dynamic>>());
-      expect(response.data['email'], 'admin@example.com');
+      expect(response.data['email'],
+          TestManager.getVariable(EnvVariables.PrimaryUserEmail));
     });
     test('should return failure for non-existing doctype', () async {
       final response = await frappeModelController.getValue(
-          'NON-EXISTING', '<admin_user>', 'email');
+          'NON-EXISTING', validUser, 'email');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(response.error.type, RenovationError.NotFoundError);
@@ -305,7 +308,7 @@ void main() {
     });
     test('should return failure for non-existing field', () async {
       final response = await frappeModelController.getValue(
-          'User', '<admin_user>', 'non_existing');
+          'User', validUser, 'non_existing');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(response.error.type, RenovationError.NotFoundError);
@@ -317,7 +320,7 @@ void main() {
       final random = Random().nextInt(10).toString();
 
       final response = await frappeModelController.setValue(
-          User(), '<username>', 'middle_name', random);
+          User(), validSecondUser, 'middle_name', random);
       expect(response.isSuccess, true);
       expect(response.data.middleName, random);
     });
@@ -325,9 +328,9 @@ void main() {
     test('should return failure for non-existing doctype', () async {
       final response = await frappeModelController.setValue(
           User()..doctype = 'NON EXISTING',
-          '<username>',
+          validSecondUser,
           'email',
-          '<username>');
+          'random@email.com');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
@@ -336,7 +339,7 @@ void main() {
 
     test('should return failure for non-existing document', () async {
       final response = await frappeModelController.setValue(
-          User(), 'non_existing', 'email', '<username>');
+          User(), 'non_existing', 'email', 'random@email.com');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
@@ -346,8 +349,8 @@ void main() {
     test('should throw InvalidFrappeFieldValue if docValue is not DBValue',
         () async {
       expect(
-          () async => await frappeModelController.setValue(
-              User(), '<admin_user>', 'middle_name', <String, dynamic>{}),
+          () async => await frappeModelController
+              .setValue(User(), validUser, 'middle_name', <String, dynamic>{}),
           throwsA(TypeMatcher<InvalidFrappeFieldValue>()));
     });
   });
@@ -372,7 +375,7 @@ void main() {
     test('should save an existing doc successfully and update it locally',
         () async {
       final getDocResponse =
-          await frappeModelController.getDoc(User(), '<admin_user>');
+          await frappeModelController.getDoc(User(), validUser);
       final user = getDocResponse.data;
 
       user..middleName = 'testing_save_doc';
@@ -383,7 +386,7 @@ void main() {
       // Checking for locally saved doc
       expect(
           frappeModelController
-              .getDocFromCache<User>('User', '<admin_user>')
+              .getDocFromCache<User>('User', validUser)
               .middleName,
           'testing_save_doc');
     });
@@ -402,6 +405,12 @@ void main() {
   });
 
   group('Document Submission', () {
+    setUpAll(() async {
+      final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
+      newDoc.title = 'EXISTING TESTING SUBMISSION';
+      await frappeModelController.submitDoc(newDoc);
+    });
+
     test('should successfully submit a document', () async {
       final userAgreement =
           frappeModelController.newDoc(RenovationUserAgreement());
@@ -423,7 +432,7 @@ void main() {
     });
     test('should fail if duplicated submitted document', () async {
       final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
-      newDoc.title = 'ANOTHER TESTING SUBMISSION';
+      newDoc.title = 'EXISTING TESTING SUBMISSION';
       final response = await frappeModelController.submitDoc(newDoc);
       expect(response.isSuccess, false);
       expect(response.httpCode, 409);
@@ -435,11 +444,12 @@ void main() {
         () async {
       expect(
           () async => await frappeModelController
-              .submitDoc(frappeModelController.newDoc(ItemGroup())),
+              .submitDoc(frappeModelController.newDoc(User())),
           throwsA(TypeMatcher<NotSubmittableDocError>()));
     });
 
     tearDownAll(() async {
+      // First document
       final getDoc = await frappeModelController.getDoc(
           RenovationUserAgreement(), 'TESTING SUBMISSION');
       if (getDoc.isSuccess) {
@@ -447,10 +457,25 @@ void main() {
         await frappeModelController.deleteDoc(
             '${cancelDoc.data.doctype}', '${cancelDoc.data.name}');
       }
+
+      // Second document
+      final getDoc2 = await frappeModelController.getDoc(
+          RenovationUserAgreement(), 'EXISTING TESTING SUBMISSION');
+      if (getDoc2.isSuccess) {
+        final cancelDoc = await frappeModelController.cancelDoc(getDoc2.data);
+        await frappeModelController.deleteDoc(
+            '${cancelDoc.data.doctype}', '${cancelDoc.data.name}');
+      }
     });
   });
 
   group('saveSubmitDoc', () {
+    setUpAll(() async {
+      final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
+      newDoc.title = 'EXISTING TESTING SAVING AND SUBMISSION';
+      await frappeModelController.submitDoc(newDoc);
+    });
+
     test('should successfully save and submit a document', () async {
       final userAgreement =
           frappeModelController.newDoc(RenovationUserAgreement());
@@ -472,7 +497,7 @@ void main() {
     });
     test('should fail if duplicated submitted document', () async {
       final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
-      newDoc.title = 'ANOTHER TESTING SAVING AND SUBMISSION';
+      newDoc.title = 'EXISTING TESTING SAVING AND SUBMISSION';
       final response = await frappeModelController.submitDoc(newDoc);
       expect(response.isSuccess, false);
       expect(response.httpCode, 409);
@@ -484,15 +509,25 @@ void main() {
         () async {
       expect(
           () async => await frappeModelController
-              .saveSubmitDoc(frappeModelController.newDoc(ItemGroup())),
+              .saveSubmitDoc(frappeModelController.newDoc(User())),
           throwsA(TypeMatcher<NotSubmittableDocError>()));
     });
 
     tearDownAll(() async {
+      // First document
       final getDoc = await frappeModelController.getDoc(
           RenovationUserAgreement(), 'TESTING SAVING AND SUBMISSION');
       if (getDoc.isSuccess) {
         final cancelDoc = await frappeModelController.cancelDoc(getDoc.data);
+        await frappeModelController.deleteDoc(
+            '${cancelDoc.data.doctype}', '${cancelDoc.data.name}');
+      }
+
+      // Second document
+      final getDoc2 = await frappeModelController.getDoc(
+          RenovationUserAgreement(), 'EXISTING TESTING SAVING AND SUBMISSION');
+      if (getDoc2.isSuccess) {
+        final cancelDoc = await frappeModelController.cancelDoc(getDoc2.data);
         await frappeModelController.deleteDoc(
             '${cancelDoc.data.doctype}', '${cancelDoc.data.name}');
       }
@@ -501,23 +536,24 @@ void main() {
 
   group('amendDoc', () {
     test('should successfully amend a doc', () async {
-      final doc = await frappeModelController.getDoc(User(), '<admin_user>',
+      final doc = await frappeModelController.getDoc(User(), validUser,
           forceFetch: true);
 
       final amendedDoc = frappeModelController
+          // Simulate submitted document
           .amendDoc(doc.data..docStatus = FrappeDocStatus.Submitted);
 
       expect(amendedDoc.name.contains('New'), true);
       expect(amendedDoc.isLocal, true);
       expect(amendedDoc.unsaved, true);
-      expect(amendedDoc.amendedFrom, '<admin_user>');
+      expect(amendedDoc.amendedFrom, validUser);
       expect(frappeModelController.locals['User'][amendedDoc.name], isNotNull);
     });
 
     test('should throw NotASubmittedDocument if document is not submitted',
         () async {
-      final amendedDoc = await frappeModelController
-          .getDoc(User(), '<admin_user>', forceFetch: true);
+      final amendedDoc = await frappeModelController.getDoc(User(), validUser,
+          forceFetch: true);
 
       expect(() => frappeModelController.amendDoc(amendedDoc.data),
           throwsA(TypeMatcher<NotASubmittedDocument>()));
@@ -526,7 +562,7 @@ void main() {
 
   group('copyDoc', () {
     test('should successfully copy a doc', () async {
-      final doc = await frappeModelController.getDoc(User(), '<admin_user>');
+      final doc = await frappeModelController.getDoc(User(), validUser);
 
       final copy = frappeModelController.copyDoc(doc.data);
 
@@ -537,7 +573,7 @@ void main() {
     });
 
     test('should throw EmptyDoctypeError if doctype is not defined', () async {
-      final doc = await frappeModelController.getDoc(User(), '<admin_user>');
+      final doc = await frappeModelController.getDoc(User(), validUser);
 
       doc.data.doctype = null;
       expect(() => frappeModelController.copyDoc(doc.data),
@@ -551,7 +587,7 @@ void main() {
     setUpAll(() async {
       final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
       newDoc.title = 'TESTING CANCELLATION';
-      userAgreement = (await frappeModelController.submitDoc(newDoc)).data;
+      userAgreement = (await frappeModelController.saveSubmitDoc(newDoc)).data;
     });
 
     test(
@@ -577,7 +613,7 @@ void main() {
 
     test('should fail for non-existing doctype', () async {
       final newDoc = frappeModelController.newDoc(NonExistingDocType());
-      newDoc.name = 'ANOTHER TESTING SUBMISSION';
+      newDoc.name = 'ANOTHER TESTING CANCELLING';
       newDoc.docStatus = FrappeDocStatus.Submitted;
 
       final cancelDoc = await frappeModelController.cancelDoc(newDoc);
@@ -590,7 +626,7 @@ void main() {
 
     test('should fail for non-existing document', () async {
       final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
-      newDoc.title = 'ANOTHER TESTING SUBMISSION';
+      newDoc.title = 'ANOTHER TESTING CANCELLING';
       newDoc.docStatus = FrappeDocStatus.Submitted;
 
       final cancelDoc = await frappeModelController.cancelDoc(newDoc);
@@ -610,8 +646,8 @@ void main() {
 
   group('SearchLink', () {
     test('should get a list of results', () async {
-      final response =
-          await frappeModelController.searchLink(doctype: 'Item', txt: '1234');
+      final response = await frappeModelController.searchLink(
+          doctype: 'User', txt: validUser.substring(0, 3));
 
       expect(response.isSuccess, true);
       expect(response.data.isNotEmpty, true);
@@ -619,9 +655,10 @@ void main() {
 
     test('should get a list of results using options', () async {
       final response = await frappeModelController.searchLink(
-          doctype: 'Item',
-          txt: 'pro',
-          options: <String, dynamic>{'searchField': 'item_group'});
+          doctype: 'User',
+          txt: TestManager.getVariable(EnvVariables.PrimaryUserEmail)
+              .substring(0, 3),
+          options: <String, dynamic>{'searchField': 'email'});
 
       expect(response.isSuccess, true);
       expect(response.data.isNotEmpty, true);
@@ -629,7 +666,7 @@ void main() {
 
     test('should get an empty list for non-matching query', () async {
       final response = await frappeModelController.searchLink(
-          doctype: 'Item', txt: 'NONEXISTING');
+          doctype: 'User', txt: 'NONEXISTING');
       expect(response.isSuccess, true);
       expect(response.data.isEmpty, true);
     });
@@ -650,21 +687,10 @@ void main() {
         final response = await frappeModelController.assignDoc(
             assignTo: null,
             myself: true,
-            docName: '1234',
-            doctype: 'Item',
+            docName: 'RE-00001',
+            doctype: 'Renovation Review',
             priority: Priority.High,
             description: 'TESTING ASSIGN');
-        expect(response.isSuccess, true);
-        expect(response.data, true);
-      });
-
-      test('should successfully assign a doc to a user without description parameter', () async {
-        final response = await frappeModelController.assignDoc(
-            assignTo: null,
-            myself: true,
-            docName: '1234',
-            doctype: 'Item',
-            priority: Priority.High);
         expect(response.isSuccess, true);
         expect(response.data, true);
       });
@@ -673,9 +699,9 @@ void main() {
         final response = await frappeModelController.assignDoc(
             assignTo: null,
             myself: true,
-            docNames: ['1234-RED', '1234-BLU'],
+            docNames: [validUser, validSecondUser],
             bulkAssign: true,
-            doctype: 'Item',
+            doctype: 'User',
             priority: Priority.High,
             description: 'TESTING ASSIGN');
         expect(response.isSuccess, true);
@@ -697,16 +723,16 @@ void main() {
 
       tearDownAll(() async {
         await frappeModelController.unAssignDoc(
-            doctype: 'Item',
-            docName: '1234',
+            doctype: 'User',
+            docName: validUser,
             unAssignFrom: frappeAuthController.currentUser);
         await frappeModelController.unAssignDoc(
-            doctype: 'Item',
-            docName: '1234-RED',
+            doctype: 'User',
+            docName: validSecondUser,
             unAssignFrom: frappeAuthController.currentUser);
         await frappeModelController.unAssignDoc(
-            doctype: 'Item',
-            docName: '1234-BLU',
+            doctype: 'Renovation Review',
+            docName: 'RE-00001',
             unAssignFrom: frappeAuthController.currentUser);
       });
     });
@@ -716,15 +742,15 @@ void main() {
         await frappeModelController.assignDoc(
             assignTo: null,
             myself: true,
-            docName: '1234-BLU',
-            doctype: 'Item',
+            docName: validSecondUser,
+            doctype: 'User',
             priority: Priority.High,
             description: 'TESTING UNASSIGN');
       });
       test('should successfully unassign a user from a doc', () async {
         final response = await frappeModelController.unAssignDoc(
-            doctype: 'Item',
-            docName: '1234-BLU',
+            doctype: 'User',
+            docName: validSecondUser,
             unAssignFrom: frappeAuthController.currentUser);
         expect(response.isSuccess, true);
         expect(response.data, true);
@@ -736,23 +762,23 @@ void main() {
         await frappeModelController.assignDoc(
             assignTo: null,
             myself: true,
-            docName: '1234',
-            doctype: 'Item',
+            docName: validSecondUser,
+            doctype: 'User',
             priority: Priority.High,
             description: 'TESTING COMPLETE ASSIGN');
       });
       test('should successfully complete an assigned task', () async {
         final response = await frappeModelController.completeDocAssignment(
-            doctype: 'Item',
-            docName: '1234',
+            doctype: 'User',
+            docName: validSecondUser,
             assignedTo: frappeAuthController.currentUser);
         expect(response.isSuccess, true);
         expect(response.data, true);
       });
       tearDownAll(() async {
         await frappeModelController.unAssignDoc(
-            doctype: 'Item',
-            docName: '1234',
+            doctype: 'User',
+            docName: validSecondUser,
             unAssignFrom: frappeAuthController.currentUser);
       });
     });
@@ -760,34 +786,34 @@ void main() {
     group('Get Docs Assigned to User', () {
       setUpAll(() async {
         await frappeModelController.assignDoc(
-            assignTo: '<username>',
-            docName: '1234-RED',
-            doctype: 'Item',
+            assignTo: validSecondUser,
+            docName: validUser,
+            doctype: 'User',
             priority: Priority.Medium,
             description: 'TESTING GET DOCS');
 
         await frappeModelController.assignDoc(
-            assignTo: '<username>',
-            docName: '1234-BLU',
-            doctype: 'Item',
+            assignTo: validSecondUser,
+            docName: validSecondUser,
+            doctype: 'User',
             priority: Priority.Low,
             description: 'TESTING GET DOCS');
 
         await frappeModelController.assignDoc(
-            assignTo: '<username>',
-            docName: '<username>',
-            doctype: 'User',
+            assignTo: validSecondUser,
+            docName: 'RE-00001',
+            doctype: 'Renovation Review',
             priority: Priority.Low,
             description: 'TESTING GET DOCS');
       });
 
       test('should successfully get all docs assigned to a user', () async {
         final response = await frappeModelController.getDocsAssignedToUser(
-            assignedTo: '<username>');
+            assignedTo: validSecondUser);
         expect(response.isSuccess, true);
         expect(response.data.isNotEmpty, true);
         expect(response.data.length, 3);
-        expect(response.data.first.assignedTo, '<username>');
+        expect(response.data.first.assignedTo, validSecondUser);
         expect(response.data.first.description, 'TESTING GET DOCS');
       });
 
@@ -795,57 +821,67 @@ void main() {
           'should successfully get all docs assigned to a user filtered by doctype',
           () async {
         final response = await frappeModelController.getDocsAssignedToUser(
-            assignedTo: '<username>', doctype: 'Item');
+            assignedTo: validSecondUser, doctype: 'User');
         expect(response.isSuccess, true);
         expect(response.data.isNotEmpty, true);
         expect(response.data.length, 2);
-        expect(response.data.first.assignedTo, '<username>');
+        expect(response.data.first.assignedTo, validSecondUser);
         expect(response.data.first.description, 'TESTING GET DOCS');
       });
 
       tearDownAll(() async {
         await frappeModelController.unAssignDoc(
-            doctype: 'Item',
-            docName: '1234-RED',
-            unAssignFrom: '<username>');
-
-        await frappeModelController.unAssignDoc(
-            doctype: 'Item',
-            docName: '1234-BLU',
-            unAssignFrom: '<username>');
+            doctype: 'User', docName: validUser, unAssignFrom: validSecondUser);
 
         await frappeModelController.unAssignDoc(
             doctype: 'User',
-            docName: '<username>',
-            unAssignFrom: '<username>');
+            docName: validSecondUser,
+            unAssignFrom: validSecondUser);
+
+        await frappeModelController.unAssignDoc(
+            doctype: 'Renovation Review',
+            docName: 'RE-00001',
+            unAssignFrom: validSecondUser);
       });
     });
 
     group('Get Users Assigned to Doc', () {
       setUpAll(() async {
         await frappeModelController.assignDoc(
-            assignTo: '<admin_user>',
-            docName: '1234-BLU',
-            doctype: 'Item',
+            assignTo: validUser,
+            docName: 'RE-00001',
+            doctype: 'Renovation Review',
             priority: Priority.Medium,
             description: 'TESTING GET USER');
 
         await frappeModelController.assignDoc(
-            assignTo: '<username>',
-            docName: '1234-BLU',
-            doctype: 'Item',
-            priority: Priority.Low,
-            description: 'TESTING GET USERS');
+            assignTo: validSecondUser,
+            docName: 'RE-00001',
+            doctype: 'Renovation Review',
+            priority: Priority.Medium,
+            description: 'TESTING GET USER');
       });
 
       test('should successfully get all users assigned to a doc', () async {
         final response = await frappeModelController.getUsersAssignedToDoc(
-            doctype: 'Item', docName: '1234-BLU');
+            doctype: 'Renovation Review', docName: 'RE-00001');
         expect(response.isSuccess, true);
         expect(response.data.isNotEmpty, true);
         expect(response.data.first is ToDo, true);
         expect(response.data.length, 2);
       });
+    });
+
+    tearDownAll(() async {
+      await frappeModelController.unAssignDoc(
+          unAssignFrom: validUser,
+          docName: 'RE-00001',
+          doctype: 'Renovation Review');
+
+      await frappeModelController.unAssignDoc(
+          unAssignFrom: validSecondUser,
+          docName: 'RE-00001',
+          doctype: 'Renovation Review');
     });
   });
 
@@ -854,68 +890,80 @@ void main() {
     setUpAll(() async => await Renovation().frappe.loadAppVersions());
 
     group('Add Tags', () {
+      setUpAll(() async => await frappeModelController.addTag(
+          doctype: 'User', docName: validSecondUser, tag: 'DUPLICATE TAG'));
+
       test('should successfully tag a document', () async {
         final response = await frappeModelController.addTag(
-            doctype: 'Item', docName: '1234', tag: 'TEST TAG');
+            doctype: 'User', docName: validSecondUser, tag: 'TEST TAG');
 
         expect(response.isSuccess, true);
         expect(response.data, 'TEST TAG');
       });
+
       test('should fail to add tag on non-existing doctype', () async {
         final response = await frappeModelController.addTag(
-            doctype: 'non-existing', docName: '1234', tag: 'TEST TAG');
+            doctype: 'non-existing', docName: validSecondUser, tag: 'TEST TAG');
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
         expect(response.error.title,
             FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
       });
+
       test('should fail to add tag on non-existing document', () async {
         final response = await frappeModelController.addTag(
-            doctype: 'Item', docName: 'non_existing', tag: 'TEST TAG');
+            doctype: 'User', docName: 'non_existing', tag: 'TEST TAG');
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
         expect(response.error.title,
             FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
       });
+
       test('should not fail to add tag on document with duplicate tag',
           () async {
         final addAnotherTagResponse = await frappeModelController.addTag(
-            doctype: 'Item', docName: '1234', tag: 'TEST TAG');
+            doctype: 'User', docName: validSecondUser, tag: 'DUPLICATE TAG');
         expect(addAnotherTagResponse.isSuccess, true);
-        expect(addAnotherTagResponse.data, 'TEST TAG');
+        expect(addAnotherTagResponse.data, 'DUPLICATE TAG');
       });
+
       test('should not fail for empty string', () async {
         final response = await frappeModelController.addTag(
-            doctype: 'Item', docName: '1234', tag: '');
+            doctype: 'User', docName: validSecondUser, tag: '');
 
         expect(response.isSuccess, true);
         expect(response.data.isEmpty, true);
       });
+
       tearDownAll(() async {
         await frappeModelController.removeTag(
-            doctype: 'Item', docName: '1234', tag: 'TEST TAG');
+            doctype: 'User', docName: validSecondUser, tag: 'TEST TAG');
         await frappeModelController.removeTag(
-            doctype: 'Item', docName: '1234', tag: '');
+            doctype: 'User', docName: validSecondUser, tag: '');
+        await frappeModelController.removeTag(
+            doctype: 'User', docName: validSecondUser, tag: 'DUPLICATE TAG');
       });
     });
 
     group('Remove Tags', () {
       setUpAll(() async {
         await frappeModelController.addTag(
-            doctype: 'Item', docName: '1234', tag: 'TEST TAG');
+            doctype: 'User', docName: validSecondUser, tag: 'TEST REMOVE TAG');
       });
       test('should successfully remove a tag from a document', () async {
         final response = await frappeModelController.removeTag(
-            doctype: 'Item', docName: '1234', tag: 'TEST TAG');
+            doctype: 'User', docName: validSecondUser, tag: 'TEST REMOVE TAG');
 
         expect(response.isSuccess, true);
-        expect(response.data, 'TEST TAG');
+        expect(response.data, 'TEST REMOVE TAG');
       });
       test('should fail to remove a tag on non-existing doctype', () async {
         final response = await frappeModelController.removeTag(
-            doctype: 'non-existing', docName: '1234', tag: 'TEST TAG');
+            doctype: 'non-existing',
+            docName: validSecondUser,
+            tag: 'TEST REMOVE TAG');
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
@@ -924,7 +972,7 @@ void main() {
       });
       test('should fail to remove tag on non-existing document', () async {
         final response = await frappeModelController.removeTag(
-            doctype: 'Item', docName: 'non_existing', tag: 'TEST TAG');
+            doctype: 'User', docName: 'non_existing', tag: 'TEST REMOVE TAG');
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
@@ -933,7 +981,7 @@ void main() {
       });
       test('should not fail for non-existing tag', () async {
         final response = await frappeModelController.removeTag(
-            doctype: 'Item', docName: '1234', tag: 'non_existing');
+            doctype: 'User', docName: validSecondUser, tag: 'non_existing');
 
         expect(response.isSuccess, true);
       });
@@ -942,13 +990,13 @@ void main() {
     group('Get Tagged Docs', () {
       setUpAll(() async {
         await frappeModelController.addTag(
-            doctype: 'Item', docName: '1234', tag: 'TEST TAG');
+            doctype: 'User', docName: validSecondUser, tag: 'TEST GET DOCS');
       });
 
       test('should successfully get tagged documents of a certain doctype',
           () async {
         final response =
-            await frappeModelController.getTaggedDocs(doctype: 'Item');
+            await frappeModelController.getTaggedDocs(doctype: 'User');
 
         expect(response.isSuccess, true);
         expect(response.data.isNotEmpty, true);
@@ -958,21 +1006,23 @@ void main() {
           'should successfully get tagged documents of a certain doctype and a certain tag',
           () async {
         final response = await frappeModelController.getTaggedDocs(
-            doctype: 'Item', tag: 'TEST TAG');
+            doctype: 'User', tag: 'TEST GET DOCS');
         expect(response.isSuccess, true);
         expect(response.data.isNotEmpty, true);
       });
+
       test('should get an empty list of a certain doctype and a certain tag',
           () async {
         final response = await frappeModelController.getTaggedDocs(
-            doctype: 'Item', tag: 'NON EXISTING');
+            doctype: 'User', tag: 'NON EXISTING');
 
         expect(response.isSuccess, true);
         expect(response.data.isEmpty, true);
       });
+
       test('should fail to get tagged docs on non-existing doctype', () async {
         final response = await frappeModelController.getTaggedDocs(
-            doctype: 'NONEXISTING', tag: 'TEST TAG');
+            doctype: 'NONEXISTING', tag: 'TEST GET DOCS');
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
@@ -982,13 +1032,44 @@ void main() {
 
       tearDownAll(() async {
         await frappeModelController.removeTag(
-            doctype: 'Item', docName: '1234', tag: 'TEST TAG');
+            doctype: 'User', docName: validSecondUser, tag: 'TEST GET DOCS');
       });
     });
 
-    group('Get Tag', () {
-      // TODO
-      test('should get all tags of a doctype', () async {});
+    group('Get Tags', () {
+      setUpAll(() async {
+        await frappeModelController.addTag(
+            doctype: 'User', docName: validSecondUser, tag: 'FIRST TAG');
+        await frappeModelController.addTag(
+            doctype: 'User', docName: validSecondUser, tag: 'SECOND TAG');
+        await frappeModelController.addTag(
+            doctype: 'User', docName: validSecondUser, tag: 'THIRD TAG');
+      });
+
+      test('should get all tags of a doctype', () async {
+        final response = await frappeModelController.getTags(doctype: 'User');
+
+        expect(response.isSuccess, true);
+        expect(response.data.length, 3);
+      });
+
+      test('should get all tags of a doctype with searching by tag', () async {
+        final response = await frappeModelController.getTags(
+            doctype: 'User', likeTag: 'FIRST');
+
+        expect(response.isSuccess, true);
+        expect(response.data.length, 1);
+        expect(response.data.first, 'FIRST TAG');
+      });
+
+      tearDownAll(() async {
+        await frappeModelController.removeTag(
+            doctype: 'User', docName: validSecondUser, tag: 'FIRST TAG');
+        await frappeModelController.removeTag(
+            doctype: 'User', docName: validSecondUser, tag: 'SECOND TAG');
+        await frappeModelController.removeTag(
+            doctype: 'User', docName: validSecondUser, tag: 'THIRD TAG');
+      });
     });
   });
 

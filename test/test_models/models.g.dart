@@ -64,8 +64,8 @@ Map<String, dynamic> _$RenovationUserAgreementToJson(
   return val;
 }
 
-ItemGroup _$ItemGroupFromJson(Map<String, dynamic> json) {
-  return ItemGroup()
+RenovationReview _$RenovationReviewFromJson(Map<String, dynamic> json) {
+  return RenovationReview()
     ..doctype = json['doctype'] as String
     ..name = json['name'] as String
     ..owner = json['owner'] as String
@@ -85,128 +85,22 @@ ItemGroup _$ItemGroupFromJson(Map<String, dynamic> json) {
         ? null
         : DateTime.parse(json['modified'] as String)
     ..modifiedBy = json['modified_by'] as String
-    ..parentItemGroupDoc = json['parent_item_group_doc'] == null
+    ..reviewedByDoctype = json['reviewed_by_doctype'] as String
+    ..reviewedBy = json['reviewed_by'] as String
+    ..reviewedByDoctypeDoc = json['reviewed_by_doctype_doc'] == null
         ? null
-        : ParentItemGroup.fromJson(
-            json['parent_item_group_doc'] as Map<String, dynamic>);
-}
-
-Map<String, dynamic> _$ItemGroupToJson(ItemGroup instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('doctype', instance.doctype);
-  writeNotNull('name', instance.name);
-  writeNotNull('owner', instance.owner);
-  writeNotNull('docstatus',
-      FrappeDocFieldConverter.frappeDocStatusToInt(instance.docStatus));
-  writeNotNull(
-      '__islocal', FrappeDocFieldConverter.boolToCheck(instance.isLocal));
-  writeNotNull(
-      '__unsaved', FrappeDocFieldConverter.boolToCheck(instance.unsaved));
-  writeNotNull('amended_from', instance.amendedFrom);
-  writeNotNull('idx', instance.idx);
-  writeNotNull('parent', instance.parent);
-  writeNotNull('parenttype', instance.parentType);
-  writeNotNull(
-      'creation', FrappeDocFieldConverter.toFrappeDateTime(instance.creation));
-  writeNotNull('parentfield', instance.parentField);
-  writeNotNull(
-      'modified', FrappeDocFieldConverter.toFrappeDateTime(instance.modified));
-  writeNotNull('modified_by', instance.modifiedBy);
-  writeNotNull('parent_item_group_doc', instance.parentItemGroupDoc?.toJson());
-  return val;
-}
-
-ParentItemGroup _$ParentItemGroupFromJson(Map<String, dynamic> json) {
-  return ParentItemGroup()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String;
-}
-
-Map<String, dynamic> _$ParentItemGroupToJson(ParentItemGroup instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('doctype', instance.doctype);
-  writeNotNull('name', instance.name);
-  writeNotNull('owner', instance.owner);
-  writeNotNull('docstatus',
-      FrappeDocFieldConverter.frappeDocStatusToInt(instance.docStatus));
-  writeNotNull(
-      '__islocal', FrappeDocFieldConverter.boolToCheck(instance.isLocal));
-  writeNotNull(
-      '__unsaved', FrappeDocFieldConverter.boolToCheck(instance.unsaved));
-  writeNotNull('amended_from', instance.amendedFrom);
-  writeNotNull('idx', instance.idx);
-  writeNotNull('parent', instance.parent);
-  writeNotNull('parenttype', instance.parentType);
-  writeNotNull(
-      'creation', FrappeDocFieldConverter.toFrappeDateTime(instance.creation));
-  writeNotNull('parentfield', instance.parentField);
-  writeNotNull(
-      'modified', FrappeDocFieldConverter.toFrappeDateTime(instance.modified));
-  writeNotNull('modified_by', instance.modifiedBy);
-  return val;
-}
-
-ItemAttribute _$ItemAttributeFromJson(Map<String, dynamic> json) {
-  return ItemAttribute()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String
-    ..itemAttributeValues = (json['item_attribute_values'] as List)
+        : DocType.fromJson(
+            json['reviewed_by_doctype_doc'] as Map<String, dynamic>)
+    ..reviewedDoctype = json['reviewed_doctype'] as String
+    ..reviewedEntity = json['reviewed_entity'] as String
+    ..reviews = (json['reviews'] as List)
         ?.map((e) => e == null
             ? null
-            : ItemAttributeValue.fromJson(e as Map<String, dynamic>))
-        ?.toList()
-    ..attributeName = json['attribute_name'] as String;
+            : RenovationReviewItem.fromJson(e as Map<String, dynamic>))
+        ?.toList();
 }
 
-Map<String, dynamic> _$ItemAttributeToJson(ItemAttribute instance) {
+Map<String, dynamic> _$RenovationReviewToJson(RenovationReview instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -234,14 +128,18 @@ Map<String, dynamic> _$ItemAttributeToJson(ItemAttribute instance) {
   writeNotNull(
       'modified', FrappeDocFieldConverter.toFrappeDateTime(instance.modified));
   writeNotNull('modified_by', instance.modifiedBy);
-  writeNotNull('item_attribute_values',
-      instance.itemAttributeValues?.map((e) => e?.toJson())?.toList());
-  writeNotNull('attribute_name', instance.attributeName);
+  writeNotNull('reviewed_by_doctype', instance.reviewedByDoctype);
+  writeNotNull('reviewed_by', instance.reviewedBy);
+  writeNotNull(
+      'reviewed_by_doctype_doc', instance.reviewedByDoctypeDoc?.toJson());
+  writeNotNull('reviewed_doctype', instance.reviewedDoctype);
+  writeNotNull('reviewed_entity', instance.reviewedEntity);
+  writeNotNull('reviews', instance.reviews?.map((e) => e?.toJson())?.toList());
   return val;
 }
 
-ItemAttributeValue _$ItemAttributeValueFromJson(Map<String, dynamic> json) {
-  return ItemAttributeValue()
+RenovationReviewItem _$RenovationReviewItemFromJson(Map<String, dynamic> json) {
+  return RenovationReviewItem()
     ..doctype = json['doctype'] as String
     ..name = json['name'] as String
     ..owner = json['owner'] as String
@@ -261,11 +159,14 @@ ItemAttributeValue _$ItemAttributeValueFromJson(Map<String, dynamic> json) {
         ? null
         : DateTime.parse(json['modified'] as String)
     ..modifiedBy = json['modified_by'] as String
-    ..attributeValue = json['attribute_value'] as String
-    ..abbr = json['abbr'] as String;
+    ..title = json['title'] as String
+    ..question = json['question'] as String
+    ..quantitative = json['quantitative'] as String
+    ..answer = json['answer'] as String;
 }
 
-Map<String, dynamic> _$ItemAttributeValueToJson(ItemAttributeValue instance) {
+Map<String, dynamic> _$RenovationReviewItemToJson(
+    RenovationReviewItem instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -293,8 +194,10 @@ Map<String, dynamic> _$ItemAttributeValueToJson(ItemAttributeValue instance) {
   writeNotNull(
       'modified', FrappeDocFieldConverter.toFrappeDateTime(instance.modified));
   writeNotNull('modified_by', instance.modifiedBy);
-  writeNotNull('attribute_value', instance.attributeValue);
-  writeNotNull('abbr', instance.abbr);
+  writeNotNull('title', instance.title);
+  writeNotNull('question', instance.question);
+  writeNotNull('quantitative', instance.quantitative);
+  writeNotNull('answer', instance.answer);
   return val;
 }
 

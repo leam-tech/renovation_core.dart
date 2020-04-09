@@ -6,13 +6,13 @@ import '../../../test_manager.dart';
 
 void main() {
   Frappe frappe;
+  final validUser = TestManager.primaryUser;
+  final validPwd = TestManager.primaryUserPwd;
   setUpAll(() async {
     await TestManager.getTestInstance();
     frappe = getFrappe();
     // Login the user to have permission to get the document
-    await getFrappeAuthController().login(
-        TestManager.getTestUserCredentials()['email'],
-        TestManager.getTestUserCredentials()['password']);
+    await getFrappeAuthController().login(validUser, validPwd);
   });
 
   group('Frappe Versioning', () {
@@ -26,7 +26,7 @@ void main() {
 
   group('FCM Notifications', () {
     test('should register fcm token', () async {
-      var response = await frappe.registerFCMToken('test');
+      var response = await frappe.registerFCMToken('1234567890');
       expect(response.isSuccess, true);
       expect(response.data, 'OK');
     });

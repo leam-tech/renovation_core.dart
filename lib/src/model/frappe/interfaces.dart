@@ -362,3 +362,27 @@ class FrappeLogTag extends FrappeDocument {
   @override
   Map<String, dynamic> toJson() => _$FrappeLogTagToJson(this);
 }
+
+@JsonSerializable()
+class TagLink extends FrappeDocument {
+  TagLink() : super('Tag Link');
+
+  factory TagLink.fromJson(Map<String, dynamic> json) =>
+      _$TagLinkFromJson(json);
+
+  @JsonKey(name: 'document_type')
+  String documentType;
+
+  @JsonKey(name: 'document_name')
+  String documentName;
+
+  String tag;
+
+  String title;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) => TagLink.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$TagLinkToJson(this);
+}

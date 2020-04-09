@@ -534,3 +534,65 @@ Map<String, dynamic> _$FrappeLogTagToJson(FrappeLogTag instance) {
   writeNotNull('tag', instance.tag);
   return val;
 }
+
+TagLink _$TagLinkFromJson(Map<String, dynamic> json) {
+  return TagLink()
+    ..doctype = json['doctype'] as String
+    ..name = json['name'] as String
+    ..owner = json['owner'] as String
+    ..docStatus =
+        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
+    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
+    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
+    ..amendedFrom = json['amended_from'] as String
+    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+    ..parent = json['parent'] as String
+    ..parentType = json['parenttype'] as String
+    ..creation = json['creation'] == null
+        ? null
+        : DateTime.parse(json['creation'] as String)
+    ..parentField = json['parentfield'] as String
+    ..modified = json['modified'] == null
+        ? null
+        : DateTime.parse(json['modified'] as String)
+    ..modifiedBy = json['modified_by'] as String
+    ..documentType = json['document_type'] as String
+    ..documentName = json['document_name'] as String
+    ..tag = json['tag'] as String
+    ..title = json['title'] as String;
+}
+
+Map<String, dynamic> _$TagLinkToJson(TagLink instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('doctype', instance.doctype);
+  writeNotNull('name', instance.name);
+  writeNotNull('owner', instance.owner);
+  writeNotNull('docstatus',
+      FrappeDocFieldConverter.frappeDocStatusToInt(instance.docStatus));
+  writeNotNull(
+      '__islocal', FrappeDocFieldConverter.boolToCheck(instance.isLocal));
+  writeNotNull(
+      '__unsaved', FrappeDocFieldConverter.boolToCheck(instance.unsaved));
+  writeNotNull('amended_from', instance.amendedFrom);
+  writeNotNull('idx', instance.idx);
+  writeNotNull('parent', instance.parent);
+  writeNotNull('parenttype', instance.parentType);
+  writeNotNull(
+      'creation', FrappeDocFieldConverter.toFrappeDateTime(instance.creation));
+  writeNotNull('parentfield', instance.parentField);
+  writeNotNull(
+      'modified', FrappeDocFieldConverter.toFrappeDateTime(instance.modified));
+  writeNotNull('modified_by', instance.modifiedBy);
+  writeNotNull('document_type', instance.documentType);
+  writeNotNull('document_name', instance.documentName);
+  writeNotNull('tag', instance.tag);
+  writeNotNull('title', instance.title);
+  return val;
+}

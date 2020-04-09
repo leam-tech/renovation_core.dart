@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:renovation_core/meta.dart';
 import 'package:renovation_core/model.dart';
 
 part 'models.g.dart';
@@ -21,75 +22,53 @@ class RenovationUserAgreement extends FrappeDocument {
 }
 
 @JsonSerializable()
-class ItemGroup extends FrappeDocument {
-  ItemGroup() : super('Item Group');
+class RenovationReview extends FrappeDocument {
+  RenovationReview() : super('Renovation Review');
 
-  @JsonKey(name: 'parent_item_group_doc')
-  ParentItemGroup parentItemGroupDoc;
+  factory RenovationReview.fromJson(Map<String, dynamic> json) =>
+      _$RenovationReviewFromJson(json);
 
-  factory ItemGroup.fromJson(Map<String, dynamic> json) =>
-      _$ItemGroupFromJson(json);
+  @JsonKey(name: 'reviewed_by_doctype')
+  String reviewedByDoctype;
+  @JsonKey(name: 'reviewed_by')
+  String reviewedBy;
 
-  @override
-  T fromJson<T>(Map<String, dynamic> json) => ItemGroup.fromJson(json) as T;
+  @JsonKey(name: 'reviewed_by_doctype_doc')
+  DocType reviewedByDoctypeDoc;
 
-  @override
-  Map<String, dynamic> toJson() => _$ItemGroupToJson(this);
-}
+  @JsonKey(name: 'reviewed_doctype')
+  String reviewedDoctype;
+  @JsonKey(name: 'reviewed_entity')
+  String reviewedEntity;
 
-@JsonSerializable()
-class ParentItemGroup extends FrappeDocument {
-  ParentItemGroup() : super('Parent Item Group');
-
-  factory ParentItemGroup.fromJson(Map<String, dynamic> json) =>
-      _$ParentItemGroupFromJson(json);
+  List<RenovationReviewItem> reviews;
 
   @override
   T fromJson<T>(Map<String, dynamic> json) =>
-      ParentItemGroup.fromJson(json) as T;
+      RenovationReview.fromJson(json) as T;
 
   @override
-  Map<String, dynamic> toJson() => _$ParentItemGroupToJson(this);
+  Map<String, dynamic> toJson() => _$RenovationReviewToJson(this);
 }
 
 @JsonSerializable()
-class ItemAttribute extends FrappeDocument {
-  ItemAttribute() : super('Item Attribute');
+class RenovationReviewItem extends FrappeDocument {
+  RenovationReviewItem() : super('Renovation Review Item');
 
-  @JsonKey(name: 'item_attribute_values')
-  List<ItemAttributeValue> itemAttributeValues;
+  factory RenovationReviewItem.fromJson(Map<String, dynamic> json) =>
+      _$RenovationReviewItemFromJson(json);
 
-  @JsonKey(name: 'attribute_name')
-  String attributeName;
-
-  factory ItemAttribute.fromJson(Map<String, dynamic> json) =>
-      _$ItemAttributeFromJson(json);
-
-  @override
-  T fromJson<T>(Map<String, dynamic> json) => ItemAttribute.fromJson(json) as T;
-
-  @override
-  Map<String, dynamic> toJson() => _$ItemAttributeToJson(this);
-}
-
-@JsonSerializable()
-class ItemAttributeValue extends FrappeDocument {
-  ItemAttributeValue() : super('Item Attribute Value');
-
-  @JsonKey(name: 'attribute_value')
-  String attributeValue;
-
-  String abbr;
-
-  factory ItemAttributeValue.fromJson(Map<String, dynamic> json) =>
-      _$ItemAttributeValueFromJson(json);
+  String title;
+  String question;
+  String quantitative;
+  String answer;
 
   @override
   T fromJson<T>(Map<String, dynamic> json) =>
-      ItemAttributeValue.fromJson(json) as T;
+      RenovationReviewItem.fromJson(json) as T;
 
   @override
-  Map<String, dynamic> toJson() => _$ItemAttributeValueToJson(this);
+  Map<String, dynamic> toJson() => _$RenovationReviewItemToJson(this);
 }
 
 @JsonSerializable()

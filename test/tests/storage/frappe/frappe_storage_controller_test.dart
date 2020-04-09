@@ -1,21 +1,28 @@
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:path/path.dart' as path;
 import 'package:renovation_core/core.dart';
 import 'package:renovation_core/storage.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../../../test_manager.dart';
 
 void main() {
   FrappeStorageController frappeStorageController;
+  Renovation renovation;
+
+  final newFolder = 'New Folder';
+  final existingFolder = TestManager.getVariable(EnvVariables.ExistingFolder);
+
+  final validUser = TestManager.primaryUser;
+  final validPwd = TestManager.primaryUserPwd;
+
   setUpAll(() async {
-    await TestManager.getTestInstance();
+    renovation = await TestManager.getTestInstance();
     frappeStorageController = getFrappeStorageController();
     // Login the user to have permission to get the document
-    await getFrappeAuthController().login(
-        TestManager.getTestUserCredentials()['email'],
-        TestManager.getTestUserCredentials()['password']);
+    await getFrappeAuthController().login(validUser, validPwd);
   });
 
   group('validateUploadArgs', () {
@@ -61,8 +68,8 @@ void main() {
   group('checkFolderExists', () {
     test('should return success and true value for data for existing folder',
         () async {
-      final response =
-          await frappeStorageController.checkFolderExists('Home/test_folder');
+      final response = await frappeStorageController
+          .checkFolderExists('Home/$existingFolder');
       expect(response.isSuccess, true);
       expect(response.data, true);
     });
@@ -91,20 +98,28 @@ void main() {
     test('should create folder successfully in backend with parent folder',
         () async {
       final response =
-          await frappeStorageController.createFolder(folderName: 'test');
+          await frappeStorageController.createFolder(folderName: newFolder);
 
       expect(response.isSuccess, true);
       expect(response.data, true);
     });
 
     test('should fail to create folder if folder already exists', () async {
-      final response =
-          await frappeStorageController.createFolder(folderName: 'test');
+      final response = await frappeStorageController.createFolder(
+          folderName: existingFolder);
 
       expect(response.isSuccess, false);
       expect(response.error.info.httpCode, 409);
       expect(response.error.type, RenovationError.DuplicateEntryError);
       expect(response.error.title, 'Folder with same name exists');
+    });
+
+    tearDown(() async {
+      await renovation.call(<String, dynamic>{
+        'cmd': 'frappe.desk.reportview.delete_items',
+        'doctype': 'File',
+        'items': jsonEncode(['Home/$newFolder'])
+      });
     });
   });
 
@@ -130,11 +145,6 @@ void main() {
       expect(response.isSuccess, true);
       expect(response.data.isPrivate, true);
       expect(response.data.fileUrl.contains('sample'), true);
-    });
-
-    test('should upload file successfully to a specific folder', () async {
-      //FIXME: Frappé doesn't have support for folder
-      // frappe.handler.uploadfile
     });
   });
 

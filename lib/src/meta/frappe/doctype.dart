@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:renovation_core/model.dart';
 
 import '../../model/frappe/document.dart';
+import '../../model/frappe/utils.dart';
 import '../../perm/frappe/interfaces.dart';
 import 'docfield.dart';
 
