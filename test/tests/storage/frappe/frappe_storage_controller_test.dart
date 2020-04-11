@@ -131,7 +131,7 @@ void main() {
               fileName: 'sample.txt'));
 
       expect(response.isSuccess, true);
-      expect(response.data.fileName, 'sample.txt');
+      expect(response.data.fileName.contains('sample'), true);
       expect(response.data.fileUrl.contains('sample'), true);
     });
 
