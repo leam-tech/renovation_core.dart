@@ -1,5 +1,12 @@
 ## Getting Started
 
+### Backend
+First you need to install renovation_core app from backend 
+```python
+bench get-app renovation_core https://github.com/leam-tech/renovation_core.git 
+```   
+
+### Dart/Flutter
 To get started, just import the package like:
 ```dart
 import 'package:renovation_core/core.dart';
@@ -50,3 +57,6 @@ import 'package:renovation_core/backend.dart';
 
 
 
+## Documentation 
+
+[Renovation Documentation](https://renovation.leam.dev/)
