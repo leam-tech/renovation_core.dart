@@ -1,6 +1,6 @@
 name: renovation_core
 description: Front-end SDK towards Frappe
-version: 1.0.6
+version: 1.0.7
 homepage: https://github.com/leam-tech/renovation_core.dart
 
 environment:
@@ -9,14 +9,14 @@ environment:
 dependencies:
   http: ^0.12.0
   json_annotation: ^3.0.0
-  rxdart: ^0.22.0
+  rxdart: ^0.24.0
   socket_io_client: ^0.9.8
   dio: ^3.0.8
   path: ^1.6.4
   logger: ^0.8.3
   meta: ^1.1.8
   enum_to_string: ^1.0.9
-  pedantic: ^1.9.0
+  pedantic: ^1.8.0
 
 
 dev_dependencies:
