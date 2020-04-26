@@ -1,3 +1,9 @@
+# v1.0.7
+
+## Chore
+  - Upgraded rxdart to **0.24.0**
+  - Downgraded pedantic to **1.8.0** for Flutter compatibility
+
 # v1.0.6
 
 ## Fixes:
