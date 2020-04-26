@@ -1,3 +1,7 @@
+# v1.0.8
+## Fix
+  - Downgrade rxdart for compatibility with `flutter_google_places`
+
 # v1.0.7
 
 ## Chore
