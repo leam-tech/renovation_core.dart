@@ -32,3 +32,15 @@ class EmptyContentError extends Error {
   @override
   String toString() => 'Content cannot be empty or null';
 }
+
+/// Thrown when an API is called while the backend doesn't have the app installed
+class AppNotInstalled extends Error {
+  String appName = 'renovation_core';
+
+  AppNotInstalled([this.appName]);
+
+  @override
+  String toString() =>
+      'The app $appName is not installed in the backend. Please install it and try again';
+}
+

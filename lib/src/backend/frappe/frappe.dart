@@ -9,6 +9,7 @@ import '../../core/errors.dart';
 import '../../core/renovation.controller.dart';
 import '../../core/request.dart';
 import '../fcm.controller.dart';
+import 'errors.dart';
 import 'fcm_notification.model.dart';
 import 'interfaces.dart';
 
@@ -43,9 +44,8 @@ class Frappe extends RenovationController implements FCMController {
     return await verifyClientId(id);
   }
 
-  /// Clears the cache.
   @override
-  void clearCache() => _appVersions.clear();
+  void clearCache() {}
 
   /// Verify the client ID from the backend.
   ///
@@ -285,6 +285,15 @@ class Frappe extends RenovationController implements FCMController {
   /// Returns `null` if the app doesn't exist in the map [_appVersions].
   AppVersion getAppsVersion(String appName) =>
       _appVersions.containsKey(appName) ? _appVersions[appName] : null;
+
+  /// Silent method throwing an error [AppNotInstalled] if 'renovation_core' is not installed in the backend.
+  ///
+  /// To be used in controller's methods where the endpoints are defined in 'renovation_core'
+  void checkRenovationCoreInstalled() {
+    if (!_appVersions.containsKey('renovation_core')) {
+      throw AppNotInstalled();
+    }
+  }
 
   @override
   ErrorDetail handleError(String errorId, ErrorDetail error) {
