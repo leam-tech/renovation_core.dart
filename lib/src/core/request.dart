@@ -4,7 +4,9 @@ library request;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:meta/meta.dart';
 
 import 'config.dart';
@@ -35,6 +37,14 @@ enum RenovationError {
 
 class Request {
   static String clientId;
+
+  /// The [Dio] instance used in all network calls
+  static final Dio _dio = Dio();
+
+  /// Persistent cookie when JWT is not in use.
+  ///
+  /// Initialized when [setupPersistentCookie] is called
+  static PersistCookieJar _cookieJar;
 
   /// Handles the raw request to a server
   ///
@@ -78,16 +88,16 @@ class Request {
 
     switch (httpMethod) {
       case HttpMethod.GET:
-        return Dio().get<String>(url,
+        return _dio.get<String>(url,
             options: httpOptions, queryParameters: queryParams);
       case HttpMethod.POST:
-        return Dio().post<String>(url,
+        return _dio.post<String>(url,
             options: httpOptions, data: data, queryParameters: queryParams);
       case HttpMethod.PUT:
-        return Dio().put<String>(url,
+        return _dio.put<String>(url,
             options: httpOptions, data: data, queryParameters: queryParams);
       case HttpMethod.DELETE:
-        return Dio().delete<String>(url,
+        return _dio.delete<String>(url,
             options: httpOptions, queryParameters: queryParams);
         break;
       default:
@@ -270,6 +280,15 @@ class Request {
   static bool isJsonResponse(Response<dynamic> response) =>
       response.headers[Headers.contentTypeHeader][0] ==
       ContentTypeLiterals.APPLICATION_JSON;
+
+  /// Set [PersistCookieJar] with the directory path.
+  static void setupPersistentCookie(String dir) {
+    // If the interceptor wasn't added to Dio
+    if (_dio.interceptors.whereType<CookieManager>().isEmpty) {
+      _cookieJar = PersistCookieJar(dir: dir);
+      _dio.interceptors.add(CookieManager(_cookieJar));
+    }
+  }
 }
 
 class RequestException implements Exception {

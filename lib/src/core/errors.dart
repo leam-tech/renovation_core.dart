@@ -70,3 +70,10 @@ class JSONAbleMethodsNotImplemented extends Error {
   @override
   String toString() => 'fromJson() and/or toJson() are not implemented';
 }
+
+/// Thrown when Cookie directory is not set while useJWT is set to `false`
+class CookieDirNotSet extends Error {
+  @override
+  String toString() =>
+      'Cookie directory is not set, please set a valid cookie directory';
+}
