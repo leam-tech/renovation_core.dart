@@ -26,6 +26,8 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
   /// If a user isn't signed in, the Guest basic permissions is retrieved.
   @override
   Future<RequestResponse<BasicPermInfo>> loadBasicPerms() async {
+    getFrappe().checkRenovationCoreInstalled();
+
     if (basicPerms != null) {
       if (basicPerms.isLoading) {
         await Future<dynamic>.delayed(Duration(milliseconds: 50));

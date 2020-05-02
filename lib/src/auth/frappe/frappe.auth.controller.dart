@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../../core/config.dart';
 import '../../core/errors.dart';
+import '../../core/frappe/renovation.dart';
 import '../../core/renovation.controller.dart';
 import '../../core/request.dart';
 import '../auth.controller.dart';
@@ -114,6 +115,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<FrappeSessionStatusInfo>> pinLogin(
       String user, String pin) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     final response = await Request.initiateRequest(
         url: config.hostUrl,
         method: HttpMethod.POST,
@@ -152,6 +155,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<SendOTPResponse>> sendOTP(String mobileNo,
       {bool newOTP = false}) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/renovation/auth.sms.generate',
         method: HttpMethod.POST,
@@ -190,6 +195,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<VerifyOTPResponse>> verifyOTP(
       String mobileNo, String otp, bool loginToUser) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/renovation/auth.sms.verify',
         method: HttpMethod.POST,
@@ -241,6 +248,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   /// Returns an array of roles assigned to the currently logged in user.
   @override
   Future<RequestResponse<List<String>>> getCurrentUserRoles() async {
+    getFrappe().checkRenovationCoreInstalled();
+
     final response = await Request.initiateRequest(
         url: config.hostUrl +
             '/api/method/renovation_core.utils.client.get_current_user_roles',

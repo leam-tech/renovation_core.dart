@@ -99,6 +99,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   Future<RequestResponse<T>> getDoc<T extends FrappeDocument>(
       T obj, String docName,
       {bool forceFetch = false}) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     EmptyDoctypeError.verify(obj.doctype);
     EmptyDocNameError.verify(docName);
 
@@ -165,6 +167,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       String parent,
       Map<String, List<String>> tableFields,
       List<String> withLinkFields}) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     orderBy ??= 'modified desc';
     limitPageStart ??= 0;
     limitPageLength ??= 0;
@@ -343,6 +347,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// If a new doc is saved with the same name, a failure is returned.
   @override
   Future<RequestResponse<T>> saveDoc<T extends FrappeDocument>(T doc) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     EmptyDoctypeError.verify(doc.doctype);
     EmptyDocNameError.verify(doc.name);
 
@@ -428,6 +434,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   @override
   Future<RequestResponse<T>> saveSubmitDoc<T extends FrappeDocument>(
       T doc) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     EmptyDoctypeError.verify(doc.doctype);
     EmptyDocNameError.verify(doc.name);
 
@@ -632,6 +640,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       {@required String doctype,
       @required String docName,
       @required String unAssignFrom}) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
     // FIXME possible to unassign same doc twice, should be validated
@@ -659,6 +669,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   Future<RequestResponse<List<GetDocsAssignedToUserResponse>>>
       getDocsAssignedToUser(
           {@required String assignedTo, String doctype, Status status}) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     final args = GetDocsAssignedToUserParams(
         assignedTo: assignedTo, doctype: doctype, status: status)
       ..cmd = 'renovation_core.utils.assign_doc.getDocsAssignedToUser';
@@ -865,6 +877,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   @override
   Future<RequestResponse<FrappeReport>> getReport(
       {@required String report, dynamic filters, String user}) async {
+    getFrappe().checkRenovationCoreInstalled();
+
     if (filters != null) {
       if (!DBFilter.isDBFilter(filters)) throw InvalidFrappeFilter();
     }

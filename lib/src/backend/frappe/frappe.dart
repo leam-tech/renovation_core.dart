@@ -134,6 +134,8 @@ class Frappe extends RenovationController implements FCMController {
   /// If the token is already registered, the backend will silently returning a success.
   @override
   Future<RequestResponse<String>> registerFCMToken(String token) async {
+    checkRenovationCoreInstalled();
+
     final response = await Request.initiateRequest(
         url: config.hostUrl,
         method: HttpMethod.POST,
@@ -193,6 +195,8 @@ class Frappe extends RenovationController implements FCMController {
   @override
   Future<RequestResponse<List<FCMNotification>>> getFCMNotifications(
       {bool seen}) async {
+    checkRenovationCoreInstalled();
+
     var requestData = <String, dynamic>{
       'cmd': 'renovation_core.utils.fcm.get_user_notifications'
     };
@@ -230,6 +234,8 @@ class Frappe extends RenovationController implements FCMController {
   @override
   Future<RequestResponse<dynamic>> markFCMNotificationsAsSeen(
       String messageId) async {
+    checkRenovationCoreInstalled();
+
     final response = await Request.initiateRequest(
         url: config.hostUrl,
         method: HttpMethod.POST,
