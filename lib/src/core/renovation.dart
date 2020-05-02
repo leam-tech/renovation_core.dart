@@ -128,6 +128,10 @@ class Renovation {
         'Accept': 'application/json',
         'X-Requested-With': 'XMLHttpRequest'
       };
+
+      frappe = Frappe(config);
+      await frappe.loadAppVersions();
+
       translate = FrappeTranslationController(config);
       auth = FrappeAuthController(config,
           sessionStatusInfo: sessionStatusInfo as FrappeSessionStatusInfo);
@@ -149,9 +153,8 @@ class Renovation {
       storage = FrappeStorageController(config);
       defaults = FrappeDefaultsController(config);
       log = FrappeLogManager(config);
-      frappe = Frappe(config);
 
-      unawaited(frappe.loadAppVersions());
+//      unawaited(frappe.loadAppVersions());
       // TODO:
       // dashboard = FrappeDashboardController(config);
     }
