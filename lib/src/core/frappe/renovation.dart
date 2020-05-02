@@ -6,7 +6,7 @@ import '../../meta/frappe/frappe.meta.controller.dart';
 import '../../model/frappe/frappe.model.controller.dart';
 import '../../perm/frappe/frappe.perm.controller.dart';
 import '../../storage/frappe/frappe.storage.controller.dart';
-import '../../translation/frappe.translation.controller.dart';
+import '../../translation/frappe/frappe.translation.controller.dart';
 import '../renovation.dart';
 
 /// Methods to get instances of Frappé controllers

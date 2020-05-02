@@ -25,7 +25,7 @@ import '../perm/frappe/frappe.perm.controller.dart';
 import '../perm/perm.controller.dart';
 import '../storage/frappe/frappe.storage.controller.dart';
 import '../storage/storage.controller.dart';
-import '../translation/frappe.translation.controller.dart';
+import '../translation/frappe/frappe.translation.controller.dart';
 import '../translation/translation.controller.dart';
 import 'config.dart';
 import 'interfaces.dart';
