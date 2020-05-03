@@ -295,7 +295,11 @@ class Frappe extends RenovationController implements FCMController {
   /// Silent method throwing an error [AppNotInstalled] if 'renovation_core' is not installed in the backend.
   ///
   /// To be used in controller's methods where the endpoints are defined in 'renovation_core'
-  void checkRenovationCoreInstalled() {
+  Future<void> checkRenovationCoreInstalled() async {
+    while (_appVersions.isEmpty) {
+      await Future<dynamic>.delayed(Duration(milliseconds: 100));
+    }
+
     if (!_appVersions.containsKey('renovation_core')) {
       throw AppNotInstalled();
     }

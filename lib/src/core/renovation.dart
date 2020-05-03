@@ -130,7 +130,7 @@ class Renovation {
       };
 
       frappe = Frappe(config);
-      await frappe.loadAppVersions();
+      unawaited(frappe.loadAppVersions());
 
       translate = FrappeTranslationController(config);
       auth = FrappeAuthController(config,
