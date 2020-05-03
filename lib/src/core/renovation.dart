@@ -2,6 +2,8 @@ import 'dart:core';
 
 import 'package:logger/logger.dart';
 import 'package:pedantic/pedantic.dart';
+import 'package:renovation_core/core.dart';
+import 'package:renovation_core/src/core/errors.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../auth/auth.controller.dart';
@@ -100,6 +102,8 @@ class Renovation {
       {RenovationBackend backend = RenovationBackend.frappe,
       String clientId,
       K sessionStatusInfo,
+      String cookieDir,
+      bool useJWT = false,
       bool isBenchEnabled = false,
       bool disableLog = false,
       Logger customLogger}) async {
@@ -127,6 +131,18 @@ class Renovation {
       translate = FrappeTranslationController(config);
       auth = FrappeAuthController(config,
           sessionStatusInfo: sessionStatusInfo as FrappeSessionStatusInfo);
+
+      // Manage sessions using cookies instead of JWT
+      if (!useJWT) {
+        if (cookieDir != null) {
+          Request.setupPersistentCookie(cookieDir);
+        } else {
+          throw CookieDirNotSet();
+        }
+      } else {
+        getFrappeAuthController().enableJWT(true);
+      }
+
       model = FrappeModelController(config);
       meta = FrappeMetaController(config);
       perm = FrappePermissionController(config);

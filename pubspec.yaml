@@ -12,6 +12,7 @@ dependencies:
   rxdart: ^0.23.1
   socket_io_client: ^0.9.8
   dio: ^3.0.8
+  dio_cookie_manager: ^1.0.0
   path: ^1.6.4
   logger: ^0.8.3
   meta: ^1.1.8

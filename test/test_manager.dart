@@ -12,7 +12,7 @@ class TestManager {
       renovation = Renovation();
 
       await renovation.init(_envVariables[EnvVariables.HostURL],
-          disableLog: true);
+          useJWT: true, disableLog: true);
     }
     return renovation;
   }

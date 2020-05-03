@@ -37,10 +37,16 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   /// The header to which the token is prepended to according to the requirement of the backend.
   static const String TOKEN_HEADER = 'JWTToken';
 
+  /// Whether to authenticate using JWT. If set to false, will use cookies.
+  bool _useJwt = false;
+
   /// Returns the current JWT token formatted as `TOKEN_HEADER token`.
   @override
   String getCurrentToken() =>
       currentToken != null ? '$TOKEN_HEADER $currentToken' : null;
+
+  /// Set the value for whether to use JWT authentication
+  void enableJWT(bool useJwt) => _useJwt = useJwt;
 
   /// Checks the session's status (Whether the user is logged in or not) and returns it as [FrappeSessionStatusInfo].
   ///
@@ -77,7 +83,11 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         url: config.hostUrl + '/api/method/login',
         method: HttpMethod.POST,
         contentType: ContentTypeLiterals.APPLICATION_X_WWW_FORM_URLENCODED,
-        data: <String, dynamic>{'usr': email, 'pwd': password, 'use_jwt': 1},
+        data: <String, dynamic>{
+          'usr': email,
+          'pwd': password,
+          'use_jwt': _useJwt ? 1 : 0
+        },
         isFrappeResponse: false);
 
     SessionStatusInfo sessionStatusInfo;
@@ -189,7 +199,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
           'mobile': mobileNo,
           'pin': otp,
           'loginToUser': loginToUser ? 1 : 0,
-          'use_jwt': 1
+          'use_jwt': _useJwt ? 1 : 0
         });
 
     VerifyOTPResponse verifyOTPResponse;
