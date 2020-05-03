@@ -20,6 +20,9 @@ class Frappe extends RenovationController implements FCMController {
   /// Holds the versions of each app as [AppVersion].
   final Map<String, AppVersion> _appVersions = <String, AppVersion>{};
 
+  /// Whether the app versions are loaded
+  bool appVersionsLoaded = false;
+
   /// Returns all the apps as a List of [AppVersion].
   List<AppVersion> get allAppVersions => _appVersions.values.toList();
 
@@ -134,7 +137,7 @@ class Frappe extends RenovationController implements FCMController {
   /// If the token is already registered, the backend will silently returning a success.
   @override
   Future<RequestResponse<String>> registerFCMToken(String token) async {
-    checkRenovationCoreInstalled();
+    await checkRenovationCoreInstalled();
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -195,7 +198,7 @@ class Frappe extends RenovationController implements FCMController {
   @override
   Future<RequestResponse<List<FCMNotification>>> getFCMNotifications(
       {bool seen}) async {
-    checkRenovationCoreInstalled();
+    await checkRenovationCoreInstalled();
 
     var requestData = <String, dynamic>{
       'cmd': 'renovation_core.utils.fcm.get_user_notifications'
@@ -234,7 +237,7 @@ class Frappe extends RenovationController implements FCMController {
   @override
   Future<RequestResponse<dynamic>> markFCMNotificationsAsSeen(
       String messageId) async {
-    checkRenovationCoreInstalled();
+    await checkRenovationCoreInstalled();
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -273,6 +276,8 @@ class Frappe extends RenovationController implements FCMController {
     final response = await config.coreInstance.call(
         <String, dynamic>{'cmd': 'renovation_core.utils.site.get_versions'});
 
+    appVersionsLoaded = true;
+
     if (response.isSuccess) {
       final version = response.data.message as Map<String, dynamic>;
       if (version != null) {
@@ -296,7 +301,7 @@ class Frappe extends RenovationController implements FCMController {
   ///
   /// To be used in controller's methods where the endpoints are defined in 'renovation_core'
   Future<void> checkRenovationCoreInstalled() async {
-    while (_appVersions.isEmpty) {
+    while (!appVersionsLoaded) {
       await Future<dynamic>.delayed(Duration(milliseconds: 100));
     }
 

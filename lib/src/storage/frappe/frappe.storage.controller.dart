@@ -125,7 +125,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
   @override
   Future<RequestResponse<FrappeUploadFileResponse>> uploadViaHTTP(
       FrappeUploadFileParams uploadFileParams) async {
-    getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkRenovationCoreInstalled();
 
     validateUploadFileArgs(uploadFileParams);
 

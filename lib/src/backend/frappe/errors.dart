@@ -14,7 +14,6 @@ class NotDocStatusIntegerError extends Error {
   String toString() => 'Doc Status value should be 0, 1 or 2';
 }
 
-
 /// An error thrown when the app version is not in the format x.y.z
 class AppVersionFormatError extends Error {
   @override
@@ -35,12 +34,11 @@ class EmptyContentError extends Error {
 
 /// Thrown when an API is called while the backend doesn't have the app installed
 class AppNotInstalled extends Error {
-  String appName = 'renovation_core';
+  String appName;
 
-  AppNotInstalled([this.appName]);
+  AppNotInstalled([this.appName = 'renovation_core']);
 
   @override
   String toString() =>
       'The app $appName is not installed in the backend. Please install it and try again';
 }
-

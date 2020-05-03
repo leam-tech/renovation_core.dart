@@ -115,7 +115,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<FrappeSessionStatusInfo>> pinLogin(
       String user, String pin) async {
-    getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkRenovationCoreInstalled();
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -155,7 +155,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<SendOTPResponse>> sendOTP(String mobileNo,
       {bool newOTP = false}) async {
-    getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkRenovationCoreInstalled();
 
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/renovation/auth.sms.generate',
@@ -195,7 +195,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<VerifyOTPResponse>> verifyOTP(
       String mobileNo, String otp, bool loginToUser) async {
-    getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkRenovationCoreInstalled();
 
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/renovation/auth.sms.verify',
@@ -248,7 +248,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   /// Returns an array of roles assigned to the currently logged in user.
   @override
   Future<RequestResponse<List<String>>> getCurrentUserRoles() async {
-    getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkRenovationCoreInstalled();
 
     final response = await Request.initiateRequest(
         url: config.hostUrl +

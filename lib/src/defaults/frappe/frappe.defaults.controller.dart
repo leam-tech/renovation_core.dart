@@ -28,7 +28,7 @@ class FrappeDefaultsController extends DefaultsController {
   @override
   Future<RequestResponse<dynamic>> getDefault(
       {@required String key, String parent = '__default'}) async {
-    getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkRenovationCoreInstalled();
 
     if (!config.coreInstance.auth.isLoggedIn) throw NotLoggedInUser();
 
