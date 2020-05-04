@@ -15,7 +15,9 @@ import 'interfaces.dart';
 
 /// Class for handling Frappe-specific functionality.
 class Frappe extends RenovationController implements FCMController {
-  Frappe(RenovationConfig config) : super(config);
+  Frappe(RenovationConfig config) : super(config) {
+    loadAppVersions();
+  }
 
   /// Holds the versions of each app as [AppVersion].
   final Map<String, AppVersion> _appVersions = <String, AppVersion>{};

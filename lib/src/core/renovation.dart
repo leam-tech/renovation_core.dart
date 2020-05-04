@@ -1,9 +1,6 @@
 import 'dart:core';
 
 import 'package:logger/logger.dart';
-import 'package:pedantic/pedantic.dart';
-import 'package:renovation_core/core.dart';
-import 'package:renovation_core/src/core/errors.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../auth/auth.controller.dart';
@@ -13,6 +10,8 @@ import '../auth/interfaces.dart';
 import '../backend/frappe/frappe.dart';
 import '../backend/frappe/frappe.log.manager.dart';
 import '../backend/log.manager.dart';
+import '../core/errors.dart';
+import '../core/frappe/renovation.dart';
 import '../defaults/defaults.controller.dart';
 import '../defaults/frappe/frappe.defaults.controller.dart';
 import '../meta/frappe/frappe.meta.controller.dart';
@@ -130,7 +129,6 @@ class Renovation {
       };
 
       frappe = Frappe(config);
-      unawaited(frappe.loadAppVersions());
 
       translate = FrappeTranslationController(config);
       auth = FrappeAuthController(config,
