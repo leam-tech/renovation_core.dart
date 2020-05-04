@@ -134,7 +134,9 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
 
     uploadFileParams.fileSize = getFileSize(uploadFileParams.file);
 
-    uploadFileParams.cmd = 'renovation_core.handler.uploadfile';
+    uploadFileParams.cmd = getFrappe().getAppsVersion('renovation_core') != null
+        ? 'renovation_core.handler.uploadfile'
+        : 'frappe.handler.uploadfile';
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
