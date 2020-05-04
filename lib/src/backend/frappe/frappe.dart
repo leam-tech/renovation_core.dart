@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:meta/meta.dart';
 
 import '../../../core.dart';
 import '../../../model.dart';
@@ -139,7 +140,7 @@ class Frappe extends RenovationController implements FCMController {
   /// If the token is already registered, the backend will silently returning a success.
   @override
   Future<RequestResponse<String>> registerFCMToken(String token) async {
-    await checkRenovationCoreInstalled();
+    await checkAppInstalled(features: ['registerFCMToken']);
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -200,7 +201,7 @@ class Frappe extends RenovationController implements FCMController {
   @override
   Future<RequestResponse<List<FCMNotification>>> getFCMNotifications(
       {bool seen}) async {
-    await checkRenovationCoreInstalled();
+    await checkAppInstalled(features: ['getFCMNotifications']);
 
     var requestData = <String, dynamic>{
       'cmd': 'renovation_core.utils.fcm.get_user_notifications'
@@ -239,7 +240,7 @@ class Frappe extends RenovationController implements FCMController {
   @override
   Future<RequestResponse<dynamic>> markFCMNotificationsAsSeen(
       String messageId) async {
-    await checkRenovationCoreInstalled();
+    await checkAppInstalled(features: ['markFCMNotificationsAsSeen']);
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -299,16 +300,27 @@ class Frappe extends RenovationController implements FCMController {
   AppVersion getAppsVersion(String appName) =>
       _appVersions.containsKey(appName) ? _appVersions[appName] : null;
 
-  /// Silent method throwing an error [AppNotInstalled] if 'renovation_core' is not installed in the backend.
+  /// Silent method throwing an error [AppNotInstalled] if [appName] is not installed in the backend and [throwError] is set.
   ///
-  /// To be used in controller's methods where the endpoints are defined in 'renovation_core'
-  Future<void> checkRenovationCoreInstalled() async {
+  /// To be used in controller's methods where the endpoints are defined in a custom app.
+  ///
+  /// When [throwError] is set to `false`, the method will just wait for the appVersions to load.
+  ///
+  /// Specify the [features] to be used for the app.
+  ///
+  /// [appName] defaults to 'renovation_core'
+  /// [throwError] defaults to `true`
+  ///
+  Future<void> checkAppInstalled(
+      {@required List<String> features,
+      bool throwError = true,
+      String appName = 'renovation_core'}) async {
     while (!appVersionsLoaded) {
       await Future<dynamic>.delayed(Duration(milliseconds: 100));
     }
 
-    if (!_appVersions.containsKey('renovation_core')) {
-      throw AppNotInstalled();
+    if (!_appVersions.containsKey(appName) && throwError) {
+      throw AppNotInstalled(appName, features);
     }
   }
 

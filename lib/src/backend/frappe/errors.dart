@@ -35,10 +35,12 @@ class EmptyContentError extends Error {
 /// Thrown when an API is called while the backend doesn't have the app installed
 class AppNotInstalled extends Error {
   String appName;
+  List<String> features;
 
-  AppNotInstalled([this.appName = 'renovation_core']);
+  AppNotInstalled(this.appName, this.features);
 
   @override
   String toString() =>
-      'The app $appName is not installed in the backend. Please install it and try again';
+      'The app "$appName" is not installed in the backend.\nPlease install it to be able to use the feature(s):\n\n'
+      '${features != null && features.isNotEmpty ? features.join("\n") : ""}\n';
 }

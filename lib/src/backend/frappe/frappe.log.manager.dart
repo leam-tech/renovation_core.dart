@@ -106,7 +106,7 @@ class FrappeLogManager extends RenovationController implements LogManager {
       List<String> tags,
       String request,
       String response}) async {
-    await getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkAppInstalled(features: ['Logger']);
 
     tags ?? _defaultTags;
 

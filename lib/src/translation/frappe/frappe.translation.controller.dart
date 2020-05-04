@@ -17,7 +17,7 @@ class FrappeTranslationController extends TranslationController {
   @override
   Future<RequestResponse<Map<String, String>>> loadTranslations(
       {String lang}) async {
-    await getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkAppInstalled(features: ['loadTranslations']);
 
     lang ??= currentLanguage;
     final response = await Request.initiateRequest(

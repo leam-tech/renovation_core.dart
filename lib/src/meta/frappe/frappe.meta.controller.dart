@@ -103,7 +103,7 @@ class FrappeMetaController extends MetaController {
       {@required String doctype}) async {
     //FIXME: Core-Dart doesn't support scripts currently
     //    config.coreInstance.scriptManager.events[doctype] = {};
-    await getFrappe().checkRenovationCoreInstalled();
+    await getFrappe().checkAppInstalled(features: ['getDocMeta']);
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
