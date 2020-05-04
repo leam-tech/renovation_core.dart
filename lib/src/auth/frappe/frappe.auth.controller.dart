@@ -47,7 +47,13 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
       currentToken != null ? '$TOKEN_HEADER $currentToken' : null;
 
   /// Set the value for whether to use JWT authentication
-  void enableJWT(bool useJwt) => _useJwt = useJwt;
+  void enableJWT(bool useJwt) {
+    if (getFrappe().getAppsVersion('renovation_core') == null && useJwt) {
+      getFrappe().checkAppInstalled(features: ['Login using JWT']);
+    } else {
+      _useJwt = useJwt;
+    }
+  }
 
   /// Checks the session's status (Whether the user is logged in or not) and returns it as [FrappeSessionStatusInfo].
   ///
