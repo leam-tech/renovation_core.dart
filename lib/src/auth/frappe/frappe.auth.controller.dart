@@ -340,7 +340,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         if (newStatus.lang != null) {
           config.coreInstance.translate.setCurrentLanguage(newStatus.lang);
         }
-        config.coreInstance.translate.loadTranslations(lang: newStatus.lang);
+        if (getFrappe().getAppsVersion('renovation_core') != null) {
+          config.coreInstance.translate.loadTranslations(lang: newStatus.lang);
+        }
         currentUser = newStatus.currentUser;
       } else {
         clearAuthToken();
