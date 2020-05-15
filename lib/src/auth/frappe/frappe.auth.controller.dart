@@ -97,10 +97,25 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         },
         isFrappeResponse: false);
 
-    SessionStatusInfo sessionStatusInfo;
+    FrappeSessionStatusInfo sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
           Request.convertToMap(response.rawResponse));
+
+      await getFrappe()
+          .checkAppInstalled(features: ['login'], throwError: false);
+
+      final isRenovationCoreInstalled =
+          getFrappe().getAppsVersion('renovation_core') != null;
+      if (!isRenovationCoreInstalled) {
+        final logged_user = await Request.initiateRequest(
+            url: config.hostUrl + '/api/method/frappe.auth.get_logged_user',
+            method: HttpMethod.GET,
+            isFrappeResponse: false);
+        if (logged_user.isSuccess) {
+          sessionStatusInfo.user = logged_user.data.message['message'];
+        }
+      }
 
       sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
     }
