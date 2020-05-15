@@ -1,9 +1,6 @@
 import 'dart:core';
 
 import 'package:logger/logger.dart';
-import 'package:pedantic/pedantic.dart';
-import 'package:renovation_core/core.dart';
-import 'package:renovation_core/src/core/errors.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../auth/auth.controller.dart';
@@ -13,6 +10,8 @@ import '../auth/interfaces.dart';
 import '../backend/frappe/frappe.dart';
 import '../backend/frappe/frappe.log.manager.dart';
 import '../backend/log.manager.dart';
+import '../core/errors.dart';
+import '../core/frappe/renovation.dart';
 import '../defaults/defaults.controller.dart';
 import '../defaults/frappe/frappe.defaults.controller.dart';
 import '../meta/frappe/frappe.meta.controller.dart';
@@ -25,7 +24,7 @@ import '../perm/frappe/frappe.perm.controller.dart';
 import '../perm/perm.controller.dart';
 import '../storage/frappe/frappe.storage.controller.dart';
 import '../storage/storage.controller.dart';
-import '../translation/frappe.translation.controller.dart';
+import '../translation/frappe/frappe.translation.controller.dart';
 import '../translation/translation.controller.dart';
 import 'config.dart';
 import 'interfaces.dart';
@@ -128,6 +127,9 @@ class Renovation {
         'Accept': 'application/json',
         'X-Requested-With': 'XMLHttpRequest'
       };
+
+      frappe = Frappe(config);
+
       translate = FrappeTranslationController(config);
       auth = FrappeAuthController(config,
           sessionStatusInfo: sessionStatusInfo as FrappeSessionStatusInfo);
@@ -149,9 +151,8 @@ class Renovation {
       storage = FrappeStorageController(config);
       defaults = FrappeDefaultsController(config);
       log = FrappeLogManager(config);
-      frappe = Frappe(config);
 
-      unawaited(frappe.loadAppVersions());
+//      unawaited(frappe.loadAppVersions());
       // TODO:
       // dashboard = FrappeDashboardController(config);
     }

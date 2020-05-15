@@ -6,6 +6,7 @@ import 'package:pedantic/pedantic.dart';
 import '../../core/config.dart';
 import '../../core/errors.dart';
 import '../../core/frappe/renovation.dart';
+import '../../core/interfaces.dart';
 import '../../core/jsonable.dart';
 import '../../core/renovation.controller.dart';
 import '../../core/request.dart';
@@ -99,6 +100,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   Future<RequestResponse<T>> getDoc<T extends FrappeDocument>(
       T obj, String docName,
       {bool forceFetch = false}) async {
+    await getFrappe()
+        .checkAppInstalled(features: ['getDoc'], throwError: false);
+
     EmptyDoctypeError.verify(obj.doctype);
     EmptyDocNameError.verify(docName);
 
@@ -108,12 +112,17 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       return RequestResponse.success(cachedDoc);
     }
 
-    unawaited(config.coreInstance.meta.getDocMeta(doctype: obj.doctype));
-    final response = await Request.initiateRequest(
-        url:
-            '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(obj.doctype)}/${Uri.encodeComponent(docName)}',
-        method: HttpMethod.GET,
-        isFrappeResponse: false);
+    RequestResponse<FrappeResponse> response;
+    // Default URL
+    var url =
+        '${config.hostUrl}/api/resource/${Uri.encodeComponent(obj.doctype)}/${Uri.encodeComponent(docName)}';
+    if (getFrappe().getAppsVersion('renovation_core') != null) {
+      unawaited(config.coreInstance.meta.getDocMeta(doctype: obj.doctype));
+      url =
+          '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(obj.doctype)}/${Uri.encodeComponent(docName)}';
+    }
+    response = await Request.initiateRequest(
+        url: url, method: HttpMethod.GET, isFrappeResponse: false);
     if (response.isSuccess) {
       final dynamic responseObj = response.data.message;
       if (responseObj != null && responseObj != 'failed') {
@@ -165,6 +174,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       String parent,
       Map<String, List<String>> tableFields,
       List<String> withLinkFields}) async {
+    await getFrappe()
+        .checkAppInstalled(features: ['getList'], throwError: false);
+
     orderBy ??= 'modified desc';
     limitPageStart ??= 0;
     limitPageLength ??= 0;
@@ -186,7 +198,20 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         tableFieldsFrappe: tableFields != null ? jsonEncode(tableFields) : null,
         withLinkFieldsFrappe:
             withLinkFields != null ? jsonEncode(withLinkFields) : null);
-    params.cmd = 'renovation_core.db.query.get_list_with_child';
+
+    // Whether custom features are used
+    final isUsingCustomFeatures = tableFields != null || withLinkFields != null;
+
+    if (getFrappe().getAppsVersion('renovation_core') == null &&
+        isUsingCustomFeatures) {
+      // Will throw an error
+      await getFrappe()
+          .checkAppInstalled(features: ['tableFields', 'withLinkFields']);
+    }
+
+    params.cmd = getFrappe().getAppsVersion('renovation_core') != null
+        ? 'renovation_core.db.query.get_list_with_child'
+        : 'frappe.client.get_list';
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -343,16 +368,26 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// If a new doc is saved with the same name, a failure is returned.
   @override
   Future<RequestResponse<T>> saveDoc<T extends FrappeDocument>(T doc) async {
+    await getFrappe()
+        .checkAppInstalled(features: ['saveDoc'], throwError: false);
+
     EmptyDoctypeError.verify(doc.doctype);
     EmptyDocNameError.verify(doc.name);
 
+    final isRenovationCoreInstalled =
+        getFrappe().getAppsVersion('renovation_core') != null;
+
     final response = await Request.initiateRequest(
-        url:
-            '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(doc.doctype)}/${doc.isLocal ? "" : '${Uri.encodeComponent(doc.name)}'}',
+        url: isRenovationCoreInstalled
+            ? '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(doc.doctype)}/${doc.isLocal ? "" : '${Uri.encodeComponent(doc.name)}'}'
+            : '${config.hostUrl}/api/resource/${Uri.encodeComponent(doc.doctype)}${doc.isLocal ? "" : '/${Uri.encodeComponent(doc.name)}'}',
         method: doc.isLocal ? HttpMethod.POST : HttpMethod.PUT,
         contentType: ContentTypeLiterals.APPLICATION_JSON,
-        data: <String, dynamic>{'doc': doc.toJson()},
+        data: isRenovationCoreInstalled
+            ? <String, dynamic>{'doc': doc.toJson()}
+            : doc.toJson(),
         isFrappeResponse: false);
+
     if (response.isSuccess) {
       if (response.data != null && response.data.message is Map) {
         final savedDoc = doc.fromJson<T>(response.data.message);
@@ -366,11 +401,12 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     response.isSuccess = false;
     return RequestResponse.fail(handleError(
         'save_doc',
-        ErrorDetail(
-            info: Information(
-                data: response.data,
-                rawResponse: response.rawResponse,
-                httpCode: response.httpCode))));
+        response.error ??
+            ErrorDetail(
+                info: Information(
+                    data: response.data,
+                    rawResponse: response.rawResponse,
+                    httpCode: response.httpCode))));
   }
 
   /// Submit a submittable document.
@@ -428,6 +464,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   @override
   Future<RequestResponse<T>> saveSubmitDoc<T extends FrappeDocument>(
       T doc) async {
+    await getFrappe().checkAppInstalled(features: ['saveSubmitDoc']);
+
     EmptyDoctypeError.verify(doc.doctype);
     EmptyDocNameError.verify(doc.name);
 
@@ -632,6 +670,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       {@required String doctype,
       @required String docName,
       @required String unAssignFrom}) async {
+    await getFrappe().checkAppInstalled(features: ['unAssignDoc']);
+
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
     // FIXME possible to unassign same doc twice, should be validated
@@ -659,6 +699,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   Future<RequestResponse<List<GetDocsAssignedToUserResponse>>>
       getDocsAssignedToUser(
           {@required String assignedTo, String doctype, Status status}) async {
+    await getFrappe().checkAppInstalled(features: ['getDocsAssignedToUser']);
+
     final args = GetDocsAssignedToUserParams(
         assignedTo: assignedTo, doctype: doctype, status: status)
       ..cmd = 'renovation_core.utils.assign_doc.getDocsAssignedToUser';
@@ -865,6 +907,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   @override
   Future<RequestResponse<FrappeReport>> getReport(
       {@required String report, dynamic filters, String user}) async {
+    await getFrappe().checkAppInstalled(features: ['getReport']);
+
     if (filters != null) {
       if (!DBFilter.isDBFilter(filters)) throw InvalidFrappeFilter();
     }
@@ -893,18 +937,21 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ErrorDetail handleError(String errorId, ErrorDetail error) {
     switch (errorId) {
       case 'get_doc':
-        if (error.info != null &&
-            error.info.data != null &&
-            error.info?.data?.exception != null) {
-          if (error.info.data.exception.contains('DoesNotExistError')) {
+        if (error.info != null) {
+          if (error.info.httpCode == 404) {
             error = handleError('non_existing_doc', error);
-          } else if (error.info.data.exception.contains('ImportError')) {
-            error = handleError('non_existing_doctype', error);
+          } else if (error.info.data != null &&
+              error.info?.data?.exception != null) {
+            if (error.info.data.exception.contains('DoesNotExistError')) {
+              error = handleError('non_existing_doc', error);
+            } else if (error.info.data.exception.contains('ImportError')) {
+              error = handleError('non_existing_doctype', error);
+            }
+          } else if (error.info.httpCode == 412) {
+            error = handleError('wrong_input', error);
+          } else {
+            error = handleError(null, error);
           }
-        } else if (error.info.httpCode == 412) {
-          error = handleError('wrong_input', error);
-        } else {
-          error = handleError(null, error);
         }
         break;
       case 'wrong_input':

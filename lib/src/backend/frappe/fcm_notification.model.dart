@@ -67,4 +67,3 @@ class NotificationMessage extends JSONAble {
   T fromJson<T>(Map<String, dynamic> json) =>
       NotificationMessage.fromJson(json) as T;
 }
-

@@ -8,6 +8,7 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../core/config.dart';
 import '../../core/errors.dart';
+import '../../core/frappe/renovation.dart';
 import '../../core/renovation.controller.dart';
 import '../../core/request.dart';
 import '../../model/frappe/frappe.model.controller.dart';
@@ -124,6 +125,8 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
   @override
   Future<RequestResponse<FrappeUploadFileResponse>> uploadViaHTTP(
       FrappeUploadFileParams uploadFileParams) async {
+    await getFrappe().checkAppInstalled(features: ['uploadViaHTTP']);
+
     validateUploadFileArgs(uploadFileParams);
 
     uploadFileParams.fileData =
@@ -131,7 +134,9 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
 
     uploadFileParams.fileSize = getFileSize(uploadFileParams.file);
 
-    uploadFileParams.cmd = 'renovation_core.handler.uploadfile';
+    uploadFileParams.cmd = getFrappe().getAppsVersion('renovation_core') != null
+        ? 'renovation_core.handler.uploadfile'
+        : 'frappe.handler.uploadfile';
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,

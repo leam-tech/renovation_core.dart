@@ -14,7 +14,6 @@ class NotDocStatusIntegerError extends Error {
   String toString() => 'Doc Status value should be 0, 1 or 2';
 }
 
-
 /// An error thrown when the app version is not in the format x.y.z
 class AppVersionFormatError extends Error {
   @override
@@ -31,4 +30,17 @@ class EmptyResponseError extends Error {
 class EmptyContentError extends Error {
   @override
   String toString() => 'Content cannot be empty or null';
+}
+
+/// Thrown when an API is called while the backend doesn't have the app installed
+class AppNotInstalled extends Error {
+  String appName;
+  List<String> features;
+
+  AppNotInstalled(this.appName, this.features);
+
+  @override
+  String toString() =>
+      'The app "$appName" is not installed in the backend.\nPlease install it to be able to use the feature(s):\n\n'
+      '${features != null && features.isNotEmpty ? features.join("\n") : ""}\n';
 }

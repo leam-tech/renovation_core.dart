@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../../core/config.dart';
 import '../../core/errors.dart';
+import '../../core/frappe/renovation.dart';
 import '../../core/renovation.controller.dart';
 import '../../core/request.dart';
 import '../auth.controller.dart';
@@ -46,7 +47,13 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
       currentToken != null ? '$TOKEN_HEADER $currentToken' : null;
 
   /// Set the value for whether to use JWT authentication
-  void enableJWT(bool useJwt) => _useJwt = useJwt;
+  void enableJWT(bool useJwt) {
+    if (getFrappe().getAppsVersion('renovation_core') == null && useJwt) {
+      getFrappe().checkAppInstalled(features: ['Login using JWT']);
+    } else {
+      _useJwt = useJwt;
+    }
+  }
 
   /// Checks the session's status (Whether the user is logged in or not) and returns it as [FrappeSessionStatusInfo].
   ///
@@ -90,10 +97,25 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         },
         isFrappeResponse: false);
 
-    SessionStatusInfo sessionStatusInfo;
+    FrappeSessionStatusInfo sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
           Request.convertToMap(response.rawResponse));
+
+      await getFrappe()
+          .checkAppInstalled(features: ['login'], throwError: false);
+
+      final isRenovationCoreInstalled =
+          getFrappe().getAppsVersion('renovation_core') != null;
+      if (!isRenovationCoreInstalled) {
+        final logged_user = await Request.initiateRequest(
+            url: config.hostUrl + '/api/method/frappe.auth.get_logged_user',
+            method: HttpMethod.GET,
+            isFrappeResponse: false);
+        if (logged_user.isSuccess) {
+          sessionStatusInfo.user = logged_user.data.message['message'];
+        }
+      }
 
       sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
     }
@@ -114,6 +136,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<FrappeSessionStatusInfo>> pinLogin(
       String user, String pin) async {
+    await getFrappe().checkAppInstalled(features: ['pinLogin']);
+
     final response = await Request.initiateRequest(
         url: config.hostUrl,
         method: HttpMethod.POST,
@@ -152,6 +176,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<SendOTPResponse>> sendOTP(String mobileNo,
       {bool newOTP = false}) async {
+    await getFrappe().checkAppInstalled(features: ['sendOTP']);
+
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/renovation/auth.sms.generate',
         method: HttpMethod.POST,
@@ -190,6 +216,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   Future<RequestResponse<VerifyOTPResponse>> verifyOTP(
       String mobileNo, String otp, bool loginToUser) async {
+    await getFrappe().checkAppInstalled(features: ['verifyOTP']);
+
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/renovation/auth.sms.verify',
         method: HttpMethod.POST,
@@ -241,6 +269,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   /// Returns an array of roles assigned to the currently logged in user.
   @override
   Future<RequestResponse<List<String>>> getCurrentUserRoles() async {
+    await getFrappe().checkAppInstalled(features: ['getCurrentUserRoles']);
+
     final response = await Request.initiateRequest(
         url: config.hostUrl +
             '/api/method/renovation_core.utils.client.get_current_user_roles',
@@ -325,7 +355,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         if (newStatus.lang != null) {
           config.coreInstance.translate.setCurrentLanguage(newStatus.lang);
         }
-        config.coreInstance.translate.loadTranslations(lang: newStatus.lang);
+        if (getFrappe().getAppsVersion('renovation_core') != null) {
+          config.coreInstance.translate.loadTranslations(lang: newStatus.lang);
+        }
         currentUser = newStatus.currentUser;
       } else {
         clearAuthToken();

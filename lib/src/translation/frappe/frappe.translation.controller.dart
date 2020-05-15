@@ -1,8 +1,9 @@
-import './translation.controller.dart';
-import '../core/config.dart';
-import '../core/errors.dart';
-import '../core/renovation.controller.dart';
-import '../core/request.dart';
+import '../translation.controller.dart';
+import '../../core/config.dart';
+import '../../core/errors.dart';
+import '../../core/frappe/renovation.dart';
+import '../../core/renovation.controller.dart';
+import '../../core/request.dart';
 
 /// Class handling the translation of Frappe
 class FrappeTranslationController extends TranslationController {
@@ -16,6 +17,8 @@ class FrappeTranslationController extends TranslationController {
   @override
   Future<RequestResponse<Map<String, String>>> loadTranslations(
       {String lang}) async {
+    await getFrappe().checkAppInstalled(features: ['loadTranslations']);
+
     lang ??= currentLanguage;
     final response = await Request.initiateRequest(
         url: config.hostUrl +

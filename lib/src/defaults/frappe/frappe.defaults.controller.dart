@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import '../../auth/frappe/errors.dart';
 import '../../core/config.dart';
 import '../../core/errors.dart';
+import '../../core/frappe/renovation.dart';
 import '../../core/renovation.controller.dart';
 import '../../core/request.dart';
 import '../defaults.controller.dart';
@@ -27,6 +28,8 @@ class FrappeDefaultsController extends DefaultsController {
   @override
   Future<RequestResponse<dynamic>> getDefault(
       {@required String key, String parent = '__default'}) async {
+    await getFrappe().checkAppInstalled(features: ['getDefault']);
+
     if (!config.coreInstance.auth.isLoggedIn) throw NotLoggedInUser();
 
     if (_renovationCustomSettings.contains(key)) {
