@@ -272,8 +272,8 @@ class Frappe extends RenovationController implements FCMController {
 
     if (response.isSuccess == true) {
       if (response.data != null && response.data.message is String) {
-        response.data = response.data.message;
-        return response;
+        return RequestResponse.success<String>(response.data.message,
+            rawResponse: response.rawResponse);
       }
     }
     response.isSuccess = false;
