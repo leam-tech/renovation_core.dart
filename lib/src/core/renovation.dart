@@ -142,7 +142,7 @@ class Renovation {
           throw CookieDirNotSet();
         }
       } else {
-        getFrappeAuthController().enableJWT(true);
+        getFrappeAuthController().enableJWT();
       }
 
       model = FrappeModelController(config);
