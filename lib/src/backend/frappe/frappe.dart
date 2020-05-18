@@ -9,6 +9,7 @@ import '../../core/config.dart';
 import '../../core/errors.dart';
 import '../../core/renovation.controller.dart';
 import '../../core/request.dart';
+import '../../model/frappe/filters.dart';
 import '../fcm.controller.dart';
 import 'errors.dart';
 import 'fcm_notification.model.dart';
@@ -198,13 +199,28 @@ class Frappe extends RenovationController implements FCMController {
   /// Returns a list of [FCMNotification] of a user.
   ///
   /// Optionally, can set [seen] to true to get only seen notifications.
+  ///
+  /// Using [limitStart] and [limitPageLength], can be used for pagination.
+  ///
+  /// Extra filters can be specified for the doctype `Communication` based on
+  /// the [DBFilter] specifications.
   @override
   Future<RequestResponse<List<FCMNotification>>> getFCMNotifications(
-      {bool seen}) async {
+      {bool seen,
+      int limitStart = 0,
+      int limitPageLength = 20,
+      dynamic filters}) async {
     await checkAppInstalled(features: ['getFCMNotifications']);
 
+    if (filters != null) {
+      if (!DBFilter.isDBFilter(filters)) throw InvalidFrappeFilter();
+    }
+
     var requestData = <String, dynamic>{
-      'cmd': 'renovation_core.utils.fcm.get_user_notifications'
+      'cmd': 'renovation_core.utils.fcm.get_user_notifications',
+      'limit_start': limitStart,
+      'limit_page_length': limitPageLength,
+      'filters': filters
     };
     if (seen != null) {
       requestData.addAll(<String, dynamic>{
@@ -223,17 +239,19 @@ class Frappe extends RenovationController implements FCMController {
         List<dynamic> jsonArray = response.data.message;
         var notifications = List<FCMNotification>.of(jsonArray.map(
             (dynamic notification) => FCMNotification.fromJson(notification)));
-        return RequestResponse.success(notifications);
+        return RequestResponse.success(notifications,
+            rawResponse: response.rawResponse);
       }
     }
     response.isSuccess = false;
     return RequestResponse.fail(handleError(
         'fcm_notification',
-        ErrorDetail(
-            info: Information(
-                data: response.data,
-                rawResponse: response.rawResponse,
-                httpCode: response.httpCode))));
+        response.error ??
+            ErrorDetail(
+                info: Information(
+                    data: response.data,
+                    rawResponse: response.rawResponse,
+                    httpCode: response.httpCode))));
   }
 
   /// Mark notification as seen in the backend.
@@ -254,8 +272,8 @@ class Frappe extends RenovationController implements FCMController {
 
     if (response.isSuccess == true) {
       if (response.data != null && response.data.message is String) {
-        response.data = response.data.message;
-        return response;
+        return RequestResponse.success<String>(response.data.message,
+            rawResponse: response.rawResponse);
       }
     }
     response.isSuccess = false;
