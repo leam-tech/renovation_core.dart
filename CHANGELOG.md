@@ -1,3 +1,29 @@
+#v1.1.2
+## Feature
+
+- Added pagination & filters optional params for `getFCMNotifications`
+
+## Fix
+
+- Success return fix for `markFCMNotificationsAsSeen`
+- Handle errors for `getFCMNotifications`
+
+# v1.1.1
+## Fix
+
+- Login when not using cookies 
+
+# v1.1.0
+## Feature
+
+- Check for `renovation_core` if installed for methods using custom cmds.
+- Throw an error `AppNotInstalled` when using a method of an app not installed in the backend.
+- Handle methods that have frappe cmd, but overriden in the backend (For example: login)
+   
+## Chore
+
+- Linting for pub.dev score improvement
+
 # v1.0.8
 ## Fix
   - Downgrade rxdart for compatibility with `flutter_google_places`
