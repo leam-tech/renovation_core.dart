@@ -1,3 +1,8 @@
+#v1.1.3
+## Fix
+
+- Explicitly add `cookie_jar` as a dependency
+
 #v1.1.2
 ## Feature
 
