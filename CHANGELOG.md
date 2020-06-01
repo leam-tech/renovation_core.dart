@@ -1,3 +1,10 @@
+# v1.1.4
+## Fix
+
+- Type 2 DBFilter fix
+- Added test case for DBFilter
+- Expose DBFilter class 
+
 # v1.1.3
 ## Fix
 
