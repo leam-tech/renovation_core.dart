@@ -1,4 +1,4 @@
-import 'package:renovation_core/src/model/frappe/filters.dart';
+import 'package:renovation_core/model.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -64,9 +64,19 @@ void main() {
 
     test('it should return false for wrong type 3', () {
       final type3 = [
-        [1, 'LIKE', 'SOME NANE']
+        [1, 'LIKE', 'SOME NAME']
       ];
       expect(DBFilter.isDBFilter(type3), false);
+    });
+
+    test('it should return true where the value of type 2 is of type 2', () {
+      final type2list = {
+        'name': [
+          'IN',
+          ['TEST1', 'TEST2', 'TEST3']
+        ]
+      };
+      expect(DBFilter.isDBFilter(type2list), true);
     });
   });
 }
