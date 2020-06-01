@@ -75,11 +75,21 @@ class DBFilter {
   static bool _isDBSingleValue(dynamic value) =>
       value == null || value is String || value is int || value is double;
 
-  static bool _isDBListValue(dynamic value) =>
-      value == null ||
-      value is List<String> ||
-      value is List<int> ||
-      value is List<double>;
+  static bool _isDBListValue(dynamic value) {
+    if (value == null) return true;
+
+    if (value is List) {
+      return value.every((dynamic element) {
+        if (element is! List) {
+          return element is String || element is int || element is double;
+        } else {
+          // Recursive
+          return _isDBListValue(element);
+        }
+      });
+    }
+    return false;
+  }
 
   /// Checks if the operator (SQL) is valid.
   ///
