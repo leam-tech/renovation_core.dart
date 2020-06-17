@@ -27,9 +27,8 @@ class SocketIOClient extends RenovationController {
   void connect({String url, String path, bool requiresAuthorization = true}) {
     url ??= config.hostUrl;
     path ??= '/socket.io';
-    if (_socket != null) _socket.disconnect();
 
-    _socket = io(url, <dynamic, dynamic>{
+    final opts = <dynamic, dynamic>{
       'path': path,
       'transports': <String>['websocket'],
       'extraHeaders': requiresAuthorization
@@ -37,22 +36,39 @@ class SocketIOClient extends RenovationController {
               'Authorization': RenovationRequestOptions.headers['Authorization']
             }
           : null
-    });
+    };
+
+    if (_socket != null) {
+      // Update the options
+      // Need to reuse the same object created earlier
+      _socket.io
+        ..uri = url
+        ..options = opts;
+      _socket..disconnect().connect();
+    } else {
+      _socket = io(url, opts);
+    }
 
     config.logger.i('LTS-Renovation-Core-Dart Connecting socket on $url$path');
 
-    _socket.on(
-        'connect',
-        (dynamic data) =>
-            config.logger.i('Connected socket successfuly on $url$path'));
-    _socket.on(
-        'connect_error',
-        (dynamic connectStatus) =>
-            config.logger.e('Connected socket unsuccessful on $url$path'));
-    _socket.on(
-        'connect_timeout',
-        (dynamic connectStatus) => config.logger
-            .e(<dynamic>['Timeout while connecting', connectStatus]));
+    if (_socket.hasListeners('connect')) {
+      _socket.on(
+          'connect',
+          (dynamic data) =>
+              config.logger.i('Connected socket successfully on $url$path'));
+    }
+    if (_socket.hasListeners('connect_error')) {
+      _socket.on(
+          'connect_error',
+          (dynamic connectStatus) =>
+              config.logger.e('Connected socket unsuccessful on $url$path'));
+    }
+    if (_socket.hasListeners('connect_timeout')) {
+      _socket.on(
+          'connect_timeout',
+          (dynamic connectStatus) => config.logger
+              .e(<dynamic>['Timeout while connecting', connectStatus]));
+    }
   }
 
   /// Gets the reference of the socket in the class
@@ -90,7 +106,8 @@ class SocketIOClient extends RenovationController {
   /// Disconnects (if any) the socket and set [_socket] to the instance itself.
   ///
   /// Otherwise, [_socket] is set to `null`.
-  void disconnect() => _socket = isConnected ? _socket.disconnect() : null;
+  void disconnect() =>
+      _socket = isConnected ? _socket = _socket.disconnect() : null;
 
   /// Clears the cache. Currently empty method
   @override
