@@ -51,19 +51,19 @@ class SocketIOClient extends RenovationController {
 
     config.logger.i('LTS-Renovation-Core-Dart Connecting socket on $url$path');
 
-    if (_socket.hasListeners('connect')) {
+    if (!_socket.hasListeners('connect')) {
       _socket.on(
           'connect',
           (dynamic data) =>
               config.logger.i('Connected socket successfully on $url$path'));
     }
-    if (_socket.hasListeners('connect_error')) {
+    if (!_socket.hasListeners('connect_error')) {
       _socket.on(
           'connect_error',
           (dynamic connectStatus) =>
               config.logger.e('Connected socket unsuccessful on $url$path'));
     }
-    if (_socket.hasListeners('connect_timeout')) {
+    if (!_socket.hasListeners('connect_timeout')) {
       _socket.on(
           'connect_timeout',
           (dynamic connectStatus) => config.logger
