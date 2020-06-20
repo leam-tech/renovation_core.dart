@@ -1,3 +1,10 @@
+# v1.1.5
+## Fix
+
+- Socket.IO reconnect after disconnecting
+- Have single listener for the events (connect, connect_error, connect_timeout)
+- Preserve socket instance on disconnect
+
 # v1.1.4
 ## Fix
 
