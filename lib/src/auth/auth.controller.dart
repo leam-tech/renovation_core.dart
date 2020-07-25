@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:zxcvbn/src/result.dart';
 
 import '../core/config.dart';
 import '../core/renovation.controller.dart';
@@ -40,6 +41,20 @@ abstract class AuthController<K extends SessionStatusInfo>
 
   /// Checks the session's status (Whether the user is logged in or not) and returns it as [SessionStatusInfo]
   Future<RequestResponse<K>> checkLogin({bool shouldUpdateSession});
+
+  /// Check the password's strength
+  ///result.score : Integer from 0-4 (useful for implementing a strength bar)
+  ///  0 # too guessable: risky password. (guesses < 10^3)
+  ///  1 # very guessable: protection from throttled online attacks. (guesses < 10^6)
+  ///  2 # somewhat guessable: protection from unthrottled online attacks. (guesses < 10^8)
+  ///  3 # safely unguessable: moderate protection from offline slow-hash scenario. (guesses < 10^10)
+  ///  4 # very unguessable: strong protection from offline slow-hash scenario. (guesses >= 10^10)
+  ///
+  /// result.feedback : verbal feedback to help choose better passwords. set when score <= 2.
+  ///
+  /// result.calcTime : how long it took to calculate an answer in milliseconds.
+  Result estimatePassword(String password);
+
 
   /// Logs in the user (if successful) using [email] & [password].
   ///

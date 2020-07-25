@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
+import 'package:zxcvbn/src/result.dart';
+import 'package:zxcvbn/zxcvbn.dart';
 
 import '../../core/config.dart';
 import '../../core/errors.dart';
@@ -562,5 +564,37 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
       }
     }
     return error;
+  }
+
+  @override
+  Result estimatePassword(String password,
+      {String firstName,
+      String lastName,
+      String middleName,
+      String email,
+      String dateOfBirth,
+      List<String> otherInputs}) {
+    var userInputs = <String>[];
+    if (firstName != null && firstName.isNotEmpty) {
+      userInputs.add(firstName);
+    }
+    if (lastName != null && lastName.isNotEmpty) {
+      userInputs.add(lastName);
+    }
+    if (middleName != null && middleName.isNotEmpty) {
+      userInputs.add(middleName);
+    }
+    if (email != null && email.isNotEmpty) {
+      userInputs.add(email);
+    }
+    if (dateOfBirth != null && dateOfBirth.isNotEmpty) {
+      userInputs.add(dateOfBirth);
+    }
+
+    if (otherInputs != null && otherInputs.isNotEmpty) {
+      userInputs.addAll(otherInputs);
+    }
+
+    return Zxcvbn().evaluate(password, userInputs: userInputs);
   }
 }

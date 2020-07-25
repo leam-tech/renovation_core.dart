@@ -19,7 +19,7 @@ dependencies:
   meta: ^1.1.8
   enum_to_string: ^1.0.9
   pedantic: ^1.8.0
-
+  zxcvbn: ^0.0.1
 
 dev_dependencies:
   test: ^1.12.0

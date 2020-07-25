@@ -66,6 +66,61 @@ void main() {
     });
   });
 
+  group('estimatePassword()', () {
+    group('Estimate password only', () {
+      test('With score 0', () {
+        final result = frappeAuthController.estimatePassword("1qaz2wsx3edc");
+        expect(result.score, 0);
+      }, skip: skip);
+
+      test('With score 1', () {
+        final result = frappeAuthController.estimatePassword("temppass22");
+        expect(result.score, 1);
+      }, skip: skip);
+
+      test('With score 2', () {
+        final result = frappeAuthController.estimatePassword("qwER43@!");
+        expect(result.score, 2);
+      }, skip: skip);
+
+      test('With score 3', () {
+        final result = frappeAuthController.estimatePassword("ryanhunter2000");
+        expect(result.score, 3);
+      }, skip: skip);
+
+      test('With score 4', () {
+        final result =
+            frappeAuthController.estimatePassword("verlineVANDERMARK");
+        expect(result.score, 4);
+      }, skip: skip);
+    }, skip: skip);
+    group('Estimate password with custom inputs', () {
+      test('With first name parameter', () {
+        final result = frappeAuthController.estimatePassword("temppass22",
+            firstName: "temp");
+        expect(result.score, 1);
+      }, skip: skip);
+
+      test('With email parameter', () {
+        final result = frappeAuthController.estimatePassword("qwER43@!",
+            email: "er43@gmail.com");
+        expect(result.score, 2);
+      }, skip: skip);
+
+      test('With last name parameter', () {
+        final result = frappeAuthController.estimatePassword("ryanhunter2000",
+            lastName: "ryanhunter");
+        expect(result.score, 1);
+      }, skip: skip);
+
+      test('With other inputs parameter', () {
+        final result = frappeAuthController
+            .estimatePassword("verlineVANDERMARK", otherInputs: ["VANDERMARK"]);
+        expect(result.score, 1);
+      }, skip: skip);
+    }, skip: skip);
+  });
+
   group('pinLogin', () {
     test('should successfully login and set the session', () async {
       final response = await frappeAuthController.pinLogin(validUser, validPin);
