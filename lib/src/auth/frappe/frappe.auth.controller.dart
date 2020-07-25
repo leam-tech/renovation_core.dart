@@ -574,6 +574,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
       String email,
       String dateOfBirth,
       List<String> otherInputs}) {
+    assert(password != null && password.isNotEmpty, "Password can't be empty");
     var userInputs = <String>[];
     if (firstName != null && firstName.isNotEmpty) {
       userInputs.add(firstName);
