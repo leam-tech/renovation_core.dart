@@ -1,3 +1,8 @@
+# v1.2.0
+## Feature
+
+- Added password strength estimator based on [zxcvbn](https://github.com/dropbox/zxcvbn)
+
 # v1.1.5
 ## Fix
 
