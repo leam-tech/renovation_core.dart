@@ -555,8 +555,12 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         return RequestResponse.success(otpResponse,
             rawResponse: response.rawResponse);
       } else {
-        return RequestResponse.fail(ErrorDetail(title: otpResponse.reason))
-          ..data = otpResponse;
+        return RequestResponse.fail(
+          ErrorDetail(
+            title: otpResponse.reason,
+            info: Information(httpCode: 400),
+          ),
+        )..data = otpResponse;
       }
     }
     return RequestResponse.fail(response.error);
@@ -600,8 +604,12 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         return RequestResponse.success(otpResponse,
             rawResponse: response.rawResponse);
       } else {
-        return RequestResponse.fail(ErrorDetail(title: otpResponse.reason))
-          ..data = otpResponse;
+        return RequestResponse.fail(
+          ErrorDetail(
+            title: otpResponse.reason,
+            info: Information(httpCode: 400),
+          ),
+        )..data = otpResponse;
       }
     }
     return RequestResponse.fail(response.error);
