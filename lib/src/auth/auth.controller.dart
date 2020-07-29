@@ -89,7 +89,7 @@ abstract class AuthController<K extends SessionStatusInfo>
       {@required String oldPassword, @required String newPassword});
 
   /// Gets the password possible reset methods & hints about these methods
-  Future<ResetPasswordInfo> getPasswordResetInfo();
+  Future<RequestResponse<dynamic>> getPasswordResetInfo();
 
   /// Generates the OTP and sends it through the chosen medium.
   ///

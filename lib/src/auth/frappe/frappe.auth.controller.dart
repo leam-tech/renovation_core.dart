@@ -499,7 +499,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   /// The [type] represents the type of the id such as email or mobile.
   /// The [id] is the actual id such as "abc@example.com" if email.
   @override
-  Future<ResetPasswordInfo> getPasswordResetInfo({
+  Future<RequestResponse<ResetPasswordInfo>> getPasswordResetInfo({
     @required RESET_ID_TYPE type,
     @required String id,
   }) async {
@@ -520,10 +520,12 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
 
     if (response.isSuccess) {
       if (response.data.message != null) {
-        return ResetPasswordInfo.fromJson(response.data.message);
+        return RequestResponse.success(
+            ResetPasswordInfo.fromJson(response.data.message),
+            rawResponse: response.rawResponse);
       }
     }
-    return null;
+    return RequestResponse.fail(response.error);
   }
 
   /// Generates the OTP and sends it through the chosen [medium] and [mediumId].
@@ -783,7 +785,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
               ..info = (error.info
                 ..cause = 'Wrong old password'
                 ..suggestion =
-                    'Check that the current password, or reset the password');
+                    'Check that the current password is correct, or reset the password');
           } else if (error.info.httpCode == 417 &&
               (error.info.data.serverMessages as String)
                   .contains('Invalid Password')) {
