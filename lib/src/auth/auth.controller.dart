@@ -88,12 +88,22 @@ abstract class AuthController<K extends SessionStatusInfo>
   Future<RequestResponse<bool>> changePassword(
       {@required String oldPassword, @required String newPassword});
 
+  /// Gets the password possible reset methods & hints about these methods
   Future<ResetPasswordInfo> getPasswordResetInfo();
 
+  /// Generates the OTP and sends it through the chosen medium.
+  ///
+  /// This is the first step for resetting a forgotten password.
   Future<RequestResponse<dynamic>> generatePasswordResetOTP();
 
+  /// Verifies the OTP sent through [generatePasswordResetOTP].
+  ///
+  /// This is the second step for resetting a forgotten password.
   Future<RequestResponse<dynamic>> verifyPasswordResetOTP();
 
+  /// Updates (resets) the password to the chosen password.
+  ///
+  /// The final step in the resetting of a forgotten password.
   Future<RequestResponse<dynamic>> updatePasswordWithToken();
 
   /// Logs out the current user.

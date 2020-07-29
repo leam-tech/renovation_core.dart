@@ -492,6 +492,12 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     }
   }
 
+  /// Gets the password possible reset methods & hints about these methods.
+  ///
+  /// The response is based on [ResetPasswordInfo] model.
+  ///
+  /// The [type] represents the type of the id such as email or mobile.
+  /// The [id] is the actual id such as "abc@example.com" if email.
   @override
   Future<ResetPasswordInfo> getPasswordResetInfo({
     @required RESET_ID_TYPE type,
@@ -520,6 +526,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return null;
   }
 
+  /// Generates the OTP and sends it through the chosen [medium] and [mediumId].
+  ///
+  /// This is the first step for resetting a forgotten password.
   @override
   Future<RequestResponse<GenerateResetOTPResponse>> generatePasswordResetOTP({
     @required RESET_ID_TYPE idType,
@@ -566,6 +575,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return RequestResponse.fail(response.error);
   }
 
+  /// Verifies the [otp] sent through [generatePasswordResetOTP].
+  ///
+  /// This is the second step for resetting a forgotten password.
   @override
   Future<RequestResponse<VerifyResetOTPResponse>> verifyPasswordResetOTP({
     @required RESET_ID_TYPE idType,
@@ -615,6 +627,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return RequestResponse.fail(response.error);
   }
 
+  /// Updates (resets) the password to the chosen password by passing the [resetToken].
+  ///
+  /// The final step in the resetting of a forgotten password.
   @override
   Future<RequestResponse<UpdatePasswordResponse>> updatePasswordWithToken({
     @required String resetToken,
