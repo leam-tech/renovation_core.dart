@@ -90,6 +90,8 @@ abstract class AuthController<K extends SessionStatusInfo>
 
   Future<ResetPasswordInfo> getPasswordResetInfo();
 
+  Future<RequestResponse<dynamic>> generatePasswordResetOTP();
+
   /// Logs out the current user.
   Future<RequestResponse<dynamic>> logout();
 

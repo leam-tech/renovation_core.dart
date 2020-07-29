@@ -186,4 +186,25 @@ class ResetInfoHint extends JSONAble {
   Map<String, dynamic> toJson() => _$ResetInfoHintToJson(this);
 }
 
+@JsonSerializable()
+class GenerateResetOTPResponse extends JSONAble {
+  GenerateResetOTPResponse();
+
+  factory GenerateResetOTPResponse.fromJson(Map<String, dynamic> json) =>
+      _$GenerateResetOTPResponseFromJson(json);
+
+  @JsonKey(fromJson: FrappeDocFieldConverter.checkToBool)
+  bool sent;
+
+  String reason;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) =>
+      GenerateResetOTPResponse.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$GenerateResetOTPResponseToJson(this);
+}
+
 enum RESET_ID_TYPE { mobile, email }
+enum OTP_MEDIUM { email, sms }

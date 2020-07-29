@@ -282,3 +282,25 @@ Map<String, dynamic> _$ResetInfoHintToJson(ResetInfoHint instance) {
   writeNotNull('sms', instance.sms);
   return val;
 }
+
+GenerateResetOTPResponse _$GenerateResetOTPResponseFromJson(
+    Map<String, dynamic> json) {
+  return GenerateResetOTPResponse()
+    ..sent = FrappeDocFieldConverter.checkToBool(json['sent'] as int)
+    ..reason = json['reason'] as String;
+}
+
+Map<String, dynamic> _$GenerateResetOTPResponseToJson(
+    GenerateResetOTPResponse instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('sent', instance.sent);
+  writeNotNull('reason', instance.reason);
+  return val;
+}
