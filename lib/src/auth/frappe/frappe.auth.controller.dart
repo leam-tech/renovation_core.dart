@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:meta/meta.dart';
 import 'package:zxcvbn/src/result.dart';
 import 'package:zxcvbn/zxcvbn.dart';
@@ -451,6 +452,226 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return false;
   }
 
+  /// Changes the password of the currently logged in user.
+  ///
+  /// Validates the old (current) password before changing it.
+  ///
+  /// Validates for compliance with the Password Policy (zxcvbn).
+  @override
+  Future<RequestResponse<bool>> changePassword({
+    @required String oldPassword,
+    @required String newPassword,
+  }) async {
+    assert(
+        oldPassword != null &&
+            oldPassword.isNotEmpty &&
+            newPassword != null &&
+            newPassword.isNotEmpty,
+        'Passwords cannot be empty');
+    assert(isLoggedIn, 'Need to be signed in to change password');
+
+    final response = await Request.initiateRequest(
+      url: config.hostUrl,
+      method: HttpMethod.POST,
+      contentType: ContentTypeLiterals.APPLICATION_JSON,
+      data: <String, dynamic>{
+        'cmd': 'renovation_core.utils.auth.change_password',
+        'old_password': oldPassword,
+        'new_password': newPassword
+      },
+    );
+
+    if (response.isSuccess) {
+      return RequestResponse.success(
+        response.isSuccess,
+        rawResponse: response.rawResponse,
+      );
+    } else {
+      return RequestResponse.fail(handleError('change_pwd', response.error))
+        ..data = false;
+    }
+  }
+
+  /// Gets the password possible reset methods & hints about these methods.
+  ///
+  /// The response is based on [ResetPasswordInfo] model.
+  ///
+  /// The [type] represents the type of the id such as email or mobile.
+  /// The [id] is the actual id such as "abc@example.com" if email.
+  @override
+  Future<RequestResponse<ResetPasswordInfo>> getPasswordResetInfo({
+    @required RESET_ID_TYPE type,
+    @required String id,
+  }) async {
+    assert(id != null && id.isNotEmpty, "ID can't be empty");
+    assert(type != null, "ID type can't be null");
+
+    final typeAsString = EnumToString.parse(type);
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.utils.forgot_pwd.get_reset_info',
+          'id_type': typeAsString,
+          'id': id
+        });
+
+    if (response.isSuccess) {
+      if (response.data.message != null) {
+        return RequestResponse.success(
+            ResetPasswordInfo.fromJson(response.data.message),
+            rawResponse: response.rawResponse);
+      }
+    }
+    return RequestResponse.fail(response.error);
+  }
+
+  /// Generates the OTP and sends it through the chosen [medium] and [mediumId].
+  ///
+  /// This is the first step for resetting a forgotten password.
+  @override
+  Future<RequestResponse<GenerateResetOTPResponse>> generatePasswordResetOTP({
+    @required RESET_ID_TYPE idType,
+    @required String id,
+    @required OTP_MEDIUM medium,
+    @required String mediumId,
+  }) async {
+    assert(id != null && id.isNotEmpty, "ID can't be empty");
+    assert(idType != null, "ID type can't be null");
+    assert(mediumId != null && mediumId.isNotEmpty, "Medium ID can't be empty");
+    assert(medium != null, "Medium can't be null");
+
+    final idTypeAsString = EnumToString.parse(idType);
+    final mediumAsString = EnumToString.parse(medium);
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.utils.forgot_pwd.generate_otp',
+          'id_type': idTypeAsString,
+          'id': id,
+          'medium': mediumAsString,
+          'medium_id': mediumId
+        });
+
+    if (response.isSuccess) {
+      final otpResponse =
+          GenerateResetOTPResponse.fromJson(response.data.message);
+
+      if (otpResponse.sent) {
+        return RequestResponse.success(otpResponse,
+            rawResponse: response.rawResponse);
+      } else {
+        return RequestResponse.fail(
+          ErrorDetail(
+            title: otpResponse.reason,
+            info: Information(httpCode: 400),
+          ),
+        )..data = otpResponse;
+      }
+    }
+    return RequestResponse.fail(response.error);
+  }
+
+  /// Verifies the [otp] sent through [generatePasswordResetOTP].
+  ///
+  /// This is the second step for resetting a forgotten password.
+  @override
+  Future<RequestResponse<VerifyResetOTPResponse>> verifyPasswordResetOTP({
+    @required RESET_ID_TYPE idType,
+    @required String id,
+    @required OTP_MEDIUM medium,
+    @required String mediumId,
+    @required String otp,
+  }) async {
+    assert(id != null && id.isNotEmpty, "ID can't be empty");
+    assert(idType != null, "ID type can't be null");
+    assert(mediumId != null && mediumId.isNotEmpty, "Medium ID can't be empty");
+    assert(medium != null, "Medium can't be null");
+    assert(otp != null && otp.isNotEmpty, "OTP can't be empty");
+
+    final idTypeAsString = EnumToString.parse(idType);
+    final mediumAsString = EnumToString.parse(medium);
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.utils.forgot_pwd.verify_otp',
+          'id_type': idTypeAsString,
+          'id': id,
+          'medium': mediumAsString,
+          'medium_id': mediumId,
+          'otp': otp
+        });
+
+    if (response.isSuccess) {
+      final otpResponse =
+          VerifyResetOTPResponse.fromJson(response.data.message);
+
+      if (otpResponse.verified) {
+        return RequestResponse.success(otpResponse,
+            rawResponse: response.rawResponse);
+      } else {
+        return RequestResponse.fail(
+          ErrorDetail(
+            title: otpResponse.reason,
+            info: Information(httpCode: 400),
+          ),
+        )..data = otpResponse;
+      }
+    }
+    return RequestResponse.fail(response.error);
+  }
+
+  /// Updates (resets) the password to the chosen password by passing the [resetToken].
+  ///
+  /// The final step in the resetting of a forgotten password.
+  @override
+  Future<RequestResponse<UpdatePasswordResponse>> updatePasswordWithToken({
+    @required String resetToken,
+    @required String newPassword,
+  }) async {
+    assert(resetToken != null && resetToken.isNotEmpty,
+        "Reset Token can't be empty");
+
+    assert(newPassword != null && newPassword.isNotEmpty,
+        "Password can't be empty");
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.utils.forgot_pwd.update_password',
+          'reset_token': resetToken,
+          'new_password': newPassword
+        });
+
+    if (response.isSuccess) {
+      final updateResponse =
+          UpdatePasswordResponse.fromJson(response.data.message);
+
+      if (updateResponse.updated) {
+        return RequestResponse.success(updateResponse,
+            rawResponse: response.rawResponse);
+      } else {
+        return RequestResponse.fail(
+          ErrorDetail(
+            title: updateResponse.reason,
+            info: Information(httpCode: 400),
+          ),
+        )..data = updateResponse;
+      }
+    }
+    return RequestResponse.fail(response.error);
+  }
+
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
   @override
   @protected
@@ -554,6 +775,26 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         case 'send_otp':
           if (error.type != RenovationError.BackendSettingError) {
             error = handleError(null, error);
+          }
+          break;
+
+        case 'change_pwd':
+          if (error.type == RenovationError.AuthenticationError) {
+            error
+              ..title = 'Invalid Password'
+              ..info = (error.info
+                ..cause = 'Wrong old password'
+                ..suggestion =
+                    'Check that the current password is correct, or reset the password');
+          } else if (error.info.httpCode == 417 &&
+              (error.info.data.serverMessages as String)
+                  .contains('Invalid Password')) {
+            error
+              ..title = 'Weak Password'
+              ..info = (error.info
+                ..cause = 'Password does not pass the policy'
+                ..suggestion =
+                    'Use stronger password, including uppercase, digits and special characters');
           }
           break;
         // No specific errors

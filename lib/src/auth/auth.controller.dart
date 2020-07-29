@@ -55,7 +55,6 @@ abstract class AuthController<K extends SessionStatusInfo>
   /// result.calcTime : how long it took to calculate an answer in milliseconds.
   Result estimatePassword(String password);
 
-
   /// Logs in the user (if successful) using [email] & [password].
   ///
   /// Returns the [SessionStatusInfo] whether successful or not, wrapped within [RequestResponse].
@@ -82,6 +81,30 @@ abstract class AuthController<K extends SessionStatusInfo>
 
   /// Returns an array of roles assigned to the currently logged in user.
   Future<RequestResponse<List<String>>> getCurrentUserRoles();
+
+  /// Changes the password of the currently logged in user.
+  ///
+  /// Validates the old (current) password before changing it.
+  Future<RequestResponse<bool>> changePassword(
+      {@required String oldPassword, @required String newPassword});
+
+  /// Gets the password possible reset methods & hints about these methods
+  Future<RequestResponse<dynamic>> getPasswordResetInfo();
+
+  /// Generates the OTP and sends it through the chosen medium.
+  ///
+  /// This is the first step for resetting a forgotten password.
+  Future<RequestResponse<dynamic>> generatePasswordResetOTP();
+
+  /// Verifies the OTP sent through [generatePasswordResetOTP].
+  ///
+  /// This is the second step for resetting a forgotten password.
+  Future<RequestResponse<dynamic>> verifyPasswordResetOTP();
+
+  /// Updates (resets) the password to the chosen password.
+  ///
+  /// The final step in the resetting of a forgotten password.
+  Future<RequestResponse<dynamic>> updatePasswordWithToken();
 
   /// Logs out the current user.
   Future<RequestResponse<dynamic>> logout();

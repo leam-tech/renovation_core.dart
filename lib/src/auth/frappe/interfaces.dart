@@ -145,3 +145,109 @@ class BlockModule extends FrappeDocument {
   @override
   Map<String, dynamic> toJson() => _$BlockModuleToJson(this);
 }
+
+@JsonSerializable()
+class ResetPasswordInfo extends JSONAble {
+  ResetPasswordInfo();
+
+  factory ResetPasswordInfo.fromJson(Map<String, dynamic> json) =>
+      _$ResetPasswordInfoFromJson(json);
+
+  @JsonKey(name: 'has_medium', fromJson: FrappeDocFieldConverter.checkToBool)
+  bool hasMedium;
+
+  List<String> medium;
+
+  ResetInfoHint hints;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) =>
+      ResetPasswordInfo.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$ResetPasswordInfoToJson(this);
+}
+
+@JsonSerializable()
+class ResetInfoHint extends JSONAble {
+  ResetInfoHint();
+
+  factory ResetInfoHint.fromJson(Map<String, dynamic> json) =>
+      _$ResetInfoHintFromJson(json);
+
+  String email;
+
+  String sms;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) => ResetInfoHint.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$ResetInfoHintToJson(this);
+}
+
+@JsonSerializable()
+class GenerateResetOTPResponse extends JSONAble {
+  GenerateResetOTPResponse();
+
+  factory GenerateResetOTPResponse.fromJson(Map<String, dynamic> json) =>
+      _$GenerateResetOTPResponseFromJson(json);
+
+  @JsonKey(fromJson: FrappeDocFieldConverter.checkToBool)
+  bool sent;
+
+  String reason;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) =>
+      GenerateResetOTPResponse.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$GenerateResetOTPResponseToJson(this);
+}
+
+@JsonSerializable()
+class VerifyResetOTPResponse extends JSONAble {
+  VerifyResetOTPResponse();
+
+  factory VerifyResetOTPResponse.fromJson(Map<String, dynamic> json) =>
+      _$VerifyResetOTPResponseFromJson(json);
+
+  @JsonKey(fromJson: FrappeDocFieldConverter.checkToBool)
+  bool verified;
+
+  @JsonKey(name: 'reset_token')
+  String resetToken;
+
+  String reason;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) =>
+      VerifyResetOTPResponse.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$VerifyResetOTPResponseToJson(this);
+}
+
+@JsonSerializable()
+class UpdatePasswordResponse extends JSONAble {
+  UpdatePasswordResponse();
+
+  factory UpdatePasswordResponse.fromJson(Map<String, dynamic> json) =>
+      _$UpdatePasswordResponseFromJson(json);
+
+  @JsonKey(fromJson: FrappeDocFieldConverter.checkToBool)
+  bool updated;
+
+  String reason;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) =>
+      UpdatePasswordResponse.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$UpdatePasswordResponseToJson(this);
+}
+
+enum RESET_ID_TYPE { mobile, email }
+enum OTP_MEDIUM { email, sms }

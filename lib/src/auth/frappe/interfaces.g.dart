@@ -238,3 +238,115 @@ Map<String, dynamic> _$BlockModuleToJson(BlockModule instance) {
   writeNotNull('module', instance.module);
   return val;
 }
+
+ResetPasswordInfo _$ResetPasswordInfoFromJson(Map<String, dynamic> json) {
+  return ResetPasswordInfo()
+    ..hasMedium = FrappeDocFieldConverter.checkToBool(json['has_medium'] as int)
+    ..medium = (json['medium'] as List)?.map((e) => e as String)?.toList()
+    ..hints = json['hints'] == null
+        ? null
+        : ResetInfoHint.fromJson(json['hints'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$ResetPasswordInfoToJson(ResetPasswordInfo instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('has_medium', instance.hasMedium);
+  writeNotNull('medium', instance.medium);
+  writeNotNull('hints', instance.hints?.toJson());
+  return val;
+}
+
+ResetInfoHint _$ResetInfoHintFromJson(Map<String, dynamic> json) {
+  return ResetInfoHint()
+    ..email = json['email'] as String
+    ..sms = json['sms'] as String;
+}
+
+Map<String, dynamic> _$ResetInfoHintToJson(ResetInfoHint instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('email', instance.email);
+  writeNotNull('sms', instance.sms);
+  return val;
+}
+
+GenerateResetOTPResponse _$GenerateResetOTPResponseFromJson(
+    Map<String, dynamic> json) {
+  return GenerateResetOTPResponse()
+    ..sent = FrappeDocFieldConverter.checkToBool(json['sent'] as int)
+    ..reason = json['reason'] as String;
+}
+
+Map<String, dynamic> _$GenerateResetOTPResponseToJson(
+    GenerateResetOTPResponse instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('sent', instance.sent);
+  writeNotNull('reason', instance.reason);
+  return val;
+}
+
+VerifyResetOTPResponse _$VerifyResetOTPResponseFromJson(
+    Map<String, dynamic> json) {
+  return VerifyResetOTPResponse()
+    ..verified = FrappeDocFieldConverter.checkToBool(json['verified'] as int)
+    ..resetToken = json['reset_token'] as String
+    ..reason = json['reason'] as String;
+}
+
+Map<String, dynamic> _$VerifyResetOTPResponseToJson(
+    VerifyResetOTPResponse instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('verified', instance.verified);
+  writeNotNull('reset_token', instance.resetToken);
+  writeNotNull('reason', instance.reason);
+  return val;
+}
+
+UpdatePasswordResponse _$UpdatePasswordResponseFromJson(
+    Map<String, dynamic> json) {
+  return UpdatePasswordResponse()
+    ..updated = FrappeDocFieldConverter.checkToBool(json['updated'] as int)
+    ..reason = json['reason'] as String;
+}
+
+Map<String, dynamic> _$UpdatePasswordResponseToJson(
+    UpdatePasswordResponse instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('updated', instance.updated);
+  writeNotNull('reason', instance.reason);
+  return val;
+}
