@@ -451,6 +451,46 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return false;
   }
 
+  /// Changes the password of the currently logged in user.
+  ///
+  /// Validates the old (current) password before changing it.
+  ///
+  /// Validates for compliance with the Password Policy (zxcvbn).
+  @override
+  Future<RequestResponse<bool>> changePassword({
+    @required String oldPassword,
+    @required String newPassword,
+  }) async {
+    assert(
+        oldPassword != null &&
+            oldPassword.isNotEmpty &&
+            newPassword != null &&
+            newPassword.isNotEmpty,
+        'Passwords cannot be empty');
+    assert(isLoggedIn, 'Need to be signed in to change password');
+
+    final response = await Request.initiateRequest(
+      url: config.hostUrl,
+      method: HttpMethod.POST,
+      contentType: ContentTypeLiterals.APPLICATION_JSON,
+      data: <String, dynamic>{
+        'cmd': 'renovation_core.utils.auth.change_password',
+        'old_password': oldPassword,
+        'new_password': newPassword
+      },
+    );
+
+    if (response.isSuccess) {
+      return RequestResponse.success(
+        response.isSuccess,
+        rawResponse: response.rawResponse,
+      );
+    } else {
+      return RequestResponse.fail(handleError('change_pwd', response.error))
+        ..data = false;
+    }
+  }
+
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
   @override
   @protected
@@ -554,6 +594,26 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         case 'send_otp':
           if (error.type != RenovationError.BackendSettingError) {
             error = handleError(null, error);
+          }
+          break;
+
+        case 'change_pwd':
+          if (error.type == RenovationError.AuthenticationError) {
+            error
+              ..title = 'Invalid Password'
+              ..info = (error.info
+                ..cause = 'Wrong old password'
+                ..suggestion =
+                    'Check that the current password, or reset the password');
+          } else if (error.info.httpCode == 417 &&
+              (error.info.data.serverMessages as String)
+                  .contains('Invalid Password')) {
+            error
+              ..title = 'Weak Password'
+              ..info = (error.info
+                ..cause = 'Password does not pass the policy'
+                ..suggestion =
+                    'Use stronger password, including uppercase, digits and special characters');
           }
           break;
         // No specific errors
