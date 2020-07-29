@@ -206,5 +206,28 @@ class GenerateResetOTPResponse extends JSONAble {
   Map<String, dynamic> toJson() => _$GenerateResetOTPResponseToJson(this);
 }
 
+@JsonSerializable()
+class VerifyResetOTPResponse extends JSONAble {
+  VerifyResetOTPResponse();
+
+  factory VerifyResetOTPResponse.fromJson(Map<String, dynamic> json) =>
+      _$VerifyResetOTPResponseFromJson(json);
+
+  @JsonKey(fromJson: FrappeDocFieldConverter.checkToBool)
+  bool verified;
+
+  @JsonKey(name: 'reset_token')
+  String resetToken;
+
+  String reason;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) =>
+      VerifyResetOTPResponse.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$VerifyResetOTPResponseToJson(this);
+}
+
 enum RESET_ID_TYPE { mobile, email }
 enum OTP_MEDIUM { email, sms }

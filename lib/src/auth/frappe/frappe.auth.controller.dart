@@ -562,6 +562,51 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return RequestResponse.fail(response.error);
   }
 
+  @override
+  Future<RequestResponse<VerifyResetOTPResponse>> verifyPasswordResetOTP({
+    @required RESET_ID_TYPE idType,
+    @required String id,
+    @required OTP_MEDIUM medium,
+    @required String mediumId,
+    @required String otp,
+  }) async {
+    assert(id != null && id.isNotEmpty, "ID can't be empty");
+    assert(idType != null, "ID type can't be null");
+    assert(mediumId != null && mediumId.isNotEmpty, "Medium ID can't be empty");
+    assert(medium != null, "Medium can't be null");
+    assert(otp != null && otp.isNotEmpty, "OTP can't be empty");
+
+    final idTypeAsString = EnumToString.parse(idType);
+    final mediumAsString = EnumToString.parse(medium);
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.utils.forgot_pwd.verify_otp',
+          'id_type': idTypeAsString,
+          'id': id,
+          'medium': mediumAsString,
+          'medium_id': mediumId,
+          'otp': otp
+        });
+
+    if (response.isSuccess) {
+      final otpResponse =
+          VerifyResetOTPResponse.fromJson(response.data.message);
+
+      if (otpResponse.verified) {
+        return RequestResponse.success(otpResponse,
+            rawResponse: response.rawResponse);
+      } else {
+        return RequestResponse.fail(ErrorDetail(title: otpResponse.reason))
+          ..data = otpResponse;
+      }
+    }
+    return RequestResponse.fail(response.error);
+  }
+
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
   @override
   @protected

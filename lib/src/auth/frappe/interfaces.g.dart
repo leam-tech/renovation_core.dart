@@ -304,3 +304,27 @@ Map<String, dynamic> _$GenerateResetOTPResponseToJson(
   writeNotNull('reason', instance.reason);
   return val;
 }
+
+VerifyResetOTPResponse _$VerifyResetOTPResponseFromJson(
+    Map<String, dynamic> json) {
+  return VerifyResetOTPResponse()
+    ..verified = FrappeDocFieldConverter.checkToBool(json['verified'] as int)
+    ..resetToken = json['reset_token'] as String
+    ..reason = json['reason'] as String;
+}
+
+Map<String, dynamic> _$VerifyResetOTPResponseToJson(
+    VerifyResetOTPResponse instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('verified', instance.verified);
+  writeNotNull('reset_token', instance.resetToken);
+  writeNotNull('reason', instance.reason);
+  return val;
+}
