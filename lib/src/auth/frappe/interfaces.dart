@@ -145,3 +145,45 @@ class BlockModule extends FrappeDocument {
   @override
   Map<String, dynamic> toJson() => _$BlockModuleToJson(this);
 }
+
+@JsonSerializable()
+class ResetPasswordInfo extends JSONAble {
+  ResetPasswordInfo();
+
+  factory ResetPasswordInfo.fromJson(Map<String, dynamic> json) =>
+      _$ResetPasswordInfoFromJson(json);
+
+  @JsonKey(name: 'has_medium', fromJson: FrappeDocFieldConverter.checkToBool)
+  bool hasMedium;
+
+  List<String> medium;
+
+  ResetInfoHint hints;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) =>
+      ResetPasswordInfo.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$ResetPasswordInfoToJson(this);
+}
+
+@JsonSerializable()
+class ResetInfoHint extends JSONAble {
+  ResetInfoHint();
+
+  factory ResetInfoHint.fromJson(Map<String, dynamic> json) =>
+      _$ResetInfoHintFromJson(json);
+
+  String email;
+
+  String sms;
+
+  @override
+  T fromJson<T>(Map<String, dynamic> json) => ResetInfoHint.fromJson(json) as T;
+
+  @override
+  Map<String, dynamic> toJson() => _$ResetInfoHintToJson(this);
+}
+
+enum RESET_ID_TYPE { mobile, email }

@@ -238,3 +238,47 @@ Map<String, dynamic> _$BlockModuleToJson(BlockModule instance) {
   writeNotNull('module', instance.module);
   return val;
 }
+
+ResetPasswordInfo _$ResetPasswordInfoFromJson(Map<String, dynamic> json) {
+  return ResetPasswordInfo()
+    ..hasMedium = FrappeDocFieldConverter.checkToBool(json['has_medium'] as int)
+    ..medium = (json['medium'] as List)?.map((e) => e as String)?.toList()
+    ..hints = json['hints'] == null
+        ? null
+        : ResetInfoHint.fromJson(json['hints'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$ResetPasswordInfoToJson(ResetPasswordInfo instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('has_medium', instance.hasMedium);
+  writeNotNull('medium', instance.medium);
+  writeNotNull('hints', instance.hints?.toJson());
+  return val;
+}
+
+ResetInfoHint _$ResetInfoHintFromJson(Map<String, dynamic> json) {
+  return ResetInfoHint()
+    ..email = json['email'] as String
+    ..sms = json['sms'] as String;
+}
+
+Map<String, dynamic> _$ResetInfoHintToJson(ResetInfoHint instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('email', instance.email);
+  writeNotNull('sms', instance.sms);
+  return val;
+}

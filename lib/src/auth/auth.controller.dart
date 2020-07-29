@@ -88,6 +88,8 @@ abstract class AuthController<K extends SessionStatusInfo>
   Future<RequestResponse<bool>> changePassword(
       {@required String oldPassword, @required String newPassword});
 
+  Future<ResetPasswordInfo> getPasswordResetInfo();
+
   /// Logs out the current user.
   Future<RequestResponse<dynamic>> logout();
 

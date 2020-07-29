@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:meta/meta.dart';
 import 'package:zxcvbn/src/result.dart';
 import 'package:zxcvbn/zxcvbn.dart';
@@ -489,6 +490,34 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
       return RequestResponse.fail(handleError('change_pwd', response.error))
         ..data = false;
     }
+  }
+
+  @override
+  Future<ResetPasswordInfo> getPasswordResetInfo({
+    @required RESET_ID_TYPE type,
+    @required String id,
+  }) async {
+    assert(id != null && id.isNotEmpty, "ID can't be empty");
+    assert(type != null, "ID type can't be null");
+
+    final typeAsString = EnumToString.parse(type);
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.utils.forgot_pwd.get_reset_info',
+          'id_type': typeAsString,
+          'id': id
+        });
+
+    if (response.isSuccess) {
+      if (response.data.message != null) {
+        return ResetPasswordInfo.fromJson(response.data.message);
+      }
+    }
+    return null;
   }
 
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
