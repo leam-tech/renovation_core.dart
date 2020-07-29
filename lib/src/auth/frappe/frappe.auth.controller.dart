@@ -615,6 +615,46 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return RequestResponse.fail(response.error);
   }
 
+  @override
+  Future<RequestResponse<UpdatePasswordResponse>> updatePasswordWithToken({
+    @required String resetToken,
+    @required String newPassword,
+  }) async {
+    assert(resetToken != null && resetToken.isNotEmpty,
+        "Reset Token can't be empty");
+
+    assert(newPassword != null && newPassword.isNotEmpty,
+        "Password can't be empty");
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.utils.forgot_pwd.update_password',
+          'reset_token': resetToken,
+          'new_password': newPassword
+        });
+
+    if (response.isSuccess) {
+      final updateResponse =
+          UpdatePasswordResponse.fromJson(response.data.message);
+
+      if (updateResponse.updated) {
+        return RequestResponse.success(updateResponse,
+            rawResponse: response.rawResponse);
+      } else {
+        return RequestResponse.fail(
+          ErrorDetail(
+            title: updateResponse.reason,
+            info: Information(httpCode: 400),
+          ),
+        )..data = updateResponse;
+      }
+    }
+    return RequestResponse.fail(response.error);
+  }
+
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
   @override
   @protected

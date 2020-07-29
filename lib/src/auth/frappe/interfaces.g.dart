@@ -328,3 +328,25 @@ Map<String, dynamic> _$VerifyResetOTPResponseToJson(
   writeNotNull('reason', instance.reason);
   return val;
 }
+
+UpdatePasswordResponse _$UpdatePasswordResponseFromJson(
+    Map<String, dynamic> json) {
+  return UpdatePasswordResponse()
+    ..updated = FrappeDocFieldConverter.checkToBool(json['updated'] as int)
+    ..reason = json['reason'] as String;
+}
+
+Map<String, dynamic> _$UpdatePasswordResponseToJson(
+    UpdatePasswordResponse instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('updated', instance.updated);
+  writeNotNull('reason', instance.reason);
+  return val;
+}
