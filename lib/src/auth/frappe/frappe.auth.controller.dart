@@ -462,6 +462,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     @required String oldPassword,
     @required String newPassword,
   }) async {
+    await getFrappe().checkAppInstalled(features: ['changePassword']);
+
     assert(
         oldPassword != null &&
             oldPassword.isNotEmpty &&
@@ -503,6 +505,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     @required RESET_ID_TYPE type,
     @required String id,
   }) async {
+    await getFrappe().checkAppInstalled(features: ['getPasswordResetInfo']);
+
     assert(id != null && id.isNotEmpty, "ID can't be empty");
     assert(type != null, "ID type can't be null");
 
@@ -538,6 +542,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     @required OTP_MEDIUM medium,
     @required String mediumId,
   }) async {
+    await getFrappe().checkAppInstalled(features: ['generatePasswordResetOTP']);
+
     assert(id != null && id.isNotEmpty, "ID can't be empty");
     assert(idType != null, "ID type can't be null");
     assert(mediumId != null && mediumId.isNotEmpty, "Medium ID can't be empty");
@@ -588,6 +594,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     @required String mediumId,
     @required String otp,
   }) async {
+    await getFrappe().checkAppInstalled(features: ['verifyPasswordResetOTP']);
+
     assert(id != null && id.isNotEmpty, "ID can't be empty");
     assert(idType != null, "ID type can't be null");
     assert(mediumId != null && mediumId.isNotEmpty, "Medium ID can't be empty");
@@ -637,6 +645,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     @required String resetToken,
     @required String newPassword,
   }) async {
+    await getFrappe().checkAppInstalled(features: ['updatePasswordWithToken']);
+
     assert(resetToken != null && resetToken.isNotEmpty,
         "Reset Token can't be empty");
 
