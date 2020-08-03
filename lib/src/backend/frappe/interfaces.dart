@@ -37,12 +37,21 @@ class AppVersion {
   String get title => _title;
 
   void _parseVersionSegment(String versionString) {
-    final segments = versionString?.split('.');
-    if (segments != null && segments.length == 3) {
-      _major = int.parse(segments[0]);
-      _minor = int.parse(segments[1]);
-      _patch = int.parse(segments[2]);
-      return;
+    if (versionString != null && versionString.isNotEmpty) {
+      final regex = RegExp(r'\d+(\.\d+){2,}');
+
+      final version = regex.firstMatch(versionString);
+
+      if (version != null && version.groupCount > 0) {
+        final segments = version.group(0).split('.');
+
+        if (segments != null && segments.length == 3) {
+          _major = int.parse(segments[0]);
+          _minor = int.parse(segments[1]);
+          _patch = int.parse(segments[2]);
+          return;
+        }
+      }
     }
     throw AppVersionFormatError();
   }
