@@ -1,3 +1,17 @@
+# v1.2.2
+## Feature
+
+- Changing Password and Forget Password `changePassword` , `getPasswordResetInfo`
+- Generate and verify OTP for different mediums `generatePasswordResetOTP`, `verifyPasswordResetOTP`  
+- Update Password `updatePasswordWithToken`
+
+## Fix
+
+- Check for `renovation_core` in backend 
+- Use Regex to parse frappe app versions
+- Null coalesce `isLoggedIn`
+
+
 # v1.2.0
 ## Feature
 
