@@ -131,7 +131,7 @@ abstract class AuthController<K extends SessionStatusInfo>
   K getSession() => sessionStatus.value;
 
   /// Returns a boolean whether the current user is logged in.
-  bool get isLoggedIn => getSession().loggedIn;
+  bool get isLoggedIn => getSession()?.loggedIn ?? false;
 
   /// Sets the token (JWT).
   @protected
