@@ -106,6 +106,14 @@ abstract class AuthController<K extends SessionStatusInfo>
   /// The final step in the resetting of a forgotten password.
   Future<RequestResponse<dynamic>> updatePasswordWithToken();
 
+  /// Logins in using Google Auth code.
+  ///
+  /// Optionally pass the [state] which is usually a JWT or base64 encoded data.
+  Future<RequestResponse<K>> loginViaGoogle({
+    @required String code,
+    String state,
+  });
+
   /// Logs out the current user.
   Future<RequestResponse<dynamic>> logout();
 

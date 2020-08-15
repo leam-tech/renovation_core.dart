@@ -682,6 +682,42 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return RequestResponse.fail(response.error);
   }
 
+  /// Logins in using Google Auth code.
+  ///
+  /// Optionally pass the [state] which is usually a JWT or base64 encoded data.
+  @override
+  Future<RequestResponse<FrappeSessionStatusInfo>> loginViaGoogle({
+    @required String code,
+    String state,
+  }) async {
+    await getFrappe().checkAppInstalled(features: ['loginViaGoogle']);
+    assert(code != null && code.isNotEmpty, 'Code cannot be empty');
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.oauth.login_via_google',
+          'code': code,
+          'state': state,
+          'use_jwt': _useJwt
+        },
+        isFrappeResponse: false);
+
+    FrappeSessionStatusInfo sessionStatusInfo;
+    if (response.isSuccess) {
+      sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
+          Request.convertToMap(response.rawResponse));
+      sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
+    }
+    updateSession(
+        sessionStatus: sessionStatusInfo, loggedIn: response.isSuccess);
+    return response.isSuccess
+        ? RequestResponse.success(sessionStatusInfo,
+            rawResponse: response.rawResponse)
+        : RequestResponse.fail(response.error);
+  }
+
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
   @override
   @protected
