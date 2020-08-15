@@ -741,7 +741,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         method: HttpMethod.POST,
         contentType: ContentTypeLiterals.APPLICATION_JSON,
         data: <String, dynamic>{
-          'cmd': 'renovation_core.oauth.login_via_google',
+          'cmd': 'renovation_core.oauth.login_via_apple',
           'code': code,
           'option': EnumToString.parse(option),
           'state': state,
