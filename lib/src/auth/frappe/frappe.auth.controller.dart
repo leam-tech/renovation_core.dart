@@ -763,6 +763,22 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         : RequestResponse.fail(response.error);
   }
 
+  /// Sets the session locally obtained externally and validates against the backend.
+  ///
+  /// Useful when a custom API returns a session object, "Sign Up", for instance.
+  ///
+  /// The session must be valid. In case the session is to be cleared, use [logout].
+  @override
+  Future<RequestResponse<FrappeSessionStatusInfo>> setExternalSession(
+      FrappeSessionStatusInfo sessionStatusInfo) {
+    assert(sessionStatusInfo != null);
+    assert(sessionStatusInfo.user != null,
+        'Only a valid session can be set.\nUse .logout() if you want to clear the session');
+
+    updateSession(sessionStatus: sessionStatusInfo, loggedIn: true);
+    return checkLogin(shouldUpdateSession: true);
+  }
+
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
   @override
   @protected

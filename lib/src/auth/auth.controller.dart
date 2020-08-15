@@ -125,6 +125,9 @@ abstract class AuthController<K extends SessionStatusInfo>
     String state,
   });
 
+  /// Sets the session locally obtained externally.
+  Future<RequestResponse<K>> setExternalSession(K sessionStatus);
+
   /// Logs out the current user.
   Future<RequestResponse<dynamic>> logout();
 
