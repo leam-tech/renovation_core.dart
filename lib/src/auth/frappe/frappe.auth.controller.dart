@@ -770,13 +770,15 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   /// The session must be valid. In case the session is to be cleared, use [logout].
   @override
   Future<RequestResponse<FrappeSessionStatusInfo>> setExternalSession(
-      FrappeSessionStatusInfo sessionStatusInfo) {
+      FrappeSessionStatusInfo sessionStatusInfo) async {
     assert(sessionStatusInfo != null);
     assert(sessionStatusInfo.user != null,
         'Only a valid session can be set.\nUse .logout() if you want to clear the session');
 
-    updateSession(sessionStatus: sessionStatusInfo, loggedIn: true);
-    return checkLogin(shouldUpdateSession: true);
+    return await verifySessionWithBackend(
+      sessionStatusInfo..currentUser = sessionStatusInfo.user,
+      shouldUpdateSession: true,
+    );
   }
 
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
