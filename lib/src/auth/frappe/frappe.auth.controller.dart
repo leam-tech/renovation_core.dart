@@ -774,7 +774,13 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     assert(sessionStatusInfo != null);
     assert(sessionStatusInfo.user != null,
         'Only a valid session can be set.\nUse .logout() if you want to clear the session');
-
+    if (_useJwt) {
+      assert(sessionStatusInfo.token != null, 'Token missing in the session');
+    }
+    // If JWT is used, set the token.
+    if (_useJwt) {
+      setAuthToken(sessionStatusInfo.token);
+    }
     return await verifySessionWithBackend(
       sessionStatusInfo..currentUser = sessionStatusInfo.user,
       shouldUpdateSession: true,
