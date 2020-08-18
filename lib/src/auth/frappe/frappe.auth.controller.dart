@@ -682,6 +682,111 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     return RequestResponse.fail(response.error);
   }
 
+  /// Logins in using Google Auth code.
+  ///
+  /// Optionally pass the [state] which is usually a JWT or base64 encoded data.
+  @override
+  Future<RequestResponse<FrappeSessionStatusInfo>> loginViaGoogle({
+    @required String code,
+    String state,
+  }) async {
+    await getFrappe().checkAppInstalled(features: ['loginViaGoogle']);
+
+    assert(code != null && code.isNotEmpty, 'Code cannot be empty');
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.oauth.login_via_google',
+          'code': code,
+          'state': state,
+          'use_jwt': _useJwt
+        },
+        isFrappeResponse: false);
+
+    FrappeSessionStatusInfo sessionStatusInfo;
+    if (response.isSuccess) {
+      sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
+          Request.convertToMap(response.rawResponse));
+      sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
+    }
+    updateSession(
+        sessionStatus: sessionStatusInfo, loggedIn: response.isSuccess);
+    return response.isSuccess
+        ? RequestResponse.success(sessionStatusInfo,
+            rawResponse: response.rawResponse)
+        : RequestResponse.fail(response.error);
+  }
+
+  /// Logins in using Apple Auth code.
+  ///
+  /// In addition to the code, the option must be specified [APPLE_OPTION].
+  ///
+  /// Optionally pass the [state] which is usually a JWT or base64 encoded data.
+  @override
+  Future<RequestResponse<FrappeSessionStatusInfo>> loginViaApple({
+    @required String code,
+    @required APPLE_OPTION option,
+    String state,
+  }) async {
+    await getFrappe().checkAppInstalled(features: ['loginViaApple']);
+
+    assert(code != null && code.isNotEmpty, 'Code cannot be empty');
+    assert(option != null, 'Apple option must be specified');
+
+    final response = await Request.initiateRequest(
+        url: config.hostUrl,
+        method: HttpMethod.POST,
+        contentType: ContentTypeLiterals.APPLICATION_JSON,
+        data: <String, dynamic>{
+          'cmd': 'renovation_core.oauth.login_via_apple',
+          'code': code,
+          'option': EnumToString.parse(option),
+          'state': state,
+          'use_jwt': _useJwt
+        },
+        isFrappeResponse: false);
+
+    FrappeSessionStatusInfo sessionStatusInfo;
+    if (response.isSuccess) {
+      sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
+          Request.convertToMap(response.rawResponse));
+      sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
+    }
+    updateSession(
+        sessionStatus: sessionStatusInfo, loggedIn: response.isSuccess);
+    return response.isSuccess
+        ? RequestResponse.success(sessionStatusInfo,
+            rawResponse: response.rawResponse)
+        : RequestResponse.fail(response.error);
+  }
+
+  /// Sets the session locally obtained externally and validates against the backend.
+  ///
+  /// Useful when a custom API returns a session object, "Sign Up", for instance.
+  ///
+  /// The session must be valid. In case the session is to be cleared, use [logout].
+  @override
+  Future<RequestResponse<FrappeSessionStatusInfo>> setExternalSession(
+      FrappeSessionStatusInfo sessionStatusInfo) async {
+    assert(sessionStatusInfo != null);
+    assert(sessionStatusInfo.user != null,
+        'Only a valid session can be set.\nUse .logout() if you want to clear the session');
+    if (_useJwt) {
+      assert(sessionStatusInfo.token != null, 'Token missing in the session');
+    }
+    // If JWT is used, set the token.
+    if (_useJwt) {
+      setAuthToken(sessionStatusInfo.token);
+    }
+    return await verifySessionWithBackend(
+      sessionStatusInfo..currentUser = sessionStatusInfo.user,
+      shouldUpdateSession: true,
+    );
+  }
+
   /// Removes [currentToken] and removes the Authorization header from [RequestOptions]
   @override
   @protected

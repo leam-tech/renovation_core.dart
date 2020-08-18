@@ -251,3 +251,13 @@ class UpdatePasswordResponse extends JSONAble {
 
 enum RESET_ID_TYPE { mobile, email }
 enum OTP_MEDIUM { email, sms }
+enum APPLE_OPTION {
+  /// When the login is from iOS or macOS.
+  native,
+
+  /// When the login is through web platform
+  web,
+
+  /// When the login is through Android platform.
+  android
+}
