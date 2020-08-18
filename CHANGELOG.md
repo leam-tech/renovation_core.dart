@@ -1,3 +1,10 @@
+# v1.2.3
+## Feature
+
+- Logging in using Google OAuth.
+- Logging in using Apple OAuth.
+- Set the session status externally.
+
 # v1.2.2
 ## Feature
 
