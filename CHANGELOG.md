@@ -1,3 +1,8 @@
+# v1.2.4
+## Feature
+
+- Parse CMDs with custom response
+
 # v1.2.3
 ## Feature
 
