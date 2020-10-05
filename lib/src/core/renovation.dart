@@ -80,8 +80,11 @@ class Renovation {
   MessageBus bus = MessageBus();
 
   /// Method for calling custom cmds defined in the backend
-  Future<RequestResponse<FrappeResponse>> call(Map<String, dynamic> args,
-      {Map<String, dynamic> extraHeaders = const <String, dynamic>{}}) {
+  Future<RequestResponse<FrappeResponse>> call(
+    Map<String, dynamic> args, {
+    Map<String, dynamic> extraHeaders = const <String, dynamic>{},
+    bool isFrappeResponse = true,
+  }) {
     return Request.initiateRequest(
         url: config.hostUrl,
         method: HttpMethod.POST,
@@ -90,7 +93,8 @@ class Renovation {
           ...extraHeaders
         },
         contentType: ContentTypeLiterals.APPLICATION_JSON,
-        data: args);
+        data: args,
+        isFrappeResponse: isFrappeResponse ?? true);
   }
 
   /// An observable holding the messages to be used in the front-end
