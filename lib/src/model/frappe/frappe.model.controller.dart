@@ -121,12 +121,14 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       url =
           '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(obj.doctype)}/${Uri.encodeComponent(docName)}';
     }
+
     response = await Request.initiateRequest(
         url: url, method: HttpMethod.GET, isFrappeResponse: false);
     if (response.isSuccess) {
       final dynamic responseObj = response.data.message;
       if (responseObj != null && responseObj != 'failed') {
         final temp = obj.fromJson<T>(responseObj);
+        temp.rawResponse = responseObj;
 
         addToLocals(temp);
         return RequestResponse.success(temp, rawResponse: response.rawResponse);
@@ -221,6 +223,10 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     if (response.isSuccess) {
       // Convert the JSON => T
       final responseObj = obj.deserializeList<T>(response.data.message);
+      for (var i = 0; i < responseObj.length; i++) {
+        responseObj[i].rawResponse = response.data.message[i];
+      }
+
       return RequestResponse.success(responseObj,
           rawResponse: response.rawResponse);
     } else {
@@ -355,8 +361,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         contentType: ContentTypeLiterals.APPLICATION_JSON,
         data: params.toJson());
     if (response.isSuccess) {
-      return RequestResponse.success(obj.fromJson(response.data.message),
-          rawResponse: response.rawResponse);
+      final temp = obj.fromJson<T>(response.data.message);
+      temp.rawResponse = response.data.message;
+      return RequestResponse.success(temp, rawResponse: response.rawResponse);
     }
     return RequestResponse.fail(handleError('set_value', response.error));
   }
@@ -393,6 +400,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         final savedDoc = doc.fromJson<T>(response.data.message);
         savedDoc.isLocal = false;
         savedDoc.unsaved = false;
+        savedDoc.rawResponse = response.data.message;
         addToLocals(savedDoc);
         return RequestResponse.success(savedDoc,
             rawResponse: response.rawResponse);
@@ -441,6 +449,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         doc = doc.fromJson(response.data.message);
         doc.isLocal = false;
         doc.unsaved = false;
+        doc.rawResponse = response.data.message;
+
         addToLocals(doc);
         return RequestResponse.success(doc, rawResponse: response.rawResponse);
       }
@@ -491,6 +501,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         doc = doc.fromJson(response.data.message);
         doc.isLocal = false;
         doc.unsaved = false;
+        doc.rawResponse = response.data.message;
+
         addToLocals(doc);
         return RequestResponse.success(doc, rawResponse: response.rawResponse);
       }
@@ -528,6 +540,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         doc = doc.fromJson(response.data.message);
         doc.isLocal = false;
         doc.unsaved = false;
+        doc.rawResponse = response.data.message;
+
         addToLocals(doc);
         return RequestResponse.success(doc, rawResponse: response.rawResponse);
       }
