@@ -43,7 +43,7 @@ class FrappeMetaController extends MetaController {
         data: <String, dynamic>{
           'cmd': 'frappe.desk.reportview.get',
           'doctype': doctype,
-          'fields': jsonEncode(['count(`tab${doctype}`.name) as total_count']),
+          'fields': jsonEncode(['count(`tab$doctype`.name) as total_count']),
           'filters': filters != null ? jsonEncode(filters) : null
         });
     if (response.isSuccess) {

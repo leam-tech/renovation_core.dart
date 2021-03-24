@@ -172,7 +172,7 @@ class FrappeSocketIOUploader implements IErrorHandler {
 
     _getCore().config.logger.w(
         'LTS-Renovation-Core FrappeSocketIOUploader Error',
-        EnumToString.parse(event));
+        EnumToString.convertToString(event));
     _destroy();
   }
 
@@ -209,8 +209,8 @@ class FrappeSocketIOUploader implements IErrorHandler {
     }
 
     uploadStatus.add(FrappeUploadStatus()
-      ..status = r.isSuccess ? UploadingStatus.completed : UploadingStatus
-          .detail_error
+      ..status =
+          r.isSuccess ? UploadingStatus.completed : UploadingStatus.detail_error
       ..progress = 100
       ..filename = args.fileName
       ..r = uploadResponse);
