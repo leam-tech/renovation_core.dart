@@ -346,25 +346,25 @@ class Frappe extends RenovationController implements FCMController {
   ErrorDetail handleError(String errorId, ErrorDetail error) {
     switch (errorId) {
       case 'verifyClientId':
-        error..title = 'Client ID Verification Error';
+        error.title = 'Client ID Verification Error';
         break;
       case 'FetchId':
-        error..title = 'Failed to Fetch Id';
+        error.title = 'Failed to Fetch Id';
         break;
       case 'Fetch-id-badrequest':
-        error..title = 'Fetch Id Bad Request!';
+        error.title = 'Fetch Id Bad Request!';
         break;
       case 'fcm_register_client':
-        error..title = 'Failed to register token!';
+        error.title = 'Failed to register token!';
         break;
       case 'fcm_unregister_client':
-        error..title = 'Failed to unregister token!';
+        error.title = 'Failed to unregister token!';
         break;
       case 'fcm_notification':
-        error..title = 'Failed to retrieve notification list!';
+        error.title = 'Failed to retrieve notification list!';
         break;
       case 'fcm_notification_mark':
-        error..title = 'Failed to mark notification as seen!';
+        error.title = 'Failed to mark notification as seen!';
         break;
       default:
         error = RenovationController.genericError(error);

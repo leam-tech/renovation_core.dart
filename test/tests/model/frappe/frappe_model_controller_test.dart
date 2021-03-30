@@ -378,7 +378,7 @@ void main() {
           await frappeModelController.getDoc(User(), validUser);
       final user = getDocResponse.data;
 
-      user..middleName = 'testing_save_doc';
+      user.middleName = 'testing_save_doc';
 
       final response = await frappeModelController.saveDoc(user);
       expect(response.isSuccess, true);

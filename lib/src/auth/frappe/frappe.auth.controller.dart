@@ -510,7 +510,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     assert(id != null && id.isNotEmpty, "ID can't be empty");
     assert(type != null, "ID type can't be null");
 
-    final typeAsString = EnumToString.parse(type);
+    final typeAsString = EnumToString.convertToString(type);
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -549,8 +549,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     assert(mediumId != null && mediumId.isNotEmpty, "Medium ID can't be empty");
     assert(medium != null, "Medium can't be null");
 
-    final idTypeAsString = EnumToString.parse(idType);
-    final mediumAsString = EnumToString.parse(medium);
+    final idTypeAsString = EnumToString.convertToString(idType);
+    final mediumAsString = EnumToString.convertToString(medium);
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -602,8 +602,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     assert(medium != null, "Medium can't be null");
     assert(otp != null && otp.isNotEmpty, "OTP can't be empty");
 
-    final idTypeAsString = EnumToString.parse(idType);
-    final mediumAsString = EnumToString.parse(medium);
+    final idTypeAsString = EnumToString.convertToString(idType);
+    final mediumAsString = EnumToString.convertToString(medium);
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -743,7 +743,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         data: <String, dynamic>{
           'cmd': 'renovation_core.oauth.login_via_apple',
           'code': code,
-          'option': EnumToString.parse(option),
+          'option': EnumToString.convertToString(option),
           'state': state,
           'use_jwt': _useJwt
         },

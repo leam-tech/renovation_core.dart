@@ -65,7 +65,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
           config.coreInstance.config.logger.w([
             'LTS-Renovation-Core',
             'Frappe SocketIO Upload error',
-            EnumToString.parse(uploadStatus.error)
+            EnumToString.convertToString(uploadStatus.error)
           ]);
           // revert to http upload
           obs.add(FrappeUploadStatus()

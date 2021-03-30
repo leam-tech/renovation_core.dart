@@ -44,7 +44,7 @@ class SocketIOClient extends RenovationController {
       _socket.io
         ..uri = url
         ..options = opts;
-      _socket..disconnect().connect();
+      (_socket..disconnect()).connect();
     } else {
       _socket = io(url, opts);
     }

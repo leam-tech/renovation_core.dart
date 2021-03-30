@@ -108,7 +108,7 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
       // NOTE: this data is required for displaying match rules in ListComponent
       for (final pType in PermissionType.values) {
         final permission = perm[doctypePerm.permLevel].toJson();
-        final permissionType = EnumToString.parse(pType);
+        final permissionType = EnumToString.convertToString(pType);
         permission[permissionType] = permission[permissionType] == 1
             ? permission[permissionType]
             : (doctypePerm.toJson()[permissionType] ?? 0);
@@ -149,13 +149,16 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
       return false;
     }
 
-    var perm = perms[permLevel].toJson()[EnumToString.parse(pType)] == 1;
+    var perm =
+        perms[permLevel].toJson()[EnumToString.convertToString(pType)] == 1;
     if (permLevel == 0 && docname != null) {
       final docInfo = await getFrappeMetaController()
           .getDocInfo(doctype: doctype, docname: docname);
       if (docInfo.isSuccess &&
           docInfo.data != null &&
-          docInfo.data.permissions.toJson()[EnumToString.parse(pType)] == 0) {
+          docInfo.data.permissions
+                  .toJson()[EnumToString.convertToString(pType)] ==
+              0) {
         perm = false;
       }
     }

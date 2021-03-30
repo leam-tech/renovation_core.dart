@@ -89,7 +89,7 @@ class FrappeLogManager extends RenovationController implements LogManager {
     });
 
     final responseInfo =
-        'Status: ${r.rawResponse.statusCode}\nHeaders:\n${header}\n\nBody:\n${json.encode(r.rawResponse.data)}';
+        'Status: ${r.rawResponse.statusCode}\nHeaders:\n$header\n\nBody:\n${json.encode(r.rawResponse.data)}';
 
     return invokeLogger(
         cmd: 'renovation_core.utils.logging.log_client_request',
