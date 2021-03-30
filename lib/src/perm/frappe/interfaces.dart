@@ -84,13 +84,22 @@ class DocPerm extends FrappeDocument {
 
   @JsonKey(
       name: 'if_owner',
-      fromJson: FrappeDocFieldConverter.checkToBool,
+      fromJson: ifOwnerCheckToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
   bool ifOwner = false;
 
   String role;
 
   dynamic match;
+
+  /// A wrapper on [FrappeDocFieldConverter.checkToBool] for scenarios
+  /// where if_owner could be an empty object, when if_owner is not defined for a doc
+  static bool ifOwnerCheckToBool(dynamic value) {
+    if (value is Map) {
+      return false;
+    }
+    return FrappeDocFieldConverter.checkToBool(value);
+  }
 
   @override
   Map<String, dynamic> toJson() => _$DocPermToJson(this);
