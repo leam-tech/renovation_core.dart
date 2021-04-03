@@ -62,12 +62,10 @@ DocType _$DocTypeFromJson(Map<String, dynamic> json) {
     ..engine = json['engine'] as String
     ..hasWebView =
         FrappeDocFieldConverter.checkToBool(json['has_web_view'] as int)
-    ..hideHeading = json['hide_heading'] as bool ?? false
     ..hideToolbar =
         FrappeDocFieldConverter.checkToBool(json['hide_toolbar'] as int)
     ..icon = json['icon'] as String
     ..imageField = json['image_field'] as String
-    ..imageView = json['image_view'] as bool ?? false
     ..inCreate = FrappeDocFieldConverter.checkToBool(json['in_create'] as int)
     ..isPublishedField =
         FrappeDocFieldConverter.checkToBool(json['is_published_field'] as int)
@@ -85,7 +83,6 @@ DocType _$DocTypeFromJson(Map<String, dynamic> json) {
     ..quickEntry =
         FrappeDocFieldConverter.checkToBool(json['quick_entry'] as int)
     ..readOnly = FrappeDocFieldConverter.checkToBool(json['read_only'] as int)
-    ..readOnlyOnload = json['read_only_onload'] as bool ?? false
     ..restrictToDomain = json['restrict_to_domain'] as String
     ..route = json['route'] as String
     ..searchFields = json['search_fields'] as String
@@ -189,12 +186,10 @@ Map<String, dynamic> _$DocTypeToJson(DocType instance) {
   writeNotNull('engine', instance.engine);
   writeNotNull(
       'has_web_view', FrappeDocFieldConverter.boolToCheck(instance.hasWebView));
-  writeNotNull('hide_heading', instance.hideHeading);
   writeNotNull('hide_toolbar',
       FrappeDocFieldConverter.boolToCheck(instance.hideToolbar));
   writeNotNull('icon', instance.icon);
   writeNotNull('image_field', instance.imageField);
-  writeNotNull('image_view', instance.imageView);
   writeNotNull(
       'in_create', FrappeDocFieldConverter.boolToCheck(instance.inCreate));
   writeNotNull('is_published_field',
@@ -216,7 +211,6 @@ Map<String, dynamic> _$DocTypeToJson(DocType instance) {
       'quick_entry', FrappeDocFieldConverter.boolToCheck(instance.quickEntry));
   writeNotNull(
       'read_only', FrappeDocFieldConverter.boolToCheck(instance.readOnly));
-  writeNotNull('read_only_onload', instance.readOnlyOnload);
   writeNotNull('restrict_to_domain', instance.restrictToDomain);
   writeNotNull('route', instance.route);
   writeNotNull('search_fields', instance.searchFields);
