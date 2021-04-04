@@ -74,7 +74,6 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// }
   /// ```
   ///
-  @protected
   @override
   void addToLocals<T extends FrappeDocument>(T doc) {
     EmptyDoctypeError.verify(doc.doctype);
