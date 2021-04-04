@@ -36,6 +36,10 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     doc.name = getNewName(doc.doctype);
     doc.isLocal = true;
     doc.unsaved = true;
+    doc.rawResponse = <String, dynamic>{
+      if (doc.rawResponse != null) ...doc.rawResponse,
+      ...doc.toJson(),
+    };
     addToLocals(doc);
     return doc;
   }
