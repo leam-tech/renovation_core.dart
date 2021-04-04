@@ -45,7 +45,7 @@ DocPerm _$DocPermFromJson(Map<String, dynamic> json) {
     ..setUserPermissions =
         FrappeDocFieldConverter.checkToBool(json['set_user_permissions'] as int)
     ..permLevel = json['permlevel'] as int
-    ..ifOwner = FrappeDocFieldConverter.checkToBool(json['if_owner'] as int)
+    ..ifOwner = DocPerm.ifOwnerCheckToBool(json['if_owner'])
     ..role = json['role'] as String
     ..match = json['match'];
 }
