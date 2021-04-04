@@ -105,9 +105,6 @@ class DocType extends FrappeDocument {
       toJson: FrappeDocFieldConverter.boolToCheck)
   bool hasWebView;
 
-  @JsonKey(name: 'hide_heading', defaultValue: false)
-  bool hideHeading = false;
-
   @JsonKey(
       name: 'hide_toolbar',
       fromJson: FrappeDocFieldConverter.checkToBool,
@@ -120,9 +117,6 @@ class DocType extends FrappeDocument {
   /// The name of the field to refer for the image
   @JsonKey(name: 'image_field')
   String imageField;
-
-  @JsonKey(name: 'image_view', defaultValue: false)
-  bool imageView = false;
 
   @JsonKey(
       name: 'in_create',
@@ -193,9 +187,6 @@ class DocType extends FrappeDocument {
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
   bool readOnly;
-
-  @JsonKey(name: 'read_only_onload', defaultValue: false)
-  bool readOnlyOnload = false;
 
   @JsonKey(name: 'restrict_to_domain')
   String restrictToDomain;
