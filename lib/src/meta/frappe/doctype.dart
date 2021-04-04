@@ -328,6 +328,9 @@ class DocType extends FrappeDocument {
       toJson: FrappeDocFieldConverter.boolToCheck)
   bool allowAutoRepeat;
 
+  @JsonKey(ignore: true)
+  bool isLoading = false;
+
   @override
   T fromJson<T>(Map<String, dynamic> json) => DocType.fromJson(json) as T;
 

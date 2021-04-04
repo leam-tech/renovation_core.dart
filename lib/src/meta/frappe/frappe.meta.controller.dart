@@ -101,51 +101,74 @@ class FrappeMetaController extends MetaController {
   @override
   Future<RequestResponse<DocType>> getDocMeta(
       {@required String doctype}) async {
-    //FIXME: Core-Dart doesn't support scripts currently
-    //    config.coreInstance.scriptManager.events[doctype] = {};
     await getFrappe().checkAppInstalled(features: ['getDocMeta']);
 
-    final response = await Request.initiateRequest(
-        url: config.hostUrl,
-        method: HttpMethod.POST,
-        contentType: ContentTypeLiterals.APPLICATION_JSON,
-        data: <String, dynamic>{
-          'cmd': 'renovation_core.utils.meta.get_bundle',
-          'doctype': doctype
-        });
-
-    if (response.isSuccess) {
-      final metas = <String, DocType>{};
-      final metasDeserialized = List<DocType>.from(
-          (response.data.message['metas'] as List)
-              .map((dynamic _meta) => DocType.fromJson(_meta))
-              .toList());
-      // local var first, Object.assign together later
-      for (final dmeta in metasDeserialized) {
-        if (dmeta.doctype == 'DocType') {
-          metas[dmeta.name] = dmeta;
-          // append __messages for translations
-
-          config.coreInstance.translate.extendDictionary(
-              dict: dmeta.messages != null
-                  ? dmeta.messages.cast<String, String>()
-                  : null);
+    if (docTypeCache.containsKey(doctype) && docTypeCache[doctype] != null) {
+      if (docTypeCache.containsKey(doctype) &&
+          docTypeCache[doctype] != null &&
+          !docTypeCache[doctype].isLoading) {
+        return RequestResponse.success(docTypeCache[doctype]);
+      } else {
+        while (docTypeCache.containsKey(doctype) &&
+            docTypeCache[doctype] != null &&
+            docTypeCache[doctype].isLoading) {
+          await Future<void>.delayed(Duration(milliseconds: 100));
+        }
+        if (docTypeCache.containsKey(doctype) &&
+            docTypeCache[doctype] != null) {
+          return RequestResponse.success(docTypeCache[doctype]);
+        } else {
+          return RequestResponse.fail(
+              handleError('get_doc_meta', ErrorDetail()));
         }
       }
-      docTypeCache.addAll(metas);
-      // trigger read perm which creates the perm dict in rcore.perms.doctypePerms
-      metas.forEach((String k, DocType v) {
-        if (v.isTable == null || !v.isTable) {
-          // perm for normal doctypes only, not for Child docs
-          config.coreInstance.perm
-              .hasPerm(doctype: k, pType: PermissionType.read);
-        }
-      });
-      return RequestResponse.success(docTypeCache[doctype],
-          rawResponse: response.rawResponse);
-    }
+    } else {
+      docTypeCache[doctype] = DocType()..isLoading = true;
 
-    return RequestResponse.fail(handleError('get_doc_meta', response.error));
+      // FIXME: Core-Dart doesn't support scripts currently
+      //    config.coreInstance.scriptManager.events[doctype] = {};
+      final response = await Request.initiateRequest(
+          url: config.hostUrl,
+          method: HttpMethod.POST,
+          contentType: ContentTypeLiterals.APPLICATION_JSON,
+          data: <String, dynamic>{
+            'cmd': 'renovation_core.utils.meta.get_bundle',
+            'doctype': doctype
+          });
+
+      if (response.isSuccess) {
+        final metas = <String, DocType>{};
+        final metasDeserialized = List<DocType>.from(
+            (response.data.message['metas'] as List)
+                .map((dynamic _meta) => DocType.fromJson(_meta))
+                .toList());
+        // local var first, Object.assign together later
+        for (final dmeta in metasDeserialized) {
+          if (dmeta.doctype == 'DocType') {
+            metas[dmeta.name] = dmeta;
+            // append __messages for translations
+
+            config.coreInstance.translate.extendDictionary(
+                dict: dmeta.messages != null
+                    ? dmeta.messages.cast<String, String>()
+                    : null);
+          }
+        }
+        docTypeCache.addAll(metas);
+        // trigger read perm which creates the perm dict in rcore.perms.doctypePerms
+        metas.forEach((String k, DocType v) {
+          if (v.isTable == null || !v.isTable) {
+            // perm for normal doctypes only, not for Child docs
+            config.coreInstance.perm
+                .hasPerm(doctype: k, pType: PermissionType.read);
+          }
+        });
+        return RequestResponse.success(docTypeCache[doctype],
+            rawResponse: response.rawResponse);
+      }
+
+      return RequestResponse.fail(handleError('get_doc_meta', response.error));
+    }
   }
 
   /// Returns the label of a field in Frappé.
