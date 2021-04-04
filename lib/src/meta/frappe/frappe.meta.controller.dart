@@ -106,12 +106,12 @@ class FrappeMetaController extends MetaController {
     if (docTypeCache.containsKey(doctype) && docTypeCache[doctype] != null) {
       if (docTypeCache.containsKey(doctype) &&
           docTypeCache[doctype] != null &&
-          docTypeCache[doctype].isLoading != true) {
+          !docTypeCache[doctype].isLoading) {
         return RequestResponse.success(docTypeCache[doctype]);
       } else {
         while (docTypeCache.containsKey(doctype) &&
             docTypeCache[doctype] != null &&
-            docTypeCache[doctype].isLoading == true) {
+            docTypeCache[doctype].isLoading) {
           await Future<void>.delayed(Duration(milliseconds: 100));
         }
         if (docTypeCache.containsKey(doctype) &&
