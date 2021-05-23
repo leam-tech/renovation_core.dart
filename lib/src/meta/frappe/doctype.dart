@@ -293,7 +293,7 @@ class DocType extends FrappeDocument {
   List printFormats;
 
   @JsonKey(name: '__templates')
-  String templates;
+  Map<String, dynamic> templates;
 
   @JsonKey(name: '__tree_js')
   String treeJs;

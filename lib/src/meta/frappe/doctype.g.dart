@@ -115,7 +115,7 @@ DocType _$DocTypeFromJson(Map<String, dynamic> json) {
     ..mapJs = json['__map_js'] as String
     ..messages = json['__messages'] as Map<String, dynamic>
     ..printFormats = json['__print_formats'] as List
-    ..templates = json['__templates'] as String
+    ..templates = json['__templates'] as Map<String, dynamic>
     ..treeJs = json['__tree_js'] as String
     ..workflowDocs = json['__workflow_docs'] as List
     ..assign = json['_assign']
