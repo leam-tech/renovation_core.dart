@@ -39,7 +39,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   }
 
   /// The header to which the token is prepended to according to the requirement of the backend.
-  static const String TOKEN_HEADER = 'JWTToken';
+  static String TOKEN_HEADER = 'Bearer';
 
   /// Whether to authenticate using JWT. If set to false, will use cookies.
   bool _useJwt = false;
@@ -50,9 +50,10 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
       currentToken != null ? '$TOKEN_HEADER $currentToken' : null;
 
   /// Enables JWT if the app 'renovation_core' is installed
-  void enableJWT() {
+  void enableJWT({bool legacyJWTHeader = false}) {
     getFrappe().checkAppInstalled(features: ['Login using JWT']);
     _useJwt = true;
+    if (legacyJWTHeader) TOKEN_HEADER = 'JWTToken';
   }
 
   /// Checks the session's status (Whether the user is logged in or not) and returns it as [FrappeSessionStatusInfo].
@@ -806,10 +807,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @visibleForTesting
   void setAuthToken(String token) {
     currentToken = token;
-
-    // Can't use the standard Bearer <token> format since frappe treats that as something else
-    // frappe/api.py validate_oauth() checks for the presence of the keyword 'Bearer'
-    RenovationRequestOptions.headers['Authorization'] = '$TOKEN_HEADER $token';
+    RenovationRequestOptions.headers['Authorization'] = getCurrentToken();
   }
 
   @override

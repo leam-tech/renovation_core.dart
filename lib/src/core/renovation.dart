@@ -107,6 +107,7 @@ class Renovation {
       K sessionStatusInfo,
       String cookieDir,
       bool useJWT = false,
+      bool legacyJWTHeader = false,
       bool isBenchEnabled = false,
       bool disableLog = false,
       Logger customLogger}) async {
@@ -146,7 +147,7 @@ class Renovation {
           throw CookieDirNotSet();
         }
       } else {
-        getFrappeAuthController().enableJWT();
+        getFrappeAuthController().enableJWT(legacyJWTHeader: legacyJWTHeader);
       }
 
       model = FrappeModelController(config);
