@@ -33,9 +33,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// It also adds the new doc to the local cache using [addToLocals].
   @override
   T newDoc<T extends FrappeDocument>(T doc) {
-    if (doc.doctype == null) {
-      throw EmptyDoctypeError();
-    }
+    EmptyDoctypeError.verify(doc.doctype);
+
     doc.name = getNewName(doc.doctype!);
     doc.isLocal = true;
     doc.unsaved = true;
@@ -77,12 +76,6 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   @override
   void addToLocals<T extends FrappeDocument>(T doc) {
-    if (doc.doctype == null) {
-      throw EmptyDoctypeError();
-    }
-    if (doc.name == null) {
-      throw EmptyDocNameError();
-    }
     EmptyDoctypeError.verify(doc.doctype);
 
     if (!locals.containsKey(doc.doctype)) {
@@ -298,13 +291,13 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// Returns a failure if the document or doctype don't exist.
   @override
   Future<RequestResponse<String?>> deleteDoc(
-      String doctype, String docName) async {
+      String? doctype, String? docName) async {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
 
     final response = await Request.initiateRequest(
         url:
-            '${config.hostUrl}/api/resource/${Uri.encodeComponent(doctype)}/${Uri.encodeComponent(docName)}',
+            '${config.hostUrl}/api/resource/${Uri.encodeComponent(doctype!)}/${Uri.encodeComponent(docName!)}',
         method: HttpMethod.DELETE);
     if (response.isSuccess) {
       if (locals[doctype] != null && locals[doctype]![docName] != null) {
@@ -319,9 +312,6 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// Returns a cloned doc, with a new local name.
   @override
   T copyDoc<T extends FrappeDocument>(T doc) {
-    if (doc.doctype == null) {
-      throw EmptyDoctypeError();
-    }
     EmptyDoctypeError.verify(doc.doctype);
     final clone = JSONAble.clone<T>(doc);
     clone.name = getNewName(doc.doctype!);
@@ -620,8 +610,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// Returns failure in case the [doctype] does not exist in the backend.
   @override
   Future<RequestResponse<bool?>> assignDoc(
-      {required String assignTo,
-      required String doctype,
+      {String? assignTo,
+      String? doctype,
       bool? myself = false,
       DateTime? dueDate,
       String? description,
@@ -667,9 +657,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// Sets the assignment to [Status.Cancelled] which means that the task is assigned.
   @override
   Future<RequestResponse<bool?>> completeDocAssignment(
-      {required String doctype,
-      required String docName,
-      required String assignedTo}) async {
+      {String? doctype, String? docName, String? assignedTo}) async {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
     final args = CompleteDocAssignmentParams(
@@ -694,9 +682,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// Un-assigns a user from the [doctype] and [docName].
   @override
   Future<RequestResponse<bool?>> unAssignDoc(
-      {required String doctype,
-      required String docName,
-      required String unAssignFrom}) async {
+      {String? doctype, String? docName, String? unAssignFrom}) async {
     await getFrappe().checkAppInstalled(features: ['unAssignDoc']);
 
     EmptyDoctypeError.verify(doctype);
