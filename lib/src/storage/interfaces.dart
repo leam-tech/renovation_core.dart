@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-import '../../core.dart';
 import '../core/jsonable.dart';
 
 abstract class UploadFileParams extends JSONAble {
@@ -38,7 +37,7 @@ enum ErrorEvent {
   socket_timeout
 }
 
-abstract class UploadFileStatus extends JSONAble{
+abstract class UploadFileStatus extends JSONAble {
   UploadingStatus status;
   bool hasProgress;
   num progress;

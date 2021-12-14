@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:meta/meta.dart';
-import 'package:zxcvbn/src/result.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
 import '../../core/config.dart';

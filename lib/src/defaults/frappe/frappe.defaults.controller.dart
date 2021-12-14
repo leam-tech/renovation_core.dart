@@ -84,7 +84,9 @@ class FrappeDefaultsController extends DefaultsController {
         _value = jsonEncode(value);
       } else if (value is bool) {
         _value = value.toString();
-      } else if (value is num) _value = value.toString();
+      } else if (value is num) {
+        _value = value.toString();
+      }
     } else {
       _value = value;
     }

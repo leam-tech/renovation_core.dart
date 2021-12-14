@@ -1,7 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-import '../../../core.dart';
+import '../../core/jsonable.dart';
+import '../../core/request.dart';
 import '../../model/frappe/document.dart';
 import '../../model/frappe/utils.dart';
 import '../interfaces.dart';

@@ -4,10 +4,15 @@ import 'dart:typed_data';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../../core.dart';
-import '../../../misc.dart';
-import '../../../storage.dart';
+import '../../core/config.dart';
 import '../../core/errors.dart';
+import '../../core/frappe/renovation.dart';
+import '../../core/interfaces.dart';
+import '../../core/renovation.controller.dart';
+import '../../core/renovation.dart';
+import '../../core/request.dart';
+import '../../misc/socketio.dart';
+import '../../storage/frappe/interfaces.dart';
 import '../interfaces.dart';
 
 /// The following is the client side logic of frappe's socket io upload implementation

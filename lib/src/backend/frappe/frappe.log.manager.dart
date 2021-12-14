@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:meta/meta.dart';
 
-import '../../../core.dart';
+import '../../core/config.dart';
 import '../../core/errors.dart';
+import '../../core/frappe/renovation.dart';
+import '../../core/renovation.controller.dart';
+import '../../core/request.dart';
 import '../../model/frappe/interfaces.dart';
 import '../log.manager.dart';
 import 'errors.dart';

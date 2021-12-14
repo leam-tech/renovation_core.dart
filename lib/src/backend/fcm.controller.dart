@@ -1,5 +1,5 @@
-import '../../backend.dart';
-import '../../core.dart';
+import '../core/request.dart';
+import 'frappe/fcm_notification.model.dart';
 
 abstract class FCMController {
   /// Used to register client FCM token
