@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 import '../../../test_manager.dart';
 
 void main() {
-  FrappeDefaultsController frappeDefaultsController;
+  late FrappeDefaultsController frappeDefaultsController;
 
   final validUser = TestManager.primaryUser;
   final validPwd = TestManager.primaryUserPwd;

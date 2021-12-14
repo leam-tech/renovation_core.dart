@@ -4,28 +4,30 @@ import 'package:renovation_core/core.dart';
 
 class TestManager {
   /// Holds the test instance of Renovation
-  static Renovation renovation;
+  static Renovation? renovation;
   static final Map<String, String> _envVariables = Platform.environment;
 
-  static Future<Renovation> getTestInstance() async {
+  static Future<Renovation?> getTestInstance() async {
     if (renovation == null) {
       renovation = Renovation();
 
-      await renovation.init(_envVariables[EnvVariables.HostURL],
+      await renovation!.init(_envVariables[EnvVariables.HostURL]!,
           useJWT: true, disableLog: true);
     }
     return renovation;
   }
 
-  static String getVariable(String variableName) => _envVariables[variableName];
+  static String? getVariable(String variableName) =>
+      _envVariables[variableName];
 
-  static final String primaryUser = _envVariables[EnvVariables.PrimaryUser];
+  static final String primaryUser = _envVariables[EnvVariables.PrimaryUser]!;
   static final String primaryUserPwd =
-      _envVariables[EnvVariables.PrimaryUserPwd];
-  static final String secondaryUser = _envVariables[EnvVariables.SecondaryUser];
+      _envVariables[EnvVariables.PrimaryUserPwd]!;
+  static final String secondaryUser =
+      _envVariables[EnvVariables.SecondaryUser]!;
   static final String secondaryUserPwd =
-      _envVariables[EnvVariables.SecondaryUserPwd];
-  static final String mobileNumber = _envVariables[EnvVariables.MobileNumber];
+      _envVariables[EnvVariables.SecondaryUserPwd]!;
+  static final String mobileNumber = _envVariables[EnvVariables.MobileNumber]!;
 }
 
 class EnvVariables {

@@ -10,8 +10,8 @@ import '../../../test_manager.dart';
 import '../../../test_models/models.dart';
 
 void main() {
-  FrappeModelController frappeModelController;
-  FrappeAuthController frappeAuthController;
+  late FrappeModelController frappeModelController;
+  late FrappeAuthController frappeAuthController;
 
   final validUser = TestManager.primaryUser;
   final validPwd = TestManager.primaryUserPwd;
@@ -31,7 +31,7 @@ void main() {
       final response = await frappeModelController.getDoc(User(), validUser);
 
       expect(response.isSuccess, true);
-      expect(response.data.fullName,
+      expect(response.data!.fullName,
           TestManager.getVariable(EnvVariables.PrimaryUserName));
       expect(response.httpCode, 200);
       expect(response.data, isA<User>());
@@ -39,7 +39,7 @@ void main() {
 
     test('should add to local cache if successful', () async {
       final response = await frappeModelController.getDoc(User(), validUser);
-      final User user = frappeModelController.locals['User'][validUser];
+      final User user = frappeModelController.locals['User']![validUser];
       expect(response.isSuccess, true);
       expect(user, isA<User>());
       expect(
@@ -59,7 +59,7 @@ void main() {
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
-          response.error.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
+          response.error!.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
     });
     test('should return failure for non-existing docs', () async {
       final response =
@@ -68,7 +68,7 @@ void main() {
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
-          response.error.title, FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
+          response.error!.title, FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
     });
   });
 
@@ -89,7 +89,7 @@ void main() {
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
-          response.error.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
+          response.error!.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
     });
 
     test('should return just names of users for no fields specified', () async {
@@ -98,8 +98,8 @@ void main() {
       expect(response.isSuccess, true);
       expect(response.httpCode, 200);
       expect(response.data, isA<List<User>>());
-      expect(response.data.every((user) => user.name != null), true);
-      expect(response.data.every((user) => user.email == null), true);
+      expect(response.data!.every((user) => user?.name != null), true);
+      expect(response.data!.every((user) => user?.email == null), true);
     });
 
     test(
@@ -110,8 +110,8 @@ void main() {
 
       expect(response.isSuccess, true);
       expect(response.httpCode, 200);
-      expect(response.data.every((user) => user.name != null), true);
-      expect(response.data.every((user) => user.email != null), true);
+      expect(response.data!.every((user) => user?.name != null), true);
+      expect(response.data!.every((user) => user?.email != null), true);
     });
 
     test('should return only return 2 items on pagination', () async {
@@ -120,7 +120,7 @@ void main() {
 
       expect(response.isSuccess, true);
       expect(response.httpCode, 200);
-      expect(response.data.length, 2);
+      expect(response.data!.length, 2);
     });
     test('should return tableField details', () async {
       final response =
@@ -129,17 +129,18 @@ void main() {
       });
       expect(response.isSuccess, true);
       expect(response.httpCode, 200);
-      expect(response.data.isNotEmpty, true);
-      expect(response.data.first.blockModules, isA<List<BlockModule>>());
+      expect(response.data!.isNotEmpty, true);
+      expect(response.data!.first?.blockModules, isA<List<BlockModule>>());
     });
     test('should return all fields', () async {
       final response =
           await frappeModelController.getList(User(), fields: ['*']);
 
+      final keyLength = response.data?.first?.toJson().keys.length;
       expect(response.isSuccess, true);
       expect(response.httpCode, 200);
-      expect(response.data.first, isA<User>());
-      expect(response.data.first.toJson().keys.length > 1, true);
+      expect(response.data!.first, isA<User>());
+      expect(keyLength != null && keyLength > 1, true);
     });
 
     test('should return list with name and linkfields document within',
@@ -149,11 +150,11 @@ void main() {
           withLinkFields: ['reviewed_by_doctype']);
 
       expect(response.isSuccess, true);
-      expect(response.data.every((review) => review.name != null), true);
+      expect(response.data!.every((review) => review?.name != null), true);
       expect(
-          response.data.any((review) =>
-              review.reviewedByDoctypeDoc != null &&
-              review.reviewedByDoctypeDoc is DocType),
+          response.data!.any((review) =>
+              review?.reviewedByDoctypeDoc != null &&
+              review?.reviewedByDoctypeDoc is DocType),
           true);
     });
 
@@ -163,8 +164,10 @@ void main() {
           withLinkFields: ['NON-EXISTING']);
 
       expect(response.isSuccess, true);
-      expect(response.data.every((review) => review is RenovationReview), true);
-      expect(response.data.any((review) => review.reviewedByDoctypeDoc == null),
+      expect(
+          response.data!.every((review) => review is RenovationReview), true);
+      expect(
+          response.data!.any((review) => review?.reviewedByDoctypeDoc == null),
           true);
     });
 
@@ -173,8 +176,8 @@ void main() {
           .getList(User(), filters: {'name': validUser, 'enabled': 1});
 
       expect(response.isSuccess, true);
-      expect(response.data.length, 1);
-      expect(response.data.first.name, validUser);
+      expect(response.data!.length, 1);
+      expect(response.data!.first?.name, validUser);
     });
 
     test('should return list of user with filters type 2', () async {
@@ -183,8 +186,8 @@ void main() {
       ]);
 
       expect(response.isSuccess, true);
-      expect(response.data.length, 1);
-      expect(response.data.first.name, validUser);
+      expect(response.data!.length, 1);
+      expect(response.data!.first?.name, validUser);
     });
 
     test('should return list of user with filters type 3', () async {
@@ -193,8 +196,8 @@ void main() {
       });
 
       expect(response.isSuccess, true);
-      expect(response.data.length, 1);
-      expect(response.data.first.name, validUser);
+      expect(response.data!.length, 1);
+      expect(response.data!.first?.name, validUser);
     });
 
     // More tests will be added to filters.dart in a separate group.
@@ -216,7 +219,7 @@ void main() {
           .getList(User(), filters: {'name': 'NONEXISTING'});
 
       expect(response.isSuccess, true);
-      expect(response.data.isEmpty, true);
+      expect(response.data!.isEmpty, true);
     });
   });
 
@@ -229,7 +232,7 @@ void main() {
       final savedDoc = await frappeModelController.saveDoc(newDoc);
       expect(savedDoc.isSuccess, true);
       final deletedDoc = await frappeModelController.deleteDoc(
-          savedDoc.data.doctype, savedDoc.data.name);
+          savedDoc.data!.doctype!, savedDoc.data!.name!);
       expect(deletedDoc.isSuccess, true);
       expect(deletedDoc.data, 'TESTING DELETION');
       expect(
@@ -243,7 +246,7 @@ void main() {
           'NONEXISTING', 'TESTING DELETIION');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
-      expect(response.error.title,
+      expect(response.error!.title,
           FrappeModelController.DOCTYPE_OR_DOCNAME_NOT_EXIST_TITLE);
     });
 
@@ -252,7 +255,7 @@ void main() {
           'Renovation User Agreement', 'non_existing');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
-      expect(response.error.title,
+      expect(response.error!.title,
           FrappeModelController.DOCTYPE_OR_DOCNAME_NOT_EXIST_TITLE);
     });
 
@@ -289,7 +292,7 @@ void main() {
           await frappeModelController.getValue('User', validUser, 'email');
       expect(response.isSuccess, true);
       expect(response.data, isA<Map<String, dynamic>>());
-      expect(response.data['email'],
+      expect(response.data!['email'],
           TestManager.getVariable(EnvVariables.PrimaryUserEmail));
     });
     test('should return failure for non-existing doctype', () async {
@@ -297,21 +300,21 @@ void main() {
           'NON-EXISTING', validUser, 'email');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
-      expect(response.error.type, RenovationError.NotFoundError);
+      expect(response.error!.type, RenovationError.NotFoundError);
     });
     test('should return failure for non-existing document', () async {
       final response =
           await frappeModelController.getValue('User', 'non_existing', 'email');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
-      expect(response.error.type, RenovationError.NotFoundError);
+      expect(response.error!.type, RenovationError.NotFoundError);
     });
     test('should return failure for non-existing field', () async {
       final response = await frappeModelController.getValue(
           'User', validUser, 'non_existing');
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
-      expect(response.error.type, RenovationError.NotFoundError);
+      expect(response.error!.type, RenovationError.NotFoundError);
     });
   });
 
@@ -322,7 +325,7 @@ void main() {
       final response = await frappeModelController.setValue(
           User(), validSecondUser, 'middle_name', random);
       expect(response.isSuccess, true);
-      expect(response.data.middleName, random);
+      expect(response.data!.middleName, random);
     });
 
     test('should return failure for non-existing doctype', () async {
@@ -334,7 +337,7 @@ void main() {
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
-          response.error.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
+          response.error!.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
     });
 
     test('should return failure for non-existing document', () async {
@@ -343,7 +346,7 @@ void main() {
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
-          response.error.title, FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
+          response.error!.title, FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
     });
 
     test('should throw InvalidFrappeFieldValue if docValue is not DBValue',
@@ -362,12 +365,12 @@ void main() {
       final savedDoc = await frappeModelController.saveDoc(newDoc);
       expect(savedDoc.isSuccess, true);
       expect(savedDoc.data, isA<RenovationUserAgreement>());
-      expect(savedDoc.data.docStatus, FrappeDocStatus.Draft);
+      expect(savedDoc.data!.docStatus, FrappeDocStatus.Draft);
       // Checking for locally saved doc
       expect(
           frappeModelController
               .getDocFromCache<RenovationUserAgreement>(
-                  'Renovation User Agreement', 'TESTING SAVE')
+                  'Renovation User Agreement', 'TESTING SAVE')!
               .name,
           'TESTING SAVE');
     });
@@ -376,17 +379,17 @@ void main() {
         () async {
       final getDocResponse =
           await frappeModelController.getDoc(User(), validUser);
-      final user = getDocResponse.data;
+      final user = getDocResponse.data!;
 
       user.middleName = 'testing_save_doc';
 
       final response = await frappeModelController.saveDoc(user);
       expect(response.isSuccess, true);
-      expect(response.data.middleName, 'testing_save_doc');
+      expect(response.data!.middleName, 'testing_save_doc');
       // Checking for locally saved doc
       expect(
           frappeModelController
-              .getDocFromCache<User>('User', validUser)
+              .getDocFromCache<User>('User', validUser)!
               .middleName,
           'testing_save_doc');
     });
@@ -397,7 +400,7 @@ void main() {
       final response = await frappeModelController.saveDoc(newDoc);
       expect(response.isSuccess, false);
       expect(response.httpCode, 409);
-      expect(response.error.title, 'Duplicate document found');
+      expect(response.error!.title, 'Duplicate document found');
     });
 
     tearDownAll(() => frappeModelController.deleteDoc(
@@ -417,8 +420,8 @@ void main() {
       userAgreement.title = 'TESTING SUBMISSION';
       final response = await frappeModelController.submitDoc(userAgreement);
       expect(response.isSuccess, true);
-      expect(response.data.title, 'TESTING SUBMISSION');
-      expect(response.data.docStatus, FrappeDocStatus.Submitted);
+      expect(response.data!.title, 'TESTING SUBMISSION');
+      expect(response.data!.docStatus, FrappeDocStatus.Submitted);
     });
     test('should fail for non-existing doctype', () async {
       final userAgreement = frappeModelController
@@ -428,7 +431,7 @@ void main() {
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
-          response.error.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
+          response.error!.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
     });
     test('should fail if duplicated submitted document', () async {
       final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
@@ -436,8 +439,8 @@ void main() {
       final response = await frappeModelController.submitDoc(newDoc);
       expect(response.isSuccess, false);
       expect(response.httpCode, 409);
-      expect(response.error.title, 'Duplicate document found');
-      expect(response.error.type, RenovationError.DuplicateEntryError);
+      expect(response.error!.title, 'Duplicate document found');
+      expect(response.error!.type, RenovationError.DuplicateEntryError);
     });
 
     test('should throw NotSubmittableDocError for non-submittable document',
@@ -453,18 +456,18 @@ void main() {
       final getDoc = await frappeModelController.getDoc(
           RenovationUserAgreement(), 'TESTING SUBMISSION');
       if (getDoc.isSuccess) {
-        final cancelDoc = await frappeModelController.cancelDoc(getDoc.data);
+        final cancelDoc = await frappeModelController.cancelDoc(getDoc.data!);
         await frappeModelController.deleteDoc(
-            '${cancelDoc.data.doctype}', '${cancelDoc.data.name}');
+            '${cancelDoc.data!.doctype}', '${cancelDoc.data!.name}');
       }
 
       // Second document
       final getDoc2 = await frappeModelController.getDoc(
           RenovationUserAgreement(), 'EXISTING TESTING SUBMISSION');
       if (getDoc2.isSuccess) {
-        final cancelDoc = await frappeModelController.cancelDoc(getDoc2.data);
+        final cancelDoc = await frappeModelController.cancelDoc(getDoc2.data!);
         await frappeModelController.deleteDoc(
-            '${cancelDoc.data.doctype}', '${cancelDoc.data.name}');
+            '${cancelDoc.data!.doctype}', '${cancelDoc.data!.name}');
       }
     });
   });
@@ -482,8 +485,8 @@ void main() {
       userAgreement.title = 'TESTING SAVING AND SUBMISSION';
       final response = await frappeModelController.saveSubmitDoc(userAgreement);
       expect(response.isSuccess, true);
-      expect(response.data.title, 'TESTING SAVING AND SUBMISSION');
-      expect(response.data.docStatus, FrappeDocStatus.Submitted);
+      expect(response.data!.title, 'TESTING SAVING AND SUBMISSION');
+      expect(response.data!.docStatus, FrappeDocStatus.Submitted);
     });
     test('should fail for non-existing doctype', () async {
       final userAgreement = frappeModelController
@@ -493,7 +496,7 @@ void main() {
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
-          response.error.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
+          response.error!.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
     });
     test('should fail if duplicated submitted document', () async {
       final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
@@ -501,8 +504,8 @@ void main() {
       final response = await frappeModelController.submitDoc(newDoc);
       expect(response.isSuccess, false);
       expect(response.httpCode, 409);
-      expect(response.error.title, 'Duplicate document found');
-      expect(response.error.type, RenovationError.DuplicateEntryError);
+      expect(response.error!.title, 'Duplicate document found');
+      expect(response.error!.type, RenovationError.DuplicateEntryError);
     });
 
     test('should throw NotSubmittableDocError for non-submittable document',
@@ -518,18 +521,18 @@ void main() {
       final getDoc = await frappeModelController.getDoc(
           RenovationUserAgreement(), 'TESTING SAVING AND SUBMISSION');
       if (getDoc.isSuccess) {
-        final cancelDoc = await frappeModelController.cancelDoc(getDoc.data);
+        final cancelDoc = await frappeModelController.cancelDoc(getDoc.data!);
         await frappeModelController.deleteDoc(
-            '${cancelDoc.data.doctype}', '${cancelDoc.data.name}');
+            '${cancelDoc.data!.doctype}', '${cancelDoc.data!.name}');
       }
 
       // Second document
       final getDoc2 = await frappeModelController.getDoc(
           RenovationUserAgreement(), 'EXISTING TESTING SAVING AND SUBMISSION');
       if (getDoc2.isSuccess) {
-        final cancelDoc = await frappeModelController.cancelDoc(getDoc2.data);
+        final cancelDoc = await frappeModelController.cancelDoc(getDoc2.data!);
         await frappeModelController.deleteDoc(
-            '${cancelDoc.data.doctype}', '${cancelDoc.data.name}');
+            '${cancelDoc.data!.doctype}', '${cancelDoc.data!.name}');
       }
     });
   });
@@ -540,14 +543,13 @@ void main() {
           forceFetch: true);
 
       final amendedDoc = frappeModelController
-          // Simulate submitted document
-          .amendDoc(doc.data..docStatus = FrappeDocStatus.Submitted);
+          .amendDoc(doc.data!..docStatus = FrappeDocStatus.Submitted);
 
-      expect(amendedDoc.name.contains('New'), true);
+      expect(amendedDoc.name!.contains('New'), true);
       expect(amendedDoc.isLocal, true);
       expect(amendedDoc.unsaved, true);
       expect(amendedDoc.amendedFrom, validUser);
-      expect(frappeModelController.locals['User'][amendedDoc.name], isNotNull);
+      expect(frappeModelController.locals['User']![amendedDoc.name], isNotNull);
     });
 
     test('should throw NotASubmittedDocument if document is not submitted',
@@ -555,7 +557,7 @@ void main() {
       final amendedDoc = await frappeModelController.getDoc(User(), validUser,
           forceFetch: true);
 
-      expect(() => frappeModelController.amendDoc(amendedDoc.data),
+      expect(() => frappeModelController.amendDoc(amendedDoc.data!),
           throwsA(TypeMatcher<NotASubmittedDocument>()));
     });
   });
@@ -564,25 +566,25 @@ void main() {
     test('should successfully copy a doc', () async {
       final doc = await frappeModelController.getDoc(User(), validUser);
 
-      final copy = frappeModelController.copyDoc(doc.data);
+      final copy = frappeModelController.copyDoc(doc.data!);
 
-      expect(copy.name.contains('New'), true);
+      expect(copy.name!.contains('New'), true);
       expect(copy.isLocal, true);
       expect(copy.unsaved, true);
-      expect(frappeModelController.locals['User'][copy.name], isNotNull);
+      expect(frappeModelController.locals['User']![copy.name], isNotNull);
     });
 
     test('should throw EmptyDoctypeError if doctype is not defined', () async {
       final doc = await frappeModelController.getDoc(User(), validUser);
 
-      doc.data.doctype = null;
-      expect(() => frappeModelController.copyDoc(doc.data),
+      doc.data!.doctype = null;
+      expect(() => frappeModelController.copyDoc(doc.data!),
           throwsA(TypeMatcher<EmptyDoctypeError>()));
     });
   });
 
   group('Document Cancellation', () {
-    RenovationUserAgreement userAgreement;
+    RenovationUserAgreement? userAgreement;
 
     setUpAll(() async {
       final newDoc = frappeModelController.newDoc(RenovationUserAgreement());
@@ -593,13 +595,13 @@ void main() {
     test(
         'should successfully cancel a submitted document and update it locally',
         () async {
-      final response = await frappeModelController.cancelDoc(userAgreement);
+      final response = await frappeModelController.cancelDoc(userAgreement!);
       expect(response.isSuccess, true);
-      expect(response.data.docStatus, FrappeDocStatus.Cancelled);
+      expect(response.data!.docStatus, FrappeDocStatus.Cancelled);
       expect(
           frappeModelController
               .getDocFromCache<RenovationUserAgreement>(
-                  'Renovation User Agreement', 'TESTING CANCELLATION')
+                  'Renovation User Agreement', 'TESTING CANCELLATION')!
               .docStatus,
           FrappeDocStatus.Cancelled);
     });
@@ -619,9 +621,9 @@ void main() {
       final cancelDoc = await frappeModelController.cancelDoc(newDoc);
       expect(cancelDoc.isSuccess, false);
       expect(cancelDoc.httpCode, 404);
-      expect(
-          cancelDoc.error.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
-      expect(cancelDoc.error.type, RenovationError.NotFoundError);
+      expect(cancelDoc.error!.title,
+          FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
+      expect(cancelDoc.error!.type, RenovationError.NotFoundError);
     });
 
     test('should fail for non-existing document', () async {
@@ -632,13 +634,13 @@ void main() {
       final cancelDoc = await frappeModelController.cancelDoc(newDoc);
       expect(cancelDoc.isSuccess, false);
       expect(cancelDoc.httpCode, 404);
-      expect(
-          cancelDoc.error.title, FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
-      expect(cancelDoc.error.type, RenovationError.NotFoundError);
+      expect(cancelDoc.error!.title,
+          FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
+      expect(cancelDoc.error!.type, RenovationError.NotFoundError);
     });
 
     tearDownAll(() async {
-      await frappeModelController.cancelDoc(userAgreement);
+      await frappeModelController.cancelDoc(userAgreement!);
       await frappeModelController.deleteDoc(
           'Renovation User Agreement', 'TESTING CANCELLATION');
     });
@@ -650,25 +652,25 @@ void main() {
           doctype: 'User', txt: validUser.substring(0, 3));
 
       expect(response.isSuccess, true);
-      expect(response.data.isNotEmpty, true);
+      expect(response.data!.isNotEmpty, true);
     });
 
     test('should get a list of results using options', () async {
       final response = await frappeModelController.searchLink(
           doctype: 'User',
-          txt: TestManager.getVariable(EnvVariables.PrimaryUserEmail)
+          txt: TestManager.getVariable(EnvVariables.PrimaryUserEmail)!
               .substring(0, 3),
           options: <String, dynamic>{'searchField': 'email'});
 
       expect(response.isSuccess, true);
-      expect(response.data.isNotEmpty, true);
+      expect(response.data!.isNotEmpty, true);
     });
 
     test('should get an empty list for non-matching query', () async {
       final response = await frappeModelController.searchLink(
           doctype: 'User', txt: 'NONEXISTING');
       expect(response.isSuccess, true);
-      expect(response.data.isEmpty, true);
+      expect(response.data!.isEmpty, true);
     });
     test('should fail for non-existing doctype on search', () async {
       final response = await frappeModelController.searchLink(
@@ -676,8 +678,8 @@ void main() {
       expect(response.isSuccess, false);
       expect(response.httpCode, 404);
       expect(
-          response.error.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
-      expect(response.error.type, RenovationError.NotFoundError);
+          response.error!.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
+      expect(response.error!.type, RenovationError.NotFoundError);
     });
   });
 
@@ -811,10 +813,10 @@ void main() {
         final response = await frappeModelController.getDocsAssignedToUser(
             assignedTo: validSecondUser);
         expect(response.isSuccess, true);
-        expect(response.data.isNotEmpty, true);
-        expect(response.data.length, 3);
-        expect(response.data.first.assignedTo, validSecondUser);
-        expect(response.data.first.description, 'TESTING GET DOCS');
+        expect(response.data!.isNotEmpty, true);
+        expect(response.data!.length, 3);
+        expect(response.data!.first.assignedTo, validSecondUser);
+        expect(response.data!.first.description, 'TESTING GET DOCS');
       });
 
       test(
@@ -823,10 +825,10 @@ void main() {
         final response = await frappeModelController.getDocsAssignedToUser(
             assignedTo: validSecondUser, doctype: 'User');
         expect(response.isSuccess, true);
-        expect(response.data.isNotEmpty, true);
-        expect(response.data.length, 2);
-        expect(response.data.first.assignedTo, validSecondUser);
-        expect(response.data.first.description, 'TESTING GET DOCS');
+        expect(response.data!.isNotEmpty, true);
+        expect(response.data!.length, 2);
+        expect(response.data!.first.assignedTo, validSecondUser);
+        expect(response.data!.first.description, 'TESTING GET DOCS');
       });
 
       tearDownAll(() async {
@@ -866,9 +868,9 @@ void main() {
         final response = await frappeModelController.getUsersAssignedToDoc(
             doctype: 'Renovation Review', docName: 'RE-00001');
         expect(response.isSuccess, true);
-        expect(response.data.isNotEmpty, true);
-        expect(response.data.first is ToDo, true);
-        expect(response.data.length, 2);
+        expect(response.data!.isNotEmpty, true);
+        expect(response.data!.first is ToDo, true);
+        expect(response.data!.length, 2);
       });
     });
 
@@ -907,7 +909,7 @@ void main() {
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
-        expect(response.error.title,
+        expect(response.error!.title,
             FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
       });
 
@@ -917,7 +919,7 @@ void main() {
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
-        expect(response.error.title,
+        expect(response.error!.title,
             FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
       });
 
@@ -934,7 +936,7 @@ void main() {
             doctype: 'User', docName: validSecondUser, tag: '');
 
         expect(response.isSuccess, true);
-        expect(response.data.isEmpty, true);
+        expect(response.data!.isEmpty, true);
       });
 
       tearDownAll(() async {
@@ -967,7 +969,7 @@ void main() {
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
-        expect(response.error.title,
+        expect(response.error!.title,
             FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
       });
       test('should fail to remove tag on non-existing document', () async {
@@ -976,7 +978,7 @@ void main() {
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
-        expect(response.error.title,
+        expect(response.error!.title,
             FrappeModelController.DOCNAME_NOT_EXIST_TITLE);
       });
       test('should not fail for non-existing tag', () async {
@@ -999,7 +1001,7 @@ void main() {
             await frappeModelController.getTaggedDocs(doctype: 'User');
 
         expect(response.isSuccess, true);
-        expect(response.data.isNotEmpty, true);
+        expect(response.data!.isNotEmpty, true);
       });
 
       test(
@@ -1008,7 +1010,7 @@ void main() {
         final response = await frappeModelController.getTaggedDocs(
             doctype: 'User', tag: 'TEST GET DOCS');
         expect(response.isSuccess, true);
-        expect(response.data.isNotEmpty, true);
+        expect(response.data!.isNotEmpty, true);
       });
 
       test('should get an empty list of a certain doctype and a certain tag',
@@ -1017,7 +1019,7 @@ void main() {
             doctype: 'User', tag: 'NON EXISTING');
 
         expect(response.isSuccess, true);
-        expect(response.data.isEmpty, true);
+        expect(response.data!.isEmpty, true);
       });
 
       test('should fail to get tagged docs on non-existing doctype', () async {
@@ -1026,7 +1028,7 @@ void main() {
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
-        expect(response.error.title,
+        expect(response.error!.title,
             FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
       });
 
@@ -1050,7 +1052,7 @@ void main() {
         final response = await frappeModelController.getTags(doctype: 'User');
 
         expect(response.isSuccess, true);
-        expect(response.data.length, 3);
+        expect(response.data!.length, 3);
       });
 
       test('should get all tags of a doctype with searching by tag', () async {
@@ -1058,8 +1060,8 @@ void main() {
             doctype: 'User', likeTag: 'FIRST');
 
         expect(response.isSuccess, true);
-        expect(response.data.length, 1);
-        expect(response.data.first, 'FIRST TAG');
+        expect(response.data!.length, 1);
+        expect(response.data!.first, 'FIRST TAG');
       });
 
       tearDownAll(() async {
@@ -1078,8 +1080,8 @@ void main() {
       final response = await frappeModelController.getReport(report: 'TEST');
 
       expect(response.isSuccess, true);
-      expect(response.data.result.isNotEmpty, true);
-      expect(response.data.columns.isNotEmpty, true);
+      expect(response.data!.result!.isNotEmpty, true);
+      expect(response.data!.columns!.isNotEmpty, true);
     });
     test('should get report with filters successfully', () async {
       //TODO
@@ -1089,7 +1091,7 @@ void main() {
           await frappeModelController.getReport(report: 'NON EXISTING REPORT');
       expect(value.isSuccess, false);
       expect(value.httpCode, 404);
-      expect(value.error.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
+      expect(value.error!.title, FrappeModelController.DOCTYPE_NOT_EXIST_TITLE);
     });
   });
 
