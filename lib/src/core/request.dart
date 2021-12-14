@@ -282,10 +282,10 @@ class Request {
       ContentTypeLiterals.APPLICATION_JSON;
 
   /// Set [PersistCookieJar] with the directory path.
-  static void setupPersistentCookie(String dir) {
+  static void setupPersistentCookie(PersistCookieJar cookieJar) {
     // If the interceptor wasn't added to Dio
     if (_dio.interceptors.whereType<CookieManager>().isEmpty) {
-      _cookieJar = PersistCookieJar(dir: dir);
+      _cookieJar = cookieJar;
       _dio.interceptors.add(CookieManager(_cookieJar));
     }
   }

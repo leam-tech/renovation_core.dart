@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:logger/logger.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -101,15 +102,21 @@ class Renovation {
   BehaviorSubject<dynamic> messages = BehaviorSubject<dynamic>.seeded(null);
 
   /// Initialize the state of the renovation instance
-  Future<void> init<K extends SessionStatusInfo>(String hostUrl,
-      {RenovationBackend backend = RenovationBackend.frappe,
-      String clientId,
-      K sessionStatusInfo,
-      String cookieDir,
-      bool useJWT = false,
-      bool isBenchEnabled = false,
-      bool disableLog = false,
-      Logger customLogger}) async {
+  Future<void> init<K extends SessionStatusInfo>(
+    String hostUrl, {
+    RenovationBackend backend = RenovationBackend.frappe,
+    String clientId,
+    K sessionStatusInfo,
+    bool useJWT = false,
+    bool isBenchEnabled = false,
+    bool disableLog = false,
+    Logger customLogger,
+
+    /// Cookie JAR options
+    String cookieDir,
+    bool persistSession = true,
+    bool ignoreExpires = false,
+  }) async {
     final logger = customLogger ??
         Logger(
           filter: DebugFilter(disableLog: disableLog),
@@ -141,7 +148,12 @@ class Renovation {
       // Manage sessions using cookies instead of JWT
       if (!useJWT) {
         if (cookieDir != null) {
-          Request.setupPersistentCookie(cookieDir);
+          Request.setupPersistentCookie(
+            PersistCookieJar(
+                storage: FileStorage(cookieDir),
+                ignoreExpires: ignoreExpires,
+                persistSession: persistSession),
+          );
         } else {
           throw CookieDirNotSet();
         }

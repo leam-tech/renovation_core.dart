@@ -75,7 +75,7 @@ class FrappeLogManager extends RenovationController implements LogManager {
       _tags.addAll(tags);
     }
 
-    final req = r.rawResponse.request;
+    final req = r.rawResponse.requestOptions;
     final requestInfo =
         'Headers:\n${req.headers}\nParams:\n${json.encode(req.data)}';
 
