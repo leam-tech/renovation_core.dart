@@ -42,5 +42,5 @@ class AppNotInstalled extends Error {
   @override
   String toString() =>
       'The app "$appName" is not installed in the backend.\nPlease install it to be able to use the feature(s):\n\n'
-      '${features != null && features.isNotEmpty ? features.join("\n") : ""}\n';
+      '${features.isNotEmpty ? features.join("\n") : ""}\n';
 }

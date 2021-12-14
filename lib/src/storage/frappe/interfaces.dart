@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:meta/meta.dart';
 
 import '../../core/jsonable.dart';
 import '../../core/request.dart';
@@ -12,8 +11,8 @@ part 'interfaces.g.dart';
 @JsonSerializable()
 class FrappeUploadFileParams extends UploadFileParams with FrappeAPI {
   FrappeUploadFileParams(
-      {@required dynamic file,
-      @required String fileName,
+      {required dynamic file,
+      required String? fileName,
       this.isPrivate,
       this.folder = 'Home',
       this.doctype,
@@ -21,27 +20,27 @@ class FrappeUploadFileParams extends UploadFileParams with FrappeAPI {
       this.docField})
       : super(file: file, fileName: fileName);
 
-  factory FrappeUploadFileParams.fromJson(Map<String, dynamic> json) =>
-      _$FrappeUploadFileParamsFromJson(json);
+  factory FrappeUploadFileParams.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeUploadFileParamsFromJson(json!);
 
   @JsonKey(
       name: 'is_private',
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool isPrivate;
+  bool? isPrivate;
   @JsonKey()
-  String folder;
-  String doctype;
-  String docname;
+  String? folder;
+  String? doctype;
+  String? docname;
   @JsonKey(name: 'docfield')
-  String docField;
+  String? docField;
   @JsonKey(name: 'from_form')
-  int fromForm = 1;
+  int? fromForm = 1;
   @JsonKey(name: 'file_url')
-  String fileUrl;
+  String? fileUrl;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeUploadFileParams.fromJson(json) as T;
 
   @override
@@ -52,18 +51,18 @@ class FrappeUploadFileParams extends UploadFileParams with FrappeAPI {
 class FrappeUploadFileResponse extends UploadFileResponse {
   FrappeUploadFileResponse();
 
-  factory FrappeUploadFileResponse.fromJson(Map<String, dynamic> json) =>
-      _$FrappeUploadFileResponseFromJson(json);
+  factory FrappeUploadFileResponse.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeUploadFileResponseFromJson(json!);
 
   @JsonKey(
       name: 'is_private',
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool isPrivate;
-  String name;
+  bool? isPrivate;
+  String? name;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeUploadFileResponse.fromJson(json) as T;
 
   @override
@@ -74,38 +73,38 @@ class FrappeUploadFileResponse extends UploadFileResponse {
 class FrappeFile extends FrappeDocument {
   FrappeFile() : super('File');
 
-  factory FrappeFile.fromJson(Map<String, dynamic> json) =>
-      _$FrappeFileFromJson(json);
+  factory FrappeFile.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeFileFromJson(json!);
 
   @JsonKey(name: 'file_name')
-  String fileName;
+  String? fileName;
 
   @JsonKey(
       name: 'is_private',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool isPrivate;
+  bool? isPrivate;
 
   @JsonKey(name: 'file_size')
-  int fileSize;
+  int? fileSize;
 
   @JsonKey(name: 'file_url')
-  String fileUrl;
+  String? fileUrl;
 
   @JsonKey(
       name: 'is_folder',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool isFolder;
+  bool? isFolder;
 
   @JsonKey(name: 'attached_to_doctype')
-  String attachedToDoctype;
+  String? attachedToDoctype;
 
   @JsonKey(name: 'attached_to_name')
-  String attachedToName;
+  String? attachedToName;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => FrappeFile.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => FrappeFile.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeFileToJson(this);
@@ -115,14 +114,14 @@ class FrappeFile extends FrappeDocument {
 class FrappeUploadStatus extends UploadFileStatus {
   FrappeUploadStatus();
 
-  factory FrappeUploadStatus.fromJson(Map<String, dynamic> json) =>
-      _$FrappeUploadStatusFromJson(json);
+  factory FrappeUploadStatus.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeUploadStatusFromJson(json!);
 
   @JsonKey(ignore: true)
-  RequestResponse<FrappeUploadFileResponse> r;
+  RequestResponse<FrappeUploadFileResponse?>? r;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeUploadStatus.fromJson(json) as T;
 
   @override
@@ -134,16 +133,16 @@ class FrappeUploadStatus extends UploadFileStatus {
 class FrappeUploadRequestSlice extends JSONAble {
   FrappeUploadRequestSlice();
 
-  num currentSlice;
+  num? currentSlice;
 
-  factory FrappeUploadRequestSlice.fromJson(Map<String, dynamic> json) =>
-      _$FrappeUploadRequestSliceFromJson(json);
+  factory FrappeUploadRequestSlice.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeUploadRequestSliceFromJson(json!);
 
   @override
   Map<String, dynamic> toJson() => _$FrappeUploadRequestSliceToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeUploadRequestSlice.fromJson(json) as T;
 }
 
@@ -153,20 +152,20 @@ class FrappeUploadAcceptSlice extends JSONAble {
   FrappeUploadAcceptSlice();
 
   @JsonKey(name: 'is_private')
-  bool isPrivate;
-  String name;
-  num size;
-  String type;
-  List<int> data;
+  bool? isPrivate;
+  String? name;
+  num? size;
+  String? type;
+  List<int>? data;
 
-  factory FrappeUploadAcceptSlice.fromJson(Map<String, dynamic> json) =>
-      _$FrappeUploadAcceptSliceFromJson(json);
+  factory FrappeUploadAcceptSlice.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeUploadAcceptSliceFromJson(json!);
 
   @override
   Map<String, dynamic> toJson() => _$FrappeUploadAcceptSliceToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeUploadAcceptSlice.fromJson(json) as T;
 }
 
@@ -176,15 +175,15 @@ class FrappeUploadEnd extends JSONAble {
   FrappeUploadEnd();
 
   @JsonKey(name: 'file_url')
-  String fileUrl;
+  String? fileUrl;
 
-  factory FrappeUploadEnd.fromJson(Map<String, dynamic> json) =>
-      _$FrappeUploadEndFromJson(json);
+  factory FrappeUploadEnd.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeUploadEndFromJson(json!);
 
   @override
   Map<String, dynamic> toJson() => _$FrappeUploadEndToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeUploadEnd.fromJson(json) as T;
 }

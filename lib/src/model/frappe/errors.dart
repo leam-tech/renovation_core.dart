@@ -29,7 +29,7 @@ class EmptyDoctypeError extends Error {
   @override
   String toString() => 'The doctype should not be null or empty';
 
-  static void verify(String doctype) {
+  static void verify(String? doctype) {
     if (doctype == null || doctype.isEmpty) throw EmptyDoctypeError();
   }
 }
@@ -38,7 +38,7 @@ class EmptyDocNameError extends Error {
   @override
   String toString() => 'The docname should not be null or empty';
 
-  static void verify(String docName) {
+  static void verify(String? docName) {
     if (docName == null || docName.isEmpty) throw EmptyDocNameError();
   }
 }
@@ -48,7 +48,7 @@ class EmptyDocFieldError extends Error {
   String toString() => 'The docfield should not be null or empty';
 
   static void verify(String docField) {
-    if (docField == null || docField.isEmpty) throw EmptyDocFieldError();
+    if (docField.isEmpty) throw EmptyDocFieldError();
   }
 }
 

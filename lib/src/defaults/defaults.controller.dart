@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 
 import '../core/config.dart';
 import '../core/renovation.controller.dart';
@@ -10,9 +9,9 @@ abstract class DefaultsController extends RenovationController {
 
   /// Gets the value given the [key]. Can specify the [parent] if the key is duplicated under a different parent.
   Future<RequestResponse<dynamic>> getDefault(
-      {@required String key, String parent});
+      {required String key, String? parent});
 
   /// Sets a default value in backend for a specified key and return nothing if successful.
   Future<RequestResponse<dynamic>> setDefaults(
-      {@required String key, @required dynamic value, String parent});
+      {required String key, required dynamic value, String? parent});
 }

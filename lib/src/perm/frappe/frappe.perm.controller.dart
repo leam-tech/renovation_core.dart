@@ -1,5 +1,4 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:meta/meta.dart';
 
 import '../../core/config.dart';
 import '../../core/errors.dart';
@@ -25,11 +24,11 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
   ///
   /// If a user isn't signed in, the Guest basic permissions is retrieved.
   @override
-  Future<RequestResponse<BasicPermInfo>> loadBasicPerms() async {
+  Future<RequestResponse<BasicPermInfo?>> loadBasicPerms() async {
     await getFrappe().checkAppInstalled(features: ['loadBasicPerms']);
 
     if (basicPerms != null) {
-      if (basicPerms.isLoading) {
+      if (basicPerms!.isLoading!) {
         await Future<dynamic>.delayed(Duration(milliseconds: 50));
         return loadBasicPerms();
       } else {
@@ -47,8 +46,8 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
         method: HttpMethod.POST,
         contentType: ContentTypeLiterals.APPLICATION_JSON);
     if (response.isSuccess && response.data != null) {
-      response.data.message != null
-          ? basicPerms = (BasicPermInfo.fromJson(response.data.message)
+      response.data!.message != null
+          ? basicPerms = (BasicPermInfo.fromJson(response.data!.message)
             ..user = user
             ..isLoading = false)
           : basicPerms = BasicPermInfo();
@@ -63,7 +62,7 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
   /// Optionally can specify the permission of a certain [document] (TBD).
   @override
   Future<RequestResponse<List<DocPerm>>> getPerm<T extends FrappeDocument>(
-      {@required String doctype, T document}) async {
+      {required String? doctype, T? document}) async {
     var perm = <DocPerm>[
       DocPerm()
         ..read = false
@@ -79,40 +78,40 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
       getFrappeMetaController().getDocMeta(doctype: doctype),
       getFrappeAuthController().getCurrentUserRoles()
     ]);
-    final RequestResponse<DocType> docMeta = responses[0];
-    final RequestResponse<List<String>> currentUserRoles = responses[1];
+    final docMeta = responses[0] as RequestResponse<DocType?>;
+    final currentUserRoles = responses[1] as RequestResponse<List<String>?>?;
 
     if (!docMeta.isSuccess) {
       return RequestResponse.success(perm);
     }
 
-    if (!currentUserRoles.isSuccess) {
+    if (!currentUserRoles!.isSuccess) {
       return RequestResponse.success(perm);
     }
 
     // read from meta.permissions
-    for (final doctypePerm in docMeta.data.permissions) {
+    for (final doctypePerm in docMeta.data!.permissions!) {
       // apply only if this DocPerm role is present for currentUser
-      if (!currentUserRoles.data.contains(doctypePerm.role)) {
+      if (!currentUserRoles.data!.contains(doctypePerm.role)) {
         continue;
       }
 
       // permlevels 0,1,2..
       // There's a new perm level, need to grow the list
-      if (perm.length < doctypePerm.permLevel + 1) {
+      if (perm.length < doctypePerm.permLevel! + 1) {
         perm.add(DocPerm());
-        perm[doctypePerm.permLevel].permLevel = doctypePerm.permLevel;
+        perm[doctypePerm.permLevel!].permLevel = doctypePerm.permLevel;
       }
 
       // For User permissions
       // NOTE: this data is required for displaying match rules in ListComponent
       for (final pType in PermissionType.values) {
-        final permission = perm[doctypePerm.permLevel].toJson();
+        final permission = perm[doctypePerm.permLevel!].toJson();
         final permissionType = EnumToString.convertToString(pType);
         permission[permissionType] = permission[permissionType] == 1
             ? permission[permissionType]
             : (doctypePerm.toJson()[permissionType] ?? 0);
-        perm[doctypePerm.permLevel] = DocPerm.fromJson(permission);
+        perm[doctypePerm.permLevel!] = DocPerm.fromJson(permission);
       }
     }
     // TODO : Implement Document Specific rules
@@ -126,10 +125,10 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
   /// If there are errors, `false` is returned.
   @override
   Future<bool> hasPerm(
-      {@required String doctype,
-      @required PermissionType pType,
-      int permLevel,
-      String docname}) async {
+      {required String? doctype,
+      required PermissionType pType,
+      int? permLevel,
+      String? docname}) async {
     if (!doctypePerms.containsKey(doctype)) {
       final permsR = await getPerm(doctype: doctype);
       if (permsR.isSuccess) {
@@ -145,18 +144,17 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
     if (perms == null) {
       return false;
     }
-    if (perms.length < permLevel + 1 || perms[permLevel] == null) {
+    if (perms.length < permLevel + 1) {
       return false;
     }
 
     var perm =
         perms[permLevel].toJson()[EnumToString.convertToString(pType)] == 1;
     if (permLevel == 0 && docname != null) {
-      final docInfo = await getFrappeMetaController()
-          .getDocInfo(doctype: doctype, docname: docname);
+      final docInfo = await getFrappeMetaController().getDocInfo(doctype: doctype, docname: docname);
       if (docInfo.isSuccess &&
           docInfo.data != null &&
-          docInfo.data.permissions
+          docInfo.data!.permissions!
                   .toJson()[EnumToString.convertToString(pType)] ==
               0) {
         perm = false;
@@ -170,9 +168,9 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
   /// If one of the perms is not allowed, the method returns `false`.
   @override
   Future<bool> hasPerms(
-      {@required String doctype,
-      @required List<PermissionType> pTypes,
-      String docname}) async {
+      {required String doctype,
+      required List<PermissionType> pTypes,
+      String? docname}) async {
     for (final pType in pTypes) {
       final hasPerm = await this.hasPerm(
           doctype: doctype, pType: pType, permLevel: 0, docname: docname);
@@ -184,12 +182,12 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
   }
 
   @override
-  ErrorDetail handleError(String errorId, ErrorDetail error) {
+  ErrorDetail handleError(String errorId, ErrorDetail? error) {
     ErrorDetail err;
     switch (errorId) {
       case 'load_basic_perms':
       default:
-        err = RenovationController.genericError(error);
+        err = RenovationController.genericError(error!);
     }
 
     return err;

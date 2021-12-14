@@ -17,19 +17,21 @@ abstract class IErrorHandler {
 
 /// Model class holding the details of an error along with the original request
 class ErrorDetail {
-  ErrorDetail({this.title, this.description, this.type, this.info});
+  ErrorDetail({this.title, this.description, this.type, this.info}){
+    info ??= Information();
+  }
 
   /// Title of the message. Can be used in the front-end
-  String title;
+  String? title;
 
   /// A short description of the error than can be used in the front-end
-  String description;
+  String? description;
 
   /// Type of error (validation, permission, etc...)
-  RenovationError type;
+  RenovationError? type;
 
   /// An instance of [Information] that contain more details
-  Information info;
+  Information? info;
 }
 
 /// A class holding the raw information in addition to possible causes and suggestions for the errors
@@ -44,25 +46,25 @@ class Information {
       this.rawError});
 
   /// Message from the server (back-end), if any.
-  List<String> serverMessages;
+  List<String>? serverMessages;
 
   /// HTTP code if the error is from the server
-  int httpCode;
+  int? httpCode;
 
   /// A cause of the error, if any
-  String cause;
+  String? cause;
 
   /// A suggestion message, if any, to resolve the error
-  String suggestion;
+  String? suggestion;
 
   /// Further details for debugging/logging
   dynamic data;
 
   /// Raw Response from [Dio]
-  Response<String> rawResponse;
+  Response<String>? rawResponse;
 
   /// Raw Error from [Dio]
-  DioError rawError;
+  DioError? rawError;
 }
 
 /// An error class to be thrown when a class doesn't implement [JSONAble] abstract methods

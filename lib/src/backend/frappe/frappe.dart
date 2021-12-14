@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:meta/meta.dart';
 
 import '../../core/config.dart';
 import '../../core/errors.dart';
@@ -32,7 +31,7 @@ class Frappe extends RenovationController implements FCMController {
   List<AppVersion> get allAppVersions => _appVersions.values.toList();
 
   /// Returns the [AppVersion] of the app *frappe*.
-  AppVersion get frappeVersion =>
+  AppVersion? get frappeVersion =>
       _appVersions.containsKey('frappe') ? _appVersions['frappe'] : null;
 
   /// Calls renovation_manager frappe site and the server will set.
@@ -59,7 +58,7 @@ class Frappe extends RenovationController implements FCMController {
   ///
   /// In case the client id is valid, it's returned within [RequestResponse].
   ///
-  Future<RequestResponse<String>> verifyClientId(String id) async {
+  Future<RequestResponse<String?>> verifyClientId(String? id) async {
     if (id != null) {
       final r = await fetchId();
       if (!r.isSuccess) {
@@ -83,7 +82,7 @@ class Frappe extends RenovationController implements FCMController {
       } else {
         config.logger.e('Renovation Core: Failed fetching client id');
       }
-      return RequestResponse.success<String>(fetchedID.data);
+      return RequestResponse.success<String?>(fetchedID.data);
     }
     return RequestResponse.fail<String>(handleError(
         'verifyClientId',
@@ -96,7 +95,7 @@ class Frappe extends RenovationController implements FCMController {
   }
 
   /// Helper method to get the ID from the backend
-  Future<RequestResponse<String>> fetchId() async {
+  Future<RequestResponse<String?>> fetchId() async {
     final url = config.hostUrl;
     final data = <String, String>{'cmd': 'renovation_bench.get_client_id'};
 
@@ -108,13 +107,13 @@ class Frappe extends RenovationController implements FCMController {
     };
     final dio = Dio();
     Response<String> response;
-    Map<String, dynamic> jsonResponse;
+    Map<String, dynamic>? jsonResponse;
     try {
       response = await dio.post<String>(url, data: data, options: options);
 
-      if (response.statusCode / 100 == 2) {
-        return RequestResponse.success<String>(
-            json.decode(response.data)['message']);
+      if (response.statusCode! / 100 == 2) {
+        return RequestResponse.success<String?>(
+            json.decode(response.data!)['message']);
       }
 
       jsonResponse = Request.convertToMap(response);
@@ -129,10 +128,10 @@ class Frappe extends RenovationController implements FCMController {
           'FetchId',
           ErrorDetail(
               info: Information(
-                  httpCode: e.response.statusCode,
-                  data: Request.isJsonResponse(e.response)
-                      ? Request.convertToMap(e.response)
-                      : e.response.data,
+                  httpCode: e.response!.statusCode,
+                  data: Request.isJsonResponse(e.response!)
+                      ? Request.convertToMap(e.response!)
+                      : e.response!.data,
                   rawError: e))));
     }
   }
@@ -141,7 +140,7 @@ class Frappe extends RenovationController implements FCMController {
   ///
   /// If the token is already registered, the backend will silently returning a success.
   @override
-  Future<RequestResponse<String>> registerFCMToken(String token) async {
+  Future<RequestResponse<String?>> registerFCMToken(String token) async {
     await checkAppInstalled(features: ['registerFCMToken']);
 
     final response = await Request.initiateRequest(
@@ -154,7 +153,7 @@ class Frappe extends RenovationController implements FCMController {
         });
 
     if (response.isSuccess == true) {
-      return RequestResponse.success(response.data.message,
+      return RequestResponse.success(response.data!.message,
           rawResponse: response.rawResponse);
     }
     response.isSuccess = false;
@@ -166,14 +165,14 @@ class Frappe extends RenovationController implements FCMController {
                     data: response.data,
                     httpCode: response.httpCode,
                     rawResponse: response.rawResponse)
-                  ..rawError = response?.error?.info?.rawError)));
+                  ..rawError = response.error?.info?.rawError)));
   }
 
   /// Removes the token from the currently signed in user.
   ///
   /// If it fails, a failure is returned and the user should not be logged out.
   @override
-  Future<RequestResponse<FrappeResponse>> unregisterFCMToken(
+  Future<RequestResponse<FrappeResponse?>> unregisterFCMToken(
       String token) async {
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -194,7 +193,7 @@ class Frappe extends RenovationController implements FCMController {
                     data: response.data,
                     httpCode: response.httpCode,
                     rawResponse: response.rawResponse)
-                  ..rawError = response?.error?.info?.rawError)));
+                  ..rawError = response.error?.info?.rawError)));
   }
 
   /// Returns a list of [FCMNotification] of a user.
@@ -206,8 +205,8 @@ class Frappe extends RenovationController implements FCMController {
   /// Extra filters can be specified for the doctype `Communication` based on
   /// the [DBFilter] specifications.
   @override
-  Future<RequestResponse<List<FCMNotification>>> getFCMNotifications(
-      {bool seen,
+  Future<RequestResponse<List<FCMNotification>?>> getFCMNotifications(
+      {bool? seen,
       int limitStart = 0,
       int limitPageLength = 20,
       dynamic filters}) async {
@@ -236,8 +235,8 @@ class Frappe extends RenovationController implements FCMController {
         data: requestData);
 
     if (response.isSuccess == true) {
-      if (response.data != null && response.data.message is List) {
-        List<dynamic> jsonArray = response.data.message;
+      if (response.data != null && response.data!.message is List) {
+        List<dynamic> jsonArray = response.data!.message;
         var notifications = List<FCMNotification>.of(jsonArray.map(
             (dynamic notification) => FCMNotification.fromJson(notification)));
         return RequestResponse.success(notifications,
@@ -272,8 +271,8 @@ class Frappe extends RenovationController implements FCMController {
         });
 
     if (response.isSuccess == true) {
-      if (response.data != null && response.data.message is String) {
-        return RequestResponse.success<String>(response.data.message,
+      if (response.data != null && response.data!.message is String) {
+        return RequestResponse.success<String?>(response.data!.message,
             rawResponse: response.rawResponse);
       }
     }
@@ -286,7 +285,7 @@ class Frappe extends RenovationController implements FCMController {
                     data: response.data,
                     httpCode: response.httpCode,
                     rawResponse: response.rawResponse)
-                  ..rawError = response?.error?.info?.rawError)));
+                  ..rawError = response.error?.info?.rawError)));
   }
 
   /// Loads the apps installed in Frappé site and their versions.
@@ -294,14 +293,14 @@ class Frappe extends RenovationController implements FCMController {
   /// Sets [_appVersions] on successful loading and returning `true` within `RequestResponse`.
   ///
   /// If loading fails, a failure is returned.
-  Future<RequestResponse<bool>> loadAppVersions() async {
+  Future<RequestResponse<bool?>> loadAppVersions() async {
     final response = await config.coreInstance.call(
         <String, dynamic>{'cmd': 'renovation_core.utils.site.get_versions'});
 
     appVersionsLoaded = true;
 
     if (response.isSuccess) {
-      final version = response.data.message as Map<String, dynamic>;
+      final version = response.data!.message as Map<String, dynamic>?;
       if (version != null) {
         version.forEach((String k, dynamic v) {
           _appVersions[k] = AppVersion.fromString(k, v);
@@ -316,7 +315,7 @@ class Frappe extends RenovationController implements FCMController {
   /// Returns the [AppVersion] of a certain app [appName].
   ///
   /// Returns `null` if the app doesn't exist in the map [_appVersions].
-  AppVersion getAppsVersion(String appName) =>
+  AppVersion? getAppsVersion(String appName) =>
       _appVersions.containsKey(appName) ? _appVersions[appName] : null;
 
   /// Silent method throwing an error [AppNotInstalled] if [appName] is not installed in the backend and [throwError] is set.
@@ -331,7 +330,7 @@ class Frappe extends RenovationController implements FCMController {
   /// [throwError] defaults to `true`
   ///
   Future<void> checkAppInstalled(
-      {@required List<String> features,
+      {required List<String> features,
       bool throwError = true,
       String appName = 'renovation_core'}) async {
     while (!appVersionsLoaded) {

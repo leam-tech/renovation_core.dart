@@ -27,14 +27,15 @@ abstract class TranslationController extends RenovationController {
       <String, Map<String, String>>{};
 
   /// Loads the translation of the selected language from the backend.
-  Future<RequestResponse<Map<String, String>>> loadTranslations({String lang});
+  Future<RequestResponse<Map<String, String>?>> loadTranslations(
+      {String? lang});
 
   /// Returns the translated text paired with the key [txt].
   ///
   /// If [txt] doesn't exist for a certain language or the [lang] is not defined in the Map,
   ///
   /// [txt] is returned as-is.
-  String getMessage({@required String txt, String lang}) {
+  String? getMessage({required String? txt, String? lang}) {
     lang ??= currentLanguage;
     if (txt == null) {
       return txt;
@@ -47,19 +48,19 @@ abstract class TranslationController extends RenovationController {
   /// Note: This will overwrite the existing map.
   ///
   /// If `null` is passed as [dict], an empty Map will be set instead.
-  void setMessagesDict({@required Map<String, String> dict, String lang}) {
+  void setMessagesDict({required Map<String, String> dict, String? lang}) {
     lang ??= currentLanguage;
-    _messages[lang] = dict ?? <String, String>{};
+    _messages[lang] = dict;
   }
 
   /// Add translations to the existing Map.
   ///
   /// Unlike [setMessagesDict], this will not overwrite the existing map, just adds to it (or replace in case the key is duplicated).
-  void extendDictionary({@required Map<String, String> dict, String lang}) {
+  void extendDictionary({required Map<String, String>? dict, String? lang}) {
     lang ??= currentLanguage;
-    if (dict != null && dict is Map<String, String>) {
+    if (dict != null) {
       _messages[lang] ??= <String, String>{};
-      _messages[lang].addAll(dict);
+      _messages[lang]?.addAll(dict);
     }
   }
 
@@ -67,7 +68,7 @@ abstract class TranslationController extends RenovationController {
   void setCurrentLanguage(String lang) => currentLanguage = lang;
 
   /// Returns the [currentLanguage].
-  String getCurrentLanguage() => currentLanguage;
+  String? getCurrentLanguage() => currentLanguage;
 
   /// Removes all translations saved in messages dictionary.
   @override

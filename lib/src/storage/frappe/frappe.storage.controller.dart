@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../core/config.dart';
@@ -19,7 +18,7 @@ import 'frappe.socketiouploader.dart';
 import 'interfaces.dart';
 
 class FrappeStorageController extends StorageController<FrappeUploadFileParams,
-    FrappeUploadFileResponse, FrappeUploadStatus> {
+    FrappeUploadFileResponse?, FrappeUploadStatus> {
   FrappeStorageController(RenovationConfig config) : super(config);
 
   /// Validate the arguments of the file to be uploaded.
@@ -35,7 +34,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
     if (uploadFileParams.file == null) throw MissingFileError();
 
     if (uploadFileParams.fileName == null ||
-        uploadFileParams.fileName.isEmpty) {
+        uploadFileParams.fileName!.isEmpty) {
       throw MissingFileNameError();
     }
 
@@ -100,7 +99,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
           break;
         case UploadingStatus.detail_error:
         default:
-          RequestResponse<FrappeUploadFileResponse> response;
+          RequestResponse<FrappeUploadFileResponse?>? response;
           if (uploadStatus.r != null) {
             response = uploadStatus.r;
           } else {
@@ -123,7 +122,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
   ///
   /// Handles files of type [File] if native and [Uint8List] if from the web.
   @override
-  Future<RequestResponse<FrappeUploadFileResponse>> uploadViaHTTP(
+  Future<RequestResponse<FrappeUploadFileResponse?>> uploadViaHTTP(
       FrappeUploadFileParams uploadFileParams) async {
     await getFrappe().checkAppInstalled(features: ['uploadViaHTTP']);
 
@@ -145,7 +144,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
         data: uploadFileParams.toJson());
 
     if (response.isSuccess) {
-      final dynamic responseObj = response.data.message;
+      final dynamic responseObj = response.data!.message;
       if (responseObj != null) {
         final uploadFileResponse = FrappeUploadFileResponse()
             .fromJson<FrappeUploadFileResponse>(responseObj);
@@ -168,11 +167,11 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
   ///
   /// It calls `getList()` of [FrappeModelController].
   @override
-  Future<RequestResponse<bool>> checkFolderExists(String folderDir) async {
+  Future<RequestResponse<bool?>> checkFolderExists(String folderDir) async {
     final response = await config.coreInstance.model.getList(FrappeFile(),
         fields: ['name'], filters: {'is_folder': 1, 'name': folderDir});
     if (response.isSuccess) {
-      return RequestResponse.success(response.data.isNotEmpty);
+      return RequestResponse.success(response.data?.isNotEmpty);
     } else {
       return RequestResponse.fail(
           handleError('checkFolderExists', response.error));
@@ -187,8 +186,8 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
   ///
   /// [folderName] must not contain a forward-slash, otherwise an error is returned within [RequestResponse].
   @override
-  Future<RequestResponse<bool>> createFolder(
-      {@required String folderName, String parentFolder = 'Home'}) async {
+  Future<RequestResponse<bool?>> createFolder(
+      {required String folderName, String? parentFolder = 'Home'}) async {
     if (folderName.contains('/')) {
       return RequestResponse.fail(handleError(
           'invalid_foldername_forward_slash',
@@ -214,7 +213,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
   ///
   /// In case [ref] is `null` or contains "http", [ref] is returned as-is.
   @override
-  String getUrl(String ref) {
+  String? getUrl(String? ref) {
     if (ref == null) return ref;
 
     // Already a well formed url, return it as-is.
@@ -224,16 +223,18 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
   }
 
   @override
-  ErrorDetail handleError(String errorId, ErrorDetail error) {
+  ErrorDetail handleError(String? errorId, ErrorDetail? error) {
+    error ??= RenovationController.genericError(error);
+
     switch (errorId) {
       case 'create_folder':
-        if (error.info.httpCode == 412) {
+        if (error.info?.httpCode == 412) {
           error = handleError('invalid_foldername_forward_slash', error);
-        } else if (error.info.httpCode == 409) {
+        } else if (error.info?.httpCode == 409) {
           error
             ..title = 'Folder with same name exists'
             ..type = RenovationError.DuplicateEntryError
-            ..info = (error.info
+            ..info = ((error.info ?? Information())
               ..httpCode = 409
               ..cause = 'A folder with same name exists'
               ..suggestion =
@@ -245,18 +246,19 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
       case 'invalid_foldername_forward_slash':
         error
           ..title = 'Invalid Folder Name'
-          ..info = (error.info
+          ..info = ((error.info ?? Information())
             ..httpCode = 412
             ..cause = 'Invalid folder name: contains forward slash'
             ..suggestion = 'Remove the forward slash from the name');
         break;
       case 'uploadViaHttp':
-        if (error.info.rawResponse.data
-            .contains('Same file has already been attached to the record')) {
+        if (error.info?.rawResponse?.data?.contains(
+                'Same file has already been attached to the record') ??
+            false) {
           error
             ..type = RenovationError.DuplicateEntryError
             ..title = 'File already exists with attached to the document'
-            ..info = (error.info
+            ..info = ((error.info ?? Information())
               ..httpCode = 409
               ..cause = 'Same file was uploaded earlier to the document'
               ..suggestion =

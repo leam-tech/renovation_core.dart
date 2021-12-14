@@ -7,7 +7,7 @@
 String toTitleCase(String s) => s.replaceAllMapped(
     RegExp('/\w\S*/g'),
     (Match txt) =>
-        txt[0].toUpperCase() + txt.toString().substring(1).toLowerCase());
+        txt[0]!.toUpperCase() + txt.toString().substring(1).toLowerCase());
 
 /// Helper function to convert an underscore string [s] to camel case.
 ///

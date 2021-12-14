@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:meta/meta.dart';
 
 import '../../auth/frappe/errors.dart';
 import '../../core/config.dart';
@@ -27,7 +26,7 @@ class FrappeDefaultsController extends DefaultsController {
   /// Throws [NotLoggedInUser] if the user is not logged in.
   @override
   Future<RequestResponse<dynamic>> getDefault(
-      {@required String key, String parent = '__default'}) async {
+      {required String key, String? parent = '__default'}) async {
     await getFrappe().checkAppInstalled(features: ['getDefault']);
 
     if (!config.coreInstance.auth.isLoggedIn) throw NotLoggedInUser();
@@ -43,10 +42,10 @@ class FrappeDefaultsController extends DefaultsController {
         contentType: ContentTypeLiterals.APPLICATION_X_WWW_FORM_URLENCODED,
         data: <String, dynamic>{'key': key, 'parent': parent});
     if (response.isSuccess) {
-      return RequestResponse.success<dynamic>(response.data.message,
+      return RequestResponse.success<dynamic>(response.data!.message,
           rawResponse: response.rawResponse);
     } else {
-      return RequestResponse.fail<dynamic>(handleError(null, response.error));
+      return RequestResponse.fail<dynamic>(handleError(null, response.error!));
     }
   }
 
@@ -59,9 +58,9 @@ class FrappeDefaultsController extends DefaultsController {
   /// Throws [NotLoggedInUser] if the user is not logged in.
   @override
   Future<RequestResponse<dynamic>> setDefaults(
-      {@required String key,
-      @required dynamic value,
-      String parent = '__default'}) async {
+      {required String key,
+      required dynamic value,
+      String? parent = '__default'}) async {
     if (!config.coreInstance.auth.isLoggedIn) throw NotLoggedInUser();
 
     dynamic _value;
@@ -99,9 +98,9 @@ class FrappeDefaultsController extends DefaultsController {
         data: <String, dynamic>{'key': key, 'value': _value, 'parent': parent});
 
     if (response.isSuccess) {
-      return RequestResponse.success<dynamic>(response.data.message);
+      return RequestResponse.success<dynamic>(response.data!.message);
     } else {
-      return RequestResponse.fail<dynamic>(handleError(null, response.error));
+      return RequestResponse.fail<dynamic>(handleError(null, response.error!));
     }
   }
 
@@ -109,6 +108,6 @@ class FrappeDefaultsController extends DefaultsController {
   void clearCache() {}
 
   @override
-  ErrorDetail handleError(String errorId, ErrorDetail error) =>
+  ErrorDetail handleError(String? errorId, ErrorDetail error) =>
       RenovationController.genericError(error);
 }

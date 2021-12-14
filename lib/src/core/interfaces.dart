@@ -9,32 +9,32 @@ part 'interfaces.g.dart';
 class FrappeResponse extends JSONAble {
   FrappeResponse();
 
-  factory FrappeResponse.fromJson(Map<String, dynamic> json) =>
-      _$FrappeResponseFromJson(json);
+  factory FrappeResponse.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeResponseFromJson(json!);
 
   @JsonKey(name: '_server_messages')
-  String serverMessages;
+  String? serverMessages;
 
-  String exc;
+  String? exc;
 
   @JsonKey(name: 'exc_type')
-  String excType;
+  String? excType;
 
   dynamic message;
 
   @JsonKey(name: 'session_expired')
-  int sessionExpired;
+  int? sessionExpired;
 
-  String exception;
+  String? exception;
 
-  String data;
+  String? data;
 
-  String traceback;
+  String? traceback;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeResponseToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeResponse.fromJson(json) as T;
 }

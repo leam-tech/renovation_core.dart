@@ -7,7 +7,7 @@ import 'document.dart';
 
 /// Use this mixin when [cmd] needs to be included in the JSON object of Frappe's API
 mixin FrappeAPI on JSONAble {
-  String cmd;
+  String? cmd;
 }
 
 /// A helper class containing method to be used with [JsonKey]
@@ -18,12 +18,12 @@ mixin FrappeAPI on JSONAble {
 ///
 /// The reverse method can be used as well when converting back to JSON, for instance, [FrappeDocFieldConverter.boolToCheck]
 class FrappeDocFieldConverter {
-  static int idxFromString(dynamic idx) =>
-      idx is String ? int.parse(idx) : idx as int;
+  static int? idxFromString(dynamic idx) =>
+      idx is String ? int.parse(idx) : idx as int?;
 
   /// Converts to the boolean representation of the "Check" docfield in Frappé
   /// `false` is represented as `0` in Frappé while `true` is represented as `1`
-  static bool checkToBool(int value) {
+  static bool checkToBool(int? value) {
     if (value == null) {
       return false;
     }
@@ -34,7 +34,7 @@ class FrappeDocFieldConverter {
   }
 
   /// Converts the value of a check (bool) to Frappé representation (0 or 1)
-  static int boolToCheck(bool boolValue) {
+  static int? boolToCheck(bool? boolValue) {
     if (boolValue == null) {
       return null;
     }
@@ -42,7 +42,7 @@ class FrappeDocFieldConverter {
   }
 
   /// Converts the docStatus of a document from `0, 1 or 2` to [FrappeDocStatus]
-  static FrappeDocStatus intToFrappeDocStatus(int docStatus) {
+  static FrappeDocStatus? intToFrappeDocStatus(int? docStatus) {
     if (docStatus == null) {
       return null;
     }
@@ -53,14 +53,14 @@ class FrappeDocFieldConverter {
   }
 
   /// Converts the docStatus of a document [FrappeDocStatus] to its representation in Frappé `0, 1 or 2`
-  static int frappeDocStatusToInt(FrappeDocStatus docStatus) {
+  static int? frappeDocStatusToInt(FrappeDocStatus? docStatus) {
     if (docStatus == null) {
       return null;
     }
     return docStatus.index;
   }
 
-  static String toFrappeDateTime(DateTime dateTime) {
+  static String? toFrappeDateTime(DateTime? dateTime) {
     if (dateTime == null) {
       return null;
     }

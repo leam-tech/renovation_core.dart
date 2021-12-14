@@ -11,8 +11,8 @@ abstract class FCMController {
   Future<RequestResponse<dynamic>> unregisterFCMToken(String token);
 
   /// Used to get FCM Notifications.
-  Future<RequestResponse<List<FCMNotification>>> getFCMNotifications(
-      {bool seen});
+  Future<RequestResponse<List<FCMNotification>?>> getFCMNotifications(
+      {bool? seen});
 
   /// Used to mark FCM Notification as read
   Future<RequestResponse<dynamic>> markFCMNotificationsAsSeen(String messageId);

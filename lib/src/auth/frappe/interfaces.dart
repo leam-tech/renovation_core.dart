@@ -13,17 +13,17 @@ part 'interfaces.g.dart';
 class SendOTPResponse extends JSONAble {
   SendOTPResponse(this.status, this.mobile);
 
-  factory SendOTPResponse.fromJson(Map<String, dynamic> json) =>
-      _$SendOTPResponseFromJson(json);
+  factory SendOTPResponse.fromJson(Map<String, dynamic>? json) =>
+      _$SendOTPResponseFromJson(json!);
 
-  String status = 'success';
-  String mobile;
+  String? status = 'success';
+  String? mobile;
 
   @override
   Map<String, dynamic> toJson() => _$SendOTPResponseToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       SendOTPResponse.fromJson(json) as T;
 }
 
@@ -31,53 +31,53 @@ class SendOTPResponse extends JSONAble {
 class VerifyOTPResponse extends JSONAble {
   VerifyOTPResponse(this.status, this.mobile);
 
-  factory VerifyOTPResponse.fromJson(Map<String, dynamic> json) =>
-      _$VerifyOTPResponseFromJson(json);
+  factory VerifyOTPResponse.fromJson(Map<String, dynamic>? json) =>
+      _$VerifyOTPResponseFromJson(json!);
 
-  String status;
-  String mobile;
+  String? status;
+  String? mobile;
 
   @override
   Map<String, dynamic> toJson() => _$VerifyOTPResponseToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       VerifyOTPResponse.fromJson(json) as T;
 }
 
 @JsonSerializable()
 class FrappeSessionStatusInfo extends SessionStatusInfo {
-  FrappeSessionStatusInfo(bool loggedIn, double timestamp, {String currentUser})
+  FrappeSessionStatusInfo(bool? loggedIn, double? timestamp, {String? currentUser})
       : super(loggedIn, timestamp, currentUser: currentUser);
 
-  factory FrappeSessionStatusInfo.fromJson(Map<String, dynamic> json) =>
-      _$FrappeSessionStatusInfoFromJson(json);
+  factory FrappeSessionStatusInfo.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeSessionStatusInfoFromJson(json!);
 
   @JsonKey(name: 'home_page')
-  String homePage;
+  String? homePage;
 
-  String message;
+  String? message;
 
-  String user;
+  String? user;
 
-  String token;
+  String? token;
 
-  String lang;
+  String? lang;
 
-  String mobile;
+  String? mobile;
 
-  String customer;
+  String? customer;
 
-  String employee;
+  String? employee;
 
   @JsonKey(name: 'full_name')
-  String fullName;
+  String? fullName;
 
   @JsonKey(name: 'has_quick_login_pin')
-  bool hasQuickPinLogin;
+  bool? hasQuickPinLogin;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeSessionStatusInfo.fromJson(json) as T;
 
   @override
@@ -88,59 +88,59 @@ class FrappeSessionStatusInfo extends SessionStatusInfo {
 class User extends FrappeDocument {
   User() : super('User');
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(Map<String, dynamic>? json) => _$UserFromJson(json!);
 
-  int enabled;
-  String email;
+  int? enabled;
+  String? email;
 
   @JsonKey(name: 'first_name')
-  String firstName;
+  String? firstName;
 
   @JsonKey(name: 'middle_name')
-  String middleName;
+  String? middleName;
 
   @JsonKey(name: 'last_name')
-  String lastName;
+  String? lastName;
 
   @JsonKey(name: 'full_name')
-  String fullName;
+  String? fullName;
 
-  String username;
-  String language;
-  String gender;
-  String phone;
+  String? username;
+  String? language;
+  String? gender;
+  String? phone;
 
   @JsonKey(name: 'mobile_no')
-  String mobileNo;
+  String? mobileNo;
 
   @JsonKey(name: 'last_login')
-  DateTime lastLogin;
+  DateTime? lastLogin;
 
   @JsonKey(name: 'user_image')
-  String userImage;
+  String? userImage;
 
   @JsonKey(name: 'block_modules')
-  List<BlockModule> blockModules;
+  List<BlockModule>? blockModules;
 
   @override
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => User.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => User.fromJson(json) as T;
 }
 
 @JsonSerializable()
 class BlockModule extends FrappeDocument {
   BlockModule() : super('Block Module');
 
-  factory BlockModule.fromJson(Map<String, dynamic> json) =>
-      _$BlockModuleFromJson(json);
+  factory BlockModule.fromJson(Map<String, dynamic>? json) =>
+      _$BlockModuleFromJson(json!);
 
   @JsonKey(name: 'module')
-  String module;
+  String? module;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => BlockModule.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => BlockModule.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$BlockModuleToJson(this);
@@ -150,18 +150,18 @@ class BlockModule extends FrappeDocument {
 class ResetPasswordInfo extends JSONAble {
   ResetPasswordInfo();
 
-  factory ResetPasswordInfo.fromJson(Map<String, dynamic> json) =>
-      _$ResetPasswordInfoFromJson(json);
+  factory ResetPasswordInfo.fromJson(Map<String, dynamic>? json) =>
+      _$ResetPasswordInfoFromJson(json!);
 
   @JsonKey(name: 'has_medium', fromJson: FrappeDocFieldConverter.checkToBool)
-  bool hasMedium;
+  bool? hasMedium;
 
-  List<String> medium;
+  List<String>? medium;
 
-  ResetInfoHint hints;
+  ResetInfoHint? hints;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       ResetPasswordInfo.fromJson(json) as T;
 
   @override
@@ -172,15 +172,15 @@ class ResetPasswordInfo extends JSONAble {
 class ResetInfoHint extends JSONAble {
   ResetInfoHint();
 
-  factory ResetInfoHint.fromJson(Map<String, dynamic> json) =>
-      _$ResetInfoHintFromJson(json);
+  factory ResetInfoHint.fromJson(Map<String, dynamic>? json) =>
+      _$ResetInfoHintFromJson(json!);
 
-  String email;
+  String? email;
 
-  String sms;
+  String? sms;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => ResetInfoHint.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => ResetInfoHint.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$ResetInfoHintToJson(this);
@@ -190,16 +190,16 @@ class ResetInfoHint extends JSONAble {
 class GenerateResetOTPResponse extends JSONAble {
   GenerateResetOTPResponse();
 
-  factory GenerateResetOTPResponse.fromJson(Map<String, dynamic> json) =>
-      _$GenerateResetOTPResponseFromJson(json);
+  factory GenerateResetOTPResponse.fromJson(Map<String, dynamic>? json) =>
+      _$GenerateResetOTPResponseFromJson(json!);
 
   @JsonKey(fromJson: FrappeDocFieldConverter.checkToBool)
-  bool sent;
+  bool? sent;
 
-  String reason;
+  String? reason;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       GenerateResetOTPResponse.fromJson(json) as T;
 
   @override
@@ -210,19 +210,19 @@ class GenerateResetOTPResponse extends JSONAble {
 class VerifyResetOTPResponse extends JSONAble {
   VerifyResetOTPResponse();
 
-  factory VerifyResetOTPResponse.fromJson(Map<String, dynamic> json) =>
-      _$VerifyResetOTPResponseFromJson(json);
+  factory VerifyResetOTPResponse.fromJson(Map<String, dynamic>? json) =>
+      _$VerifyResetOTPResponseFromJson(json!);
 
   @JsonKey(fromJson: FrappeDocFieldConverter.checkToBool)
-  bool verified;
+  bool? verified;
 
   @JsonKey(name: 'reset_token')
-  String resetToken;
+  String? resetToken;
 
-  String reason;
+  String? reason;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       VerifyResetOTPResponse.fromJson(json) as T;
 
   @override
@@ -233,16 +233,16 @@ class VerifyResetOTPResponse extends JSONAble {
 class UpdatePasswordResponse extends JSONAble {
   UpdatePasswordResponse();
 
-  factory UpdatePasswordResponse.fromJson(Map<String, dynamic> json) =>
-      _$UpdatePasswordResponseFromJson(json);
+  factory UpdatePasswordResponse.fromJson(Map<String, dynamic>? json) =>
+      _$UpdatePasswordResponseFromJson(json!);
 
   @JsonKey(fromJson: FrappeDocFieldConverter.checkToBool)
-  bool updated;
+  bool? updated;
 
-  String reason;
+  String? reason;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       UpdatePasswordResponse.fromJson(json) as T;
 
   @override

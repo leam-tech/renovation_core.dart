@@ -11,7 +11,7 @@ class MessageBus {
   void post(String id, dynamic data) {
     if (!_buses.containsKey(id)) return;
 
-    _buses[id].add(data);
+    _buses[id]!.add(data);
   }
 
   /// Returns the stream of a certain [id].
@@ -19,7 +19,7 @@ class MessageBus {
   /// If there's no stream [BehaviorSubject] defined for [id], a new [BehaviorSubject] is created and assigned.
   ///
   /// In all cases a [BehaviorSubject] is returned.
-  BehaviorSubject<dynamic> getSubject(String id) {
+  BehaviorSubject<dynamic>? getSubject(String id) {
     _buses[id] ??= BehaviorSubject<dynamic>();
     return _buses[id];
   }

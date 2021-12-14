@@ -13,34 +13,34 @@ import 'interfaces.dart';
 /// A controller containing authentication properties and methods.
 ///
 /// Authentication methods include standard email/pwd login, OTP login, updating session, etc..
-abstract class AuthController<K extends SessionStatusInfo>
+abstract class AuthController<K extends SessionStatusInfo?>
     extends RenovationController {
-  BehaviorSubject<K> sessionStatus = BehaviorSubject<K>.seeded(null);
+  BehaviorSubject<K?> sessionStatus = BehaviorSubject<K?>.seeded(null);
 
   /// Listen to changes in [sessionStatus] and log them in console
-  AuthController(RenovationConfig config, {K sessionStatusInfo})
+  AuthController(RenovationConfig config, {K? sessionStatusInfo})
       : super(config) {
     sessionStatus.stream.where((session) => session != null).listen((session) {
       config.logger.i('Session Updated');
-      config.logger.v(session.toJson());
+      config.logger.v(session!.toJson());
     });
   }
 
   /// The current signed in user (if any).
-  String currentUser;
+  String? currentUser;
 
   /// The token (JWT) of the current session.
   @protected
-  String currentToken;
+  String? currentToken;
 
   /// The current signed in user's roles.
-  List<String> currentUserRoles = <String>[];
+  List<String>? currentUserRoles = <String>[];
 
   /// Returns the current JWT token formatted as `TOKEN_HEADER token`.
-  String getCurrentToken();
+  String? getCurrentToken();
 
   /// Checks the session's status (Whether the user is logged in or not) and returns it as [SessionStatusInfo]
-  Future<RequestResponse<K>> checkLogin({bool shouldUpdateSession});
+  Future<RequestResponse<K>> checkLogin({bool? shouldUpdateSession});
 
   /// Check the password's strength
   ///result.score : Integer from 0-4 (useful for implementing a strength bar)
@@ -60,7 +60,7 @@ abstract class AuthController<K extends SessionStatusInfo>
   /// Returns the [SessionStatusInfo] whether successful or not, wrapped within [RequestResponse].
   ///
   /// [password] is optional.
-  Future<RequestResponse<K>> login(String email, [String password]);
+  Future<RequestResponse<K>> login(String email, [String? password]);
 
   /// Logs in the user (if successful) using [user] & [pin].
   ///
@@ -72,21 +72,21 @@ abstract class AuthController<K extends SessionStatusInfo>
   /// Sends a request to the backend with the mobile number. The response is a [SendOTPResponse].
   ///
   /// If [newOTP] is `true`, a previously sent OTP, won't be used. Instead a fresh one will be generated.
-  Future<RequestResponse<SendOTPResponse>> sendOTP(String mobileNo,
-      {bool newOTP});
+  Future<RequestResponse<SendOTPResponse?>> sendOTP(String mobileNo,
+      {bool? newOTP});
 
   /// Verifies the [otp] entered by the user against the one sent through [sendOTP].
-  Future<RequestResponse<VerifyOTPResponse>> verifyOTP(
+  Future<RequestResponse<VerifyOTPResponse?>> verifyOTP(
       String mobileNo, String otp, bool loginToUser);
 
   /// Returns an array of roles assigned to the currently logged in user.
-  Future<RequestResponse<List<String>>> getCurrentUserRoles();
+  Future<RequestResponse<List<String>>?> getCurrentUserRoles();
 
   /// Changes the password of the currently logged in user.
   ///
   /// Validates the old (current) password before changing it.
-  Future<RequestResponse<bool>> changePassword(
-      {@required String oldPassword, @required String newPassword});
+  Future<RequestResponse<bool?>> changePassword(
+      {required String oldPassword, required String newPassword});
 
   /// Gets the password possible reset methods & hints about these methods
   Future<RequestResponse<dynamic>> getPasswordResetInfo();
@@ -110,8 +110,8 @@ abstract class AuthController<K extends SessionStatusInfo>
   ///
   /// Optionally pass the [state] which is usually a JWT or base64 encoded data.
   Future<RequestResponse<K>> loginViaGoogle({
-    @required String code,
-    String state,
+    required String code,
+    String? state,
   });
 
   /// Logins in using Apple Auth code.
@@ -120,9 +120,9 @@ abstract class AuthController<K extends SessionStatusInfo>
   ///
   /// Optionally pass the [state] which is usually a JWT or base64 encoded data.
   Future<RequestResponse<K>> loginViaApple({
-    @required String code,
-    @required APPLE_OPTION option,
-    String state,
+    required String code,
+    required APPLE_OPTION option,
+    String? state,
   });
 
   /// Sets the session locally obtained externally.
@@ -141,7 +141,7 @@ abstract class AuthController<K extends SessionStatusInfo>
   @protected
   @visibleForTesting
   void updateSession(
-      {K sessionStatus, bool loggedIn = false, double useTimestamp});
+      {K? sessionStatus, bool loggedIn = false, double? useTimestamp});
 
   /// Helper method to verify the local session against the backend.
   @protected
@@ -150,7 +150,7 @@ abstract class AuthController<K extends SessionStatusInfo>
       {bool shouldUpdateSession = true});
 
   /// Returns the session status from [sessionStatus].
-  K getSession() => sessionStatus.value;
+  K? getSession() => sessionStatus.value;
 
   /// Returns a boolean whether the current user is logged in.
   bool get isLoggedIn => getSession()?.loggedIn ?? false;
@@ -171,7 +171,7 @@ abstract class AuthController<K extends SessionStatusInfo>
   void setSession(K session) => sessionStatus.add(session);
 
   /// Changes the user's language preference in the backend to the language [lang].
-  Future<bool> changeUserLanguage(String lang);
+  Future<bool?> changeUserLanguage(String lang);
 
   /// Resets [sessionStatus] as loggedIn = false with the current timestamp
   void resetSession() => updateSession(loggedIn: false);
