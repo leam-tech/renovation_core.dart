@@ -7,29 +7,28 @@ part of 'models.dart';
 // **************************************************************************
 
 RenovationUserAgreement _$RenovationUserAgreementFromJson(
-    Map<String, dynamic> json) {
-  return RenovationUserAgreement()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String
-    ..title = json['title'] as String;
-}
+        Map<String, dynamic> json) =>
+    RenovationUserAgreement()
+      ..doctype = json['doctype'] as String?
+      ..name = json['name'] as String?
+      ..owner = json['owner'] as String?
+      ..docStatus = FrappeDocFieldConverter.intToFrappeDocStatus(
+          json['docstatus'] as int?)
+      ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int?)
+      ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int?)
+      ..amendedFrom = json['amended_from'] as String?
+      ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+      ..parent = json['parent'] as String?
+      ..parentType = json['parenttype'] as String?
+      ..creation = json['creation'] == null
+          ? null
+          : DateTime.parse(json['creation'] as String)
+      ..parentField = json['parentfield'] as String?
+      ..modified = json['modified'] == null
+          ? null
+          : DateTime.parse(json['modified'] as String)
+      ..modifiedBy = json['modified_by'] as String?
+      ..title = json['title'] as String?;
 
 Map<String, dynamic> _$RenovationUserAgreementToJson(
     RenovationUserAgreement instance) {
@@ -64,41 +63,39 @@ Map<String, dynamic> _$RenovationUserAgreementToJson(
   return val;
 }
 
-RenovationReview _$RenovationReviewFromJson(Map<String, dynamic> json) {
-  return RenovationReview()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String
-    ..reviewedByDoctype = json['reviewed_by_doctype'] as String
-    ..reviewedBy = json['reviewed_by'] as String
-    ..reviewedByDoctypeDoc = json['reviewed_by_doctype_doc'] == null
-        ? null
-        : DocType.fromJson(
-            json['reviewed_by_doctype_doc'] as Map<String, dynamic>)
-    ..reviewedDoctype = json['reviewed_doctype'] as String
-    ..reviewedEntity = json['reviewed_entity'] as String
-    ..reviews = (json['reviews'] as List)
-        ?.map((e) => e == null
-            ? null
-            : RenovationReviewItem.fromJson(e as Map<String, dynamic>))
-        ?.toList();
-}
+RenovationReview _$RenovationReviewFromJson(Map<String, dynamic> json) =>
+    RenovationReview()
+      ..doctype = json['doctype'] as String?
+      ..name = json['name'] as String?
+      ..owner = json['owner'] as String?
+      ..docStatus = FrappeDocFieldConverter.intToFrappeDocStatus(
+          json['docstatus'] as int?)
+      ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int?)
+      ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int?)
+      ..amendedFrom = json['amended_from'] as String?
+      ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+      ..parent = json['parent'] as String?
+      ..parentType = json['parenttype'] as String?
+      ..creation = json['creation'] == null
+          ? null
+          : DateTime.parse(json['creation'] as String)
+      ..parentField = json['parentfield'] as String?
+      ..modified = json['modified'] == null
+          ? null
+          : DateTime.parse(json['modified'] as String)
+      ..modifiedBy = json['modified_by'] as String?
+      ..reviewedByDoctype = json['reviewed_by_doctype'] as String?
+      ..reviewedBy = json['reviewed_by'] as String?
+      ..reviewedByDoctypeDoc = json['reviewed_by_doctype_doc'] == null
+          ? null
+          : DocType.fromJson(
+              json['reviewed_by_doctype_doc'] as Map<String, dynamic>?)
+      ..reviewedDoctype = json['reviewed_doctype'] as String?
+      ..reviewedEntity = json['reviewed_entity'] as String?
+      ..reviews = (json['reviews'] as List<dynamic>?)
+          ?.map(
+              (e) => RenovationReviewItem.fromJson(e as Map<String, dynamic>?))
+          .toList();
 
 Map<String, dynamic> _$RenovationReviewToJson(RenovationReview instance) {
   final val = <String, dynamic>{};
@@ -134,36 +131,36 @@ Map<String, dynamic> _$RenovationReviewToJson(RenovationReview instance) {
       'reviewed_by_doctype_doc', instance.reviewedByDoctypeDoc?.toJson());
   writeNotNull('reviewed_doctype', instance.reviewedDoctype);
   writeNotNull('reviewed_entity', instance.reviewedEntity);
-  writeNotNull('reviews', instance.reviews?.map((e) => e?.toJson())?.toList());
+  writeNotNull('reviews', instance.reviews?.map((e) => e.toJson()).toList());
   return val;
 }
 
-RenovationReviewItem _$RenovationReviewItemFromJson(Map<String, dynamic> json) {
-  return RenovationReviewItem()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String
-    ..title = json['title'] as String
-    ..question = json['question'] as String
-    ..quantitative = json['quantitative'] as String
-    ..answer = json['answer'] as String;
-}
+RenovationReviewItem _$RenovationReviewItemFromJson(
+        Map<String, dynamic> json) =>
+    RenovationReviewItem()
+      ..doctype = json['doctype'] as String?
+      ..name = json['name'] as String?
+      ..owner = json['owner'] as String?
+      ..docStatus = FrappeDocFieldConverter.intToFrappeDocStatus(
+          json['docstatus'] as int?)
+      ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int?)
+      ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int?)
+      ..amendedFrom = json['amended_from'] as String?
+      ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+      ..parent = json['parent'] as String?
+      ..parentType = json['parenttype'] as String?
+      ..creation = json['creation'] == null
+          ? null
+          : DateTime.parse(json['creation'] as String)
+      ..parentField = json['parentfield'] as String?
+      ..modified = json['modified'] == null
+          ? null
+          : DateTime.parse(json['modified'] as String)
+      ..modifiedBy = json['modified_by'] as String?
+      ..title = json['title'] as String?
+      ..question = json['question'] as String?
+      ..quantitative = json['quantitative'] as String?
+      ..answer = json['answer'] as String?;
 
 Map<String, dynamic> _$RenovationReviewItemToJson(
     RenovationReviewItem instance) {
@@ -201,28 +198,27 @@ Map<String, dynamic> _$RenovationReviewItemToJson(
   return val;
 }
 
-NonExistingDocType _$NonExistingDocTypeFromJson(Map<String, dynamic> json) {
-  return NonExistingDocType()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String;
-}
+NonExistingDocType _$NonExistingDocTypeFromJson(Map<String, dynamic> json) =>
+    NonExistingDocType()
+      ..doctype = json['doctype'] as String?
+      ..name = json['name'] as String?
+      ..owner = json['owner'] as String?
+      ..docStatus = FrappeDocFieldConverter.intToFrappeDocStatus(
+          json['docstatus'] as int?)
+      ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int?)
+      ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int?)
+      ..amendedFrom = json['amended_from'] as String?
+      ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+      ..parent = json['parent'] as String?
+      ..parentType = json['parenttype'] as String?
+      ..creation = json['creation'] == null
+          ? null
+          : DateTime.parse(json['creation'] as String)
+      ..parentField = json['parentfield'] as String?
+      ..modified = json['modified'] == null
+          ? null
+          : DateTime.parse(json['modified'] as String)
+      ..modifiedBy = json['modified_by'] as String?;
 
 Map<String, dynamic> _$NonExistingDocTypeToJson(NonExistingDocType instance) {
   final val = <String, dynamic>{};

@@ -6,49 +6,47 @@ part of 'interfaces.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DocPerm _$DocPermFromJson(Map<String, dynamic> json) {
-  return DocPerm()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String
-    ..create = FrappeDocFieldConverter.checkToBool(json['create'] as int)
-    ..read = FrappeDocFieldConverter.checkToBool(json['read'] as int)
-    ..write = FrappeDocFieldConverter.checkToBool(json['write'] as int)
-    ..delete = FrappeDocFieldConverter.checkToBool(json['delete'] as int)
-    ..submit = FrappeDocFieldConverter.checkToBool(json['submit'] as int)
-    ..cancel = FrappeDocFieldConverter.checkToBool(json['cancel'] as int)
-    ..amend = FrappeDocFieldConverter.checkToBool(json['amend'] as int)
-    ..report = FrappeDocFieldConverter.checkToBool(json['report'] as int)
-    ..import = FrappeDocFieldConverter.checkToBool(json['import'] as int)
-    ..export = FrappeDocFieldConverter.checkToBool(json['export'] as int)
-    ..print = FrappeDocFieldConverter.checkToBool(json['print'] as int)
-    ..email = FrappeDocFieldConverter.checkToBool(json['email'] as int)
-    ..share = FrappeDocFieldConverter.checkToBool(json['share'] as int)
-    ..recursiveDelete =
-        FrappeDocFieldConverter.checkToBool(json['recursive_delete'] as int)
-    ..setUserPermissions =
-        FrappeDocFieldConverter.checkToBool(json['set_user_permissions'] as int)
-    ..permLevel = json['permlevel'] as int
-    ..ifOwner = DocPerm.ifOwnerCheckToBool(json['if_owner'])
-    ..role = json['role'] as String
-    ..match = json['match'];
-}
+DocPerm _$DocPermFromJson(Map<String, dynamic> json) => DocPerm()
+  ..doctype = json['doctype'] as String?
+  ..name = json['name'] as String?
+  ..owner = json['owner'] as String?
+  ..docStatus =
+      FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int?)
+  ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int?)
+  ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int?)
+  ..amendedFrom = json['amended_from'] as String?
+  ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+  ..parent = json['parent'] as String?
+  ..parentType = json['parenttype'] as String?
+  ..creation = json['creation'] == null
+      ? null
+      : DateTime.parse(json['creation'] as String)
+  ..parentField = json['parentfield'] as String?
+  ..modified = json['modified'] == null
+      ? null
+      : DateTime.parse(json['modified'] as String)
+  ..modifiedBy = json['modified_by'] as String?
+  ..create = FrappeDocFieldConverter.checkToBool(json['create'] as int?)
+  ..read = FrappeDocFieldConverter.checkToBool(json['read'] as int?)
+  ..write = FrappeDocFieldConverter.checkToBool(json['write'] as int?)
+  ..delete = FrappeDocFieldConverter.checkToBool(json['delete'] as int?)
+  ..submit = FrappeDocFieldConverter.checkToBool(json['submit'] as int?)
+  ..cancel = FrappeDocFieldConverter.checkToBool(json['cancel'] as int?)
+  ..amend = FrappeDocFieldConverter.checkToBool(json['amend'] as int?)
+  ..report = FrappeDocFieldConverter.checkToBool(json['report'] as int?)
+  ..import = FrappeDocFieldConverter.checkToBool(json['import'] as int?)
+  ..export = FrappeDocFieldConverter.checkToBool(json['export'] as int?)
+  ..print = FrappeDocFieldConverter.checkToBool(json['print'] as int?)
+  ..email = FrappeDocFieldConverter.checkToBool(json['email'] as int?)
+  ..share = FrappeDocFieldConverter.checkToBool(json['share'] as int?)
+  ..recursiveDelete =
+      FrappeDocFieldConverter.checkToBool(json['recursive_delete'] as int?)
+  ..setUserPermissions =
+      FrappeDocFieldConverter.checkToBool(json['set_user_permissions'] as int?)
+  ..permLevel = json['permlevel'] as int?
+  ..ifOwner = DocPerm.ifOwnerCheckToBool(json['if_owner'])
+  ..role = json['role'] as String?
+  ..match = json['match'];
 
 Map<String, dynamic> _$DocPermToJson(DocPerm instance) {
   final val = <String, dynamic>{};

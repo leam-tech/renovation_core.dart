@@ -6,32 +6,46 @@ part of 'interfaces.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-BasicPermInfo _$BasicPermInfoFromJson(Map<String, dynamic> json) {
-  return BasicPermInfo()
-    ..can_search =
-        (json['can_search'] as List)?.map((e) => e as String)?.toList()
-    ..can_email = (json['can_email'] as List)?.map((e) => e as String)?.toList()
-    ..can_export =
-        (json['can_export'] as List)?.map((e) => e as String)?.toList()
-    ..can_get_report =
-        (json['can_get_report'] as List)?.map((e) => e as String)?.toList()
-    ..can_cancel =
-        (json['can_cancel'] as List)?.map((e) => e as String)?.toList()
-    ..can_print = (json['can_print'] as List)?.map((e) => e as String)?.toList()
-    ..can_set_user_permissions = (json['can_set_user_permissions'] as List)
-        ?.map((e) => e as String)
-        ?.toList()
-    ..can_delete =
-        (json['can_delete'] as List)?.map((e) => e as String)?.toList()
-    ..can_write = (json['can_write'] as List)?.map((e) => e as String)?.toList()
-    ..can_import =
-        (json['can_import'] as List)?.map((e) => e as String)?.toList()
-    ..can_read = (json['can_read'] as List)?.map((e) => e as String)?.toList()
-    ..can_create =
-        (json['can_create'] as List)?.map((e) => e as String)?.toList()
-    ..isLoading = json['isLoading'] as bool
-    ..user = json['user'] as String;
-}
+BasicPermInfo _$BasicPermInfoFromJson(Map<String, dynamic> json) =>
+    BasicPermInfo()
+      ..can_search = (json['can_search'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_email = (json['can_email'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_export = (json['can_export'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_get_report = (json['can_get_report'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_cancel = (json['can_cancel'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_print = (json['can_print'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_set_user_permissions =
+          (json['can_set_user_permissions'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList()
+      ..can_delete = (json['can_delete'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_write = (json['can_write'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_import = (json['can_import'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..can_read =
+          (json['can_read'] as List<dynamic>?)?.map((e) => e as String).toList()
+      ..can_create = (json['can_create'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList()
+      ..isLoading = json['isLoading'] as bool?
+      ..user = json['user'] as String?;
 
 Map<String, dynamic> _$BasicPermInfoToJson(BasicPermInfo instance) {
   final val = <String, dynamic>{};

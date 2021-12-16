@@ -3,11 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../core/jsonable.dart';
 
 abstract class UploadFileParams extends JSONAble {
-  UploadFileParams(
-      {required this.file,
-      required this.fileName,
-      this.fileData,
-      this.fileSize});
+  UploadFileParams({this.file, this.fileName, this.fileData, this.fileSize});
 
   @JsonKey(ignore: true)
   dynamic file;

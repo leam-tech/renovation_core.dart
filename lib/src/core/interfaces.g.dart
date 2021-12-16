@@ -6,17 +6,16 @@ part of 'interfaces.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FrappeResponse _$FrappeResponseFromJson(Map<String, dynamic> json) {
-  return FrappeResponse()
-    ..serverMessages = json['_server_messages'] as String
-    ..exc = json['exc'] as String
-    ..excType = json['exc_type'] as String
-    ..message = json['message']
-    ..sessionExpired = json['session_expired'] as int
-    ..exception = json['exception'] as String
-    ..data = json['data'] as String
-    ..traceback = json['traceback'] as String;
-}
+FrappeResponse _$FrappeResponseFromJson(Map<String, dynamic> json) =>
+    FrappeResponse()
+      ..serverMessages = json['_server_messages'] as String?
+      ..exc = json['exc'] as String?
+      ..excType = json['exc_type'] as String?
+      ..message = json['message']
+      ..sessionExpired = json['session_expired'] as int?
+      ..exception = json['exception'] as String?
+      ..data = json['data'] as String?
+      ..traceback = json['traceback'] as String?;
 
 Map<String, dynamic> _$FrappeResponseToJson(FrappeResponse instance) {
   final val = <String, dynamic>{};

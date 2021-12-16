@@ -6,93 +6,91 @@ part of 'docfield.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DocField _$DocFieldFromJson(Map<String, dynamic> json) {
-  return DocField()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String
-    ..allowBulkEdit =
-        FrappeDocFieldConverter.checkToBool(json['allow_bulk_edit'] as int)
-    ..allowInQuickEntry =
-        FrappeDocFieldConverter.checkToBool(json['allow_in_quick_entry'] as int)
-    ..allowOnSubmit =
-        FrappeDocFieldConverter.checkToBool(json['allow_on_submit'] as int)
-    ..bold = FrappeDocFieldConverter.checkToBool(json['bold'] as int)
-    ..inPreview = FrappeDocFieldConverter.checkToBool(json['in_preview'] as int)
-    ..collapsible =
-        FrappeDocFieldConverter.checkToBool(json['collapsible'] as int)
-    ..collapsibleDependsOn = json['collapsible_depends_on'] as String
-    ..columns = json['columns'] as int
-    ..defaults = json['default'] as String
-    ..dependsOn = json['depends_on'] as String
-    ..description = json['description'] as String
-    ..fetchFrom = json['fetch_from'] as String
-    ..fetchIfEmpty =
-        FrappeDocFieldConverter.checkToBool(json['fetch_if_empty'] as int)
-    ..fieldName = json['fieldname'] as String
-    ..fieldType = json['fieldtype'] as String
-    ..hidden = FrappeDocFieldConverter.checkToBool(json['hidden'] as int)
-    ..ignoreUserPermissions = FrappeDocFieldConverter.checkToBool(
-        json['ignore_user_permissions'] as int)
-    ..ignoreXssFilter =
-        FrappeDocFieldConverter.checkToBool(json['ignore_xss_filter'] as int)
-    ..inFilter = FrappeDocFieldConverter.checkToBool(json['in_filter'] as int)
-    ..inGlobalSearch =
-        FrappeDocFieldConverter.checkToBool(json['in_global_search'] as int)
-    ..showPreviewPopup =
-        FrappeDocFieldConverter.checkToBool(json['show_preview_popup'] as int)
-    ..inListView =
-        FrappeDocFieldConverter.checkToBool(json['in_list_view'] as int)
-    ..inStandardFilter =
-        FrappeDocFieldConverter.checkToBool(json['in_standard_filter'] as int)
-    ..isCustomField =
-        FrappeDocFieldConverter.checkToBool(json['is_custom_field'] as int)
-    ..label = json['label'] as String
-    ..length = json['length'] as int
-    ..linkedDocumentType = json['linked_document_type'] as String
-    ..noCopy = FrappeDocFieldConverter.checkToBool(json['no_copy'] as int)
-    ..oldFieldName = json['oldfieldname'] as String
-    ..oldFieldType = json['oldfieldtype'] as String
-    ..options = json['options'] as String
-    ..permLevel = json['permlevel'] as int
-    ..precision = json['precision'] as String
-    ..printHide = FrappeDocFieldConverter.checkToBool(json['print_hide'] as int)
-    ..printHideIfNoValue = FrappeDocFieldConverter.checkToBool(
-        json['print_hide_if_no_value'] as int)
-    ..printWidth = json['print_width'] as String
-    ..readOnly = FrappeDocFieldConverter.checkToBool(json['read_only'] as int)
-    ..rememberLastSelectedValue = FrappeDocFieldConverter.checkToBool(
-        json['remember_last_selected_value'] as int)
-    ..reportHide =
-        FrappeDocFieldConverter.checkToBool(json['report_hide'] as int)
-    ..required = FrappeDocFieldConverter.checkToBool(json['reqd'] as int)
-    ..searchFields = json['search_fields'] as List
-    ..searchIndex =
-        FrappeDocFieldConverter.checkToBool(json['search_index'] as int)
-    ..setOnlyOnce =
-        FrappeDocFieldConverter.checkToBool(json['set_only_once'] as int)
-    ..translatable =
-        FrappeDocFieldConverter.checkToBool(json['translatable'] as int)
-    ..trigger = json['trigger'] as String
-    ..unique = FrappeDocFieldConverter.checkToBool(json['unique'] as int)
-    ..width = json['width'] as String;
-}
+DocField _$DocFieldFromJson(Map<String, dynamic> json) => DocField()
+  ..doctype = json['doctype'] as String?
+  ..name = json['name'] as String?
+  ..owner = json['owner'] as String?
+  ..docStatus =
+      FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int?)
+  ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int?)
+  ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int?)
+  ..amendedFrom = json['amended_from'] as String?
+  ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+  ..parent = json['parent'] as String?
+  ..parentType = json['parenttype'] as String?
+  ..creation = json['creation'] == null
+      ? null
+      : DateTime.parse(json['creation'] as String)
+  ..parentField = json['parentfield'] as String?
+  ..modified = json['modified'] == null
+      ? null
+      : DateTime.parse(json['modified'] as String)
+  ..modifiedBy = json['modified_by'] as String?
+  ..allowBulkEdit =
+      FrappeDocFieldConverter.checkToBool(json['allow_bulk_edit'] as int?)
+  ..allowInQuickEntry =
+      FrappeDocFieldConverter.checkToBool(json['allow_in_quick_entry'] as int?)
+  ..allowOnSubmit =
+      FrappeDocFieldConverter.checkToBool(json['allow_on_submit'] as int?)
+  ..bold = FrappeDocFieldConverter.checkToBool(json['bold'] as int?)
+  ..inPreview = FrappeDocFieldConverter.checkToBool(json['in_preview'] as int?)
+  ..collapsible =
+      FrappeDocFieldConverter.checkToBool(json['collapsible'] as int?)
+  ..collapsibleDependsOn = json['collapsible_depends_on'] as String?
+  ..columns = json['columns'] as int?
+  ..defaults = json['default'] as String?
+  ..dependsOn = json['depends_on'] as String?
+  ..description = json['description'] as String?
+  ..fetchFrom = json['fetch_from'] as String?
+  ..fetchIfEmpty =
+      FrappeDocFieldConverter.checkToBool(json['fetch_if_empty'] as int?)
+  ..fieldName = json['fieldname'] as String?
+  ..fieldType = json['fieldtype'] as String?
+  ..hidden = FrappeDocFieldConverter.checkToBool(json['hidden'] as int?)
+  ..ignoreUserPermissions = FrappeDocFieldConverter.checkToBool(
+      json['ignore_user_permissions'] as int?)
+  ..ignoreXssFilter =
+      FrappeDocFieldConverter.checkToBool(json['ignore_xss_filter'] as int?)
+  ..inFilter = FrappeDocFieldConverter.checkToBool(json['in_filter'] as int?)
+  ..inGlobalSearch =
+      FrappeDocFieldConverter.checkToBool(json['in_global_search'] as int?)
+  ..showPreviewPopup =
+      FrappeDocFieldConverter.checkToBool(json['show_preview_popup'] as int?)
+  ..inListView =
+      FrappeDocFieldConverter.checkToBool(json['in_list_view'] as int?)
+  ..inStandardFilter =
+      FrappeDocFieldConverter.checkToBool(json['in_standard_filter'] as int?)
+  ..isCustomField =
+      FrappeDocFieldConverter.checkToBool(json['is_custom_field'] as int?)
+  ..label = json['label'] as String?
+  ..length = json['length'] as int?
+  ..linkedDocumentType = json['linked_document_type'] as String?
+  ..noCopy = FrappeDocFieldConverter.checkToBool(json['no_copy'] as int?)
+  ..oldFieldName = json['oldfieldname'] as String?
+  ..oldFieldType = json['oldfieldtype'] as String?
+  ..options = json['options'] as String?
+  ..permLevel = json['permlevel'] as int?
+  ..precision = json['precision'] as String?
+  ..printHide = FrappeDocFieldConverter.checkToBool(json['print_hide'] as int?)
+  ..printHideIfNoValue = FrappeDocFieldConverter.checkToBool(
+      json['print_hide_if_no_value'] as int?)
+  ..printWidth = json['print_width'] as String?
+  ..readOnly = FrappeDocFieldConverter.checkToBool(json['read_only'] as int?)
+  ..rememberLastSelectedValue = FrappeDocFieldConverter.checkToBool(
+      json['remember_last_selected_value'] as int?)
+  ..reportHide =
+      FrappeDocFieldConverter.checkToBool(json['report_hide'] as int?)
+  ..required = FrappeDocFieldConverter.checkToBool(json['reqd'] as int?)
+  ..searchFields = json['search_fields'] as List<dynamic>?
+  ..searchIndex =
+      FrappeDocFieldConverter.checkToBool(json['search_index'] as int?)
+  ..setOnlyOnce =
+      FrappeDocFieldConverter.checkToBool(json['set_only_once'] as int?)
+  ..translatable =
+      FrappeDocFieldConverter.checkToBool(json['translatable'] as int?)
+  ..trigger = json['trigger'] as String?
+  ..unique = FrappeDocFieldConverter.checkToBool(json['unique'] as int?)
+  ..width = json['width'] as String?;
 
 Map<String, dynamic> _$DocFieldToJson(DocField instance) {
   final val = <String, dynamic>{};

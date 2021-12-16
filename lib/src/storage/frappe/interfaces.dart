@@ -11,8 +11,8 @@ part 'interfaces.g.dart';
 @JsonSerializable()
 class FrappeUploadFileParams extends UploadFileParams with FrappeAPI {
   FrappeUploadFileParams(
-      {required dynamic file,
-      required String? fileName,
+      {dynamic file,
+      String? fileName,
       this.isPrivate,
       this.folder = 'Home',
       this.doctype,
