@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../core/config.dart';
@@ -13,7 +12,7 @@ import 'interfaces.dart';
 ///Class containing properties and  methods dealing with Upload of files.
 abstract class StorageController<
     K extends UploadFileParams,
-    L extends UploadFileResponse,
+    L extends UploadFileResponse?,
     M extends UploadFileStatus> extends RenovationController {
   StorageController(RenovationConfig config) : super(config);
 
@@ -35,14 +34,14 @@ abstract class StorageController<
   Future<RequestResponse<L>> uploadViaHTTP(K uploadFileParams);
 
   /// Returns [bool] within RequestResponse after creating folder.
-  Future<RequestResponse<bool>> createFolder(
-      {@required String folderName, String parentFolder});
+  Future<RequestResponse<bool?>> createFolder(
+      {required String folderName, String? parentFolder});
 
   /// Returns [bool] within [RequestResponse] after querying the folder in the backend.
-  Future<RequestResponse<bool>> checkFolderExists(String folderDir);
+  Future<RequestResponse<bool?>> checkFolderExists(String folderDir);
 
   /// Returns the URL appended to the reference of the file.
-  String getUrl(String ref);
+  String? getUrl(String ref);
 
   /// Returns the file as [Uint8List] of a file.
   ///

@@ -9,39 +9,39 @@ abstract class FrappeDocument extends RenovationDocument {
 
   factory FrappeDocument.fromJson(Map<String, dynamic> json) =>
       throw JSONAbleMethodsNotImplemented();
-  String doctype;
-  String name;
-  String owner;
+  String? doctype;
+  String? name;
+  String? owner;
   @JsonKey(
       name: 'docstatus',
       fromJson: FrappeDocFieldConverter.intToFrappeDocStatus,
       toJson: FrappeDocFieldConverter.frappeDocStatusToInt)
-  FrappeDocStatus docStatus = FrappeDocStatus.Draft;
+  FrappeDocStatus? docStatus = FrappeDocStatus.Draft;
   @JsonKey(
       name: '__islocal',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool isLocal;
+  bool? isLocal;
   @JsonKey(
       name: '__unsaved',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool unsaved;
+  bool? unsaved;
   @JsonKey(name: 'amended_from')
-  String amendedFrom;
+  String? amendedFrom;
   @JsonKey(fromJson: FrappeDocFieldConverter.idxFromString)
-  int idx;
-  String parent;
+  int? idx;
+  String? parent;
   @JsonKey(name: 'parenttype')
-  String parentType;
+  String? parentType;
   @JsonKey(toJson: FrappeDocFieldConverter.toFrappeDateTime)
-  DateTime creation;
+  DateTime? creation;
   @JsonKey(name: 'parentfield')
-  String parentField;
+  String? parentField;
   @JsonKey(toJson: FrappeDocFieldConverter.toFrappeDateTime)
-  DateTime modified;
+  DateTime? modified;
   @JsonKey(name: 'modified_by')
-  String modifiedBy;
+  String? modifiedBy;
 
   static T nullifyFields<T extends FrappeDocument>(T doc) => doc
     ..name = null
@@ -61,9 +61,9 @@ abstract class FrappeDocument extends RenovationDocument {
         ..docStatus = null));
 
   @override
-  List<T> deserializeList<T>(List docs) => docs != null
+  List<T>? deserializeList<T>(List? docs) => docs != null
       ? List<T>.from(super
-          .deserializeList<T>(docs)
+          .deserializeList<T>(docs)!
           .map<T>((T obj) => ((obj as FrappeDocument)..doctype = doctype) as T))
       : null;
 }

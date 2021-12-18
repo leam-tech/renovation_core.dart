@@ -11,5 +11,5 @@ abstract class RenovationDocument extends JSONAble {
       throw JSONAbleMethodsNotImplemented();
 
   @JsonKey(ignore: true)
-  Map<String, dynamic> rawResponse;
+  Map<String, dynamic>? rawResponse;
 }

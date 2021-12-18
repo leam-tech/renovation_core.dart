@@ -7,21 +7,21 @@ part of 'interfaces.dart';
 // **************************************************************************
 
 FrappeUploadFileParams _$FrappeUploadFileParamsFromJson(
-    Map<String, dynamic> json) {
-  return FrappeUploadFileParams(
-    fileName: json['filename'] as String,
-    isPrivate: FrappeDocFieldConverter.checkToBool(json['is_private'] as int),
-    folder: json['folder'] as String,
-    doctype: json['doctype'] as String,
-    docname: json['docname'] as String,
-    docField: json['docfield'] as String,
-  )
-    ..cmd = json['cmd'] as String
-    ..fileData = json['filedata'] as String
-    ..fileSize = json['file_size'] as int
-    ..fromForm = json['from_form'] as int
-    ..fileUrl = json['file_url'] as String;
-}
+        Map<String, dynamic> json) =>
+    FrappeUploadFileParams(
+      fileName: json['filename'] as String?,
+      isPrivate:
+          FrappeDocFieldConverter.checkToBool(json['is_private'] as int?),
+      folder: json['folder'] as String? ?? 'Home',
+      doctype: json['doctype'] as String?,
+      docname: json['docname'] as String?,
+      docField: json['docfield'] as String?,
+    )
+      ..cmd = json['cmd'] as String?
+      ..fileData = json['filedata'] as String?
+      ..fileSize = json['file_size'] as int?
+      ..fromForm = json['from_form'] as int?
+      ..fileUrl = json['file_url'] as String?;
 
 Map<String, dynamic> _$FrappeUploadFileParamsToJson(
     FrappeUploadFileParams instance) {
@@ -33,8 +33,8 @@ Map<String, dynamic> _$FrappeUploadFileParamsToJson(
     }
   }
 
-  writeNotNull('cmd', instance.cmd);
   writeNotNull('filename', instance.fileName);
+  writeNotNull('cmd', instance.cmd);
   writeNotNull('filedata', instance.fileData);
   writeNotNull('file_size', instance.fileSize);
   writeNotNull(
@@ -49,13 +49,13 @@ Map<String, dynamic> _$FrappeUploadFileParamsToJson(
 }
 
 FrappeUploadFileResponse _$FrappeUploadFileResponseFromJson(
-    Map<String, dynamic> json) {
-  return FrappeUploadFileResponse()
-    ..fileName = json['file_name'] as String
-    ..fileUrl = json['file_url'] as String
-    ..isPrivate = FrappeDocFieldConverter.checkToBool(json['is_private'] as int)
-    ..name = json['name'] as String;
-}
+        Map<String, dynamic> json) =>
+    FrappeUploadFileResponse()
+      ..fileName = json['file_name'] as String?
+      ..fileUrl = json['file_url'] as String?
+      ..isPrivate =
+          FrappeDocFieldConverter.checkToBool(json['is_private'] as int?)
+      ..name = json['name'] as String?;
 
 Map<String, dynamic> _$FrappeUploadFileResponseToJson(
     FrappeUploadFileResponse instance) {
@@ -75,35 +75,33 @@ Map<String, dynamic> _$FrappeUploadFileResponseToJson(
   return val;
 }
 
-FrappeFile _$FrappeFileFromJson(Map<String, dynamic> json) {
-  return FrappeFile()
-    ..doctype = json['doctype'] as String
-    ..name = json['name'] as String
-    ..owner = json['owner'] as String
-    ..docStatus =
-        FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int)
-    ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int)
-    ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int)
-    ..amendedFrom = json['amended_from'] as String
-    ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
-    ..parent = json['parent'] as String
-    ..parentType = json['parenttype'] as String
-    ..creation = json['creation'] == null
-        ? null
-        : DateTime.parse(json['creation'] as String)
-    ..parentField = json['parentfield'] as String
-    ..modified = json['modified'] == null
-        ? null
-        : DateTime.parse(json['modified'] as String)
-    ..modifiedBy = json['modified_by'] as String
-    ..fileName = json['file_name'] as String
-    ..isPrivate = FrappeDocFieldConverter.checkToBool(json['is_private'] as int)
-    ..fileSize = json['file_size'] as int
-    ..fileUrl = json['file_url'] as String
-    ..isFolder = FrappeDocFieldConverter.checkToBool(json['is_folder'] as int)
-    ..attachedToDoctype = json['attached_to_doctype'] as String
-    ..attachedToName = json['attached_to_name'] as String;
-}
+FrappeFile _$FrappeFileFromJson(Map<String, dynamic> json) => FrappeFile()
+  ..doctype = json['doctype'] as String?
+  ..name = json['name'] as String?
+  ..owner = json['owner'] as String?
+  ..docStatus =
+      FrappeDocFieldConverter.intToFrappeDocStatus(json['docstatus'] as int?)
+  ..isLocal = FrappeDocFieldConverter.checkToBool(json['__islocal'] as int?)
+  ..unsaved = FrappeDocFieldConverter.checkToBool(json['__unsaved'] as int?)
+  ..amendedFrom = json['amended_from'] as String?
+  ..idx = FrappeDocFieldConverter.idxFromString(json['idx'])
+  ..parent = json['parent'] as String?
+  ..parentType = json['parenttype'] as String?
+  ..creation = json['creation'] == null
+      ? null
+      : DateTime.parse(json['creation'] as String)
+  ..parentField = json['parentfield'] as String?
+  ..modified = json['modified'] == null
+      ? null
+      : DateTime.parse(json['modified'] as String)
+  ..modifiedBy = json['modified_by'] as String?
+  ..fileName = json['file_name'] as String?
+  ..isPrivate = FrappeDocFieldConverter.checkToBool(json['is_private'] as int?)
+  ..fileSize = json['file_size'] as int?
+  ..fileUrl = json['file_url'] as String?
+  ..isFolder = FrappeDocFieldConverter.checkToBool(json['is_folder'] as int?)
+  ..attachedToDoctype = json['attached_to_doctype'] as String?
+  ..attachedToName = json['attached_to_name'] as String?;
 
 Map<String, dynamic> _$FrappeFileToJson(FrappeFile instance) {
   final val = <String, dynamic>{};
@@ -145,14 +143,13 @@ Map<String, dynamic> _$FrappeFileToJson(FrappeFile instance) {
   return val;
 }
 
-FrappeUploadStatus _$FrappeUploadStatusFromJson(Map<String, dynamic> json) {
-  return FrappeUploadStatus()
-    ..status = _$enumDecodeNullable(_$UploadingStatusEnumMap, json['status'])
-    ..hasProgress = json['hasProgress'] as bool
-    ..progress = json['progress'] as num
-    ..error = _$enumDecodeNullable(_$ErrorEventEnumMap, json['error'])
-    ..filename = json['filename'] as String;
-}
+FrappeUploadStatus _$FrappeUploadStatusFromJson(Map<String, dynamic> json) =>
+    FrappeUploadStatus()
+      ..status = $enumDecodeNullable(_$UploadingStatusEnumMap, json['status'])
+      ..hasProgress = json['hasProgress'] as bool?
+      ..progress = json['progress'] as num?
+      ..error = $enumDecodeNullable(_$ErrorEventEnumMap, json['error'])
+      ..filename = json['filename'] as String?;
 
 Map<String, dynamic> _$FrappeUploadStatusToJson(FrappeUploadStatus instance) {
   final val = <String, dynamic>{};
@@ -169,38 +166,6 @@ Map<String, dynamic> _$FrappeUploadStatusToJson(FrappeUploadStatus instance) {
   writeNotNull('error', _$ErrorEventEnumMap[instance.error]);
   writeNotNull('filename', instance.filename);
   return val;
-}
-
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
 }
 
 const _$UploadingStatusEnumMap = {
@@ -220,9 +185,8 @@ const _$ErrorEventEnumMap = {
 };
 
 FrappeUploadRequestSlice _$FrappeUploadRequestSliceFromJson(
-    Map<String, dynamic> json) {
-  return FrappeUploadRequestSlice()..currentSlice = json['currentSlice'] as num;
-}
+        Map<String, dynamic> json) =>
+    FrappeUploadRequestSlice()..currentSlice = json['currentSlice'] as num?;
 
 Map<String, dynamic> _$FrappeUploadRequestSliceToJson(
     FrappeUploadRequestSlice instance) {
@@ -239,14 +203,13 @@ Map<String, dynamic> _$FrappeUploadRequestSliceToJson(
 }
 
 FrappeUploadAcceptSlice _$FrappeUploadAcceptSliceFromJson(
-    Map<String, dynamic> json) {
-  return FrappeUploadAcceptSlice()
-    ..isPrivate = json['is_private'] as bool
-    ..name = json['name'] as String
-    ..size = json['size'] as num
-    ..type = json['type'] as String
-    ..data = (json['data'] as List)?.map((e) => e as int)?.toList();
-}
+        Map<String, dynamic> json) =>
+    FrappeUploadAcceptSlice()
+      ..isPrivate = json['is_private'] as bool?
+      ..name = json['name'] as String?
+      ..size = json['size'] as num?
+      ..type = json['type'] as String?
+      ..data = (json['data'] as List<dynamic>?)?.map((e) => e as int).toList();
 
 Map<String, dynamic> _$FrappeUploadAcceptSliceToJson(
     FrappeUploadAcceptSlice instance) {
@@ -266,9 +229,8 @@ Map<String, dynamic> _$FrappeUploadAcceptSliceToJson(
   return val;
 }
 
-FrappeUploadEnd _$FrappeUploadEndFromJson(Map<String, dynamic> json) {
-  return FrappeUploadEnd()..fileUrl = json['file_url'] as String;
-}
+FrappeUploadEnd _$FrappeUploadEndFromJson(Map<String, dynamic> json) =>
+    FrappeUploadEnd()..fileUrl = json['file_url'] as String?;
 
 Map<String, dynamic> _$FrappeUploadEndToJson(FrappeUploadEnd instance) {
   final val = <String, dynamic>{};

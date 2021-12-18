@@ -1,4 +1,6 @@
-import '../../core.dart';
+import '../core/config.dart';
+import '../core/renovation.controller.dart';
+import '../core/request.dart';
 
 abstract class LogManager extends RenovationController {
   LogManager(RenovationConfig config) : super(config);

@@ -33,11 +33,13 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   /// It also adds the new doc to the local cache using [addToLocals].
   @override
   T newDoc<T extends FrappeDocument>(T doc) {
-    doc.name = getNewName(doc.doctype);
+    EmptyDoctypeError.verify(doc.doctype);
+
+    doc.name = getNewName(doc.doctype!);
     doc.isLocal = true;
     doc.unsaved = true;
     doc.rawResponse = <String, dynamic>{
-      if (doc.rawResponse != null) ...doc.rawResponse,
+      if (doc.rawResponse != null) ...doc.rawResponse!,
       ...doc.toJson(),
     };
     addToLocals(doc);
@@ -52,10 +54,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   String getNewName(String doctype) {
     EmptyDoctypeError.verify(doctype);
 
-    if (ModelController.newNameCount[doctype] == null) {
-      ModelController.newNameCount[doctype] = 0;
-    }
-    ModelController.newNameCount[doctype]++;
+    ModelController.newNameCount[doctype] ??= 0;
+    ModelController.newNameCount.update(doctype, (value) => value++);
     return 'New $doctype ${ModelController.newNameCount[doctype]}';
   }
 
@@ -79,15 +79,15 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     EmptyDoctypeError.verify(doc.doctype);
 
     if (!locals.containsKey(doc.doctype)) {
-      locals[doc.doctype] = <String, dynamic>{};
+      locals[doc.doctype!] = <String, dynamic>{};
     }
     if (doc.name == null) {
-      doc.name = getNewName(doc.doctype);
+      doc.name = getNewName(doc.doctype!);
       doc.docStatus = FrappeDocStatus.Draft; // treat as a new doc
       doc.isLocal = true;
       doc.unsaved = true;
     }
-    locals[doc.doctype][doc.name] = doc;
+    locals[doc.doctype]![doc.name!] = doc;
   }
 
   /// Returns the document specified by its [docName].
@@ -100,9 +100,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Throws [EmptyDoctypeError] if the doctype field is not set within the model class.
   @override
-  Future<RequestResponse<T>> getDoc<T extends FrappeDocument>(
+  Future<RequestResponse<T?>> getDoc<T extends FrappeDocument>(
       T obj, String docName,
-      {bool forceFetch = false}) async {
+      {bool? forceFetch = false}) async {
     await getFrappe()
         .checkAppInstalled(features: ['getDoc'], throwError: false);
 
@@ -111,24 +111,24 @@ class FrappeModelController extends ModelController<FrappeDocument> {
 
     final cachedDoc = getDocFromCache<T>(obj.doctype, docName);
 
-    if (cachedDoc != null && !forceFetch) {
+    if (cachedDoc != null && !forceFetch!) {
       return RequestResponse.success(cachedDoc);
     }
 
-    RequestResponse<FrappeResponse> response;
+    RequestResponse<FrappeResponse?> response;
     // Default URL
     var url =
-        '${config.hostUrl}/api/resource/${Uri.encodeComponent(obj.doctype)}/${Uri.encodeComponent(docName)}';
+        '${config.hostUrl}/api/resource/${Uri.encodeComponent(obj.doctype!)}/${Uri.encodeComponent(docName)}';
     if (getFrappe().getAppsVersion('renovation_core') != null) {
       unawaited(config.coreInstance.meta.getDocMeta(doctype: obj.doctype));
       url =
-          '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(obj.doctype)}/${Uri.encodeComponent(docName)}';
+          '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(obj.doctype!)}/${Uri.encodeComponent(docName)}';
     }
 
     response = await Request.initiateRequest(
         url: url, method: HttpMethod.GET, isFrappeResponse: false);
     if (response.isSuccess) {
-      final dynamic responseObj = response.data.message;
+      final dynamic responseObj = response.data!.message;
       if (responseObj != null && responseObj != 'failed') {
         final temp = obj.fromJson<T>(responseObj);
         temp.rawResponse = responseObj;
@@ -145,7 +145,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
                       data: response.data,
                       httpCode: response.httpCode,
                       rawResponse: response.rawResponse)
-                    ..rawError = response?.error?.info?.rawError)));
+                    ..rawError = response.error?.info?.rawError)));
     }
 
     return RequestResponse.fail(handleError('get_doc', response.error));
@@ -170,15 +170,15 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///    - {{field_name}} asc|desc
   ///    - By default, the list is ordered by modification timestamp (modified)
   @override
-  Future<RequestResponse<List<T>>> getList<T extends FrappeDocument>(T obj,
-      {List<String> fields,
+  Future<RequestResponse<List<T?>?>> getList<T extends FrappeDocument>(T obj,
+      {List<String>? fields,
       dynamic filters,
-      String orderBy = 'modified desc',
-      int limitPageStart = 0,
-      int limitPageLength = 99,
-      String parent,
-      Map<String, List<String>> tableFields,
-      List<String> withLinkFields}) async {
+      String? orderBy = 'modified desc',
+      int? limitPageStart = 0,
+      int? limitPageLength = 99,
+      String? parent,
+      Map<String, List<String>>? tableFields,
+      List<String>? withLinkFields}) async {
     await getFrappe()
         .checkAppInstalled(features: ['getList'], throwError: false);
 
@@ -225,9 +225,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         queryParams: params.toJson());
     if (response.isSuccess) {
       // Convert the JSON => T
-      final responseObj = obj.deserializeList<T>(response.data.message);
+      final responseObj = obj.deserializeList<T>(response.data!.message)!;
       for (var i = 0; i < responseObj.length; i++) {
-        responseObj[i].rawResponse = response.data.message[i];
+        responseObj[i].rawResponse = response.data!.message[i];
       }
 
       return RequestResponse.success(responseObj,
@@ -247,7 +247,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Returns a failure in case [doctype], [docName] or [docField] don't exist.
   @override
-  Future<RequestResponse<Map<String, dynamic>>> getValue(
+  Future<RequestResponse<Map<String, dynamic>?>> getValue(
       String doctype, String docName, String docField) async {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
@@ -263,7 +263,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         queryParams: params.toJson());
     if (response.isSuccess) {
       if (response.data?.message != null) {
-        return RequestResponse.success(response.data.message,
+        return RequestResponse.success(response.data!.message,
             rawResponse: response.rawResponse);
       } else {
         response.isSuccess = false;
@@ -290,18 +290,18 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Returns a failure if the document or doctype don't exist.
   @override
-  Future<RequestResponse<String>> deleteDoc(
-      String doctype, String docName) async {
+  Future<RequestResponse<String?>> deleteDoc(
+      String? doctype, String? docName) async {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
 
     final response = await Request.initiateRequest(
         url:
-            '${config.hostUrl}/api/resource/${Uri.encodeComponent(doctype)}/${Uri.encodeComponent(docName)}',
+            '${config.hostUrl}/api/resource/${Uri.encodeComponent(doctype!)}/${Uri.encodeComponent(docName!)}',
         method: HttpMethod.DELETE);
     if (response.isSuccess) {
-      if (locals[doctype] != null && locals[doctype][docName] != null) {
-        locals[doctype].remove(docName);
+      if (locals[doctype] != null && locals[doctype]![docName] != null) {
+        locals[doctype]!.remove(docName);
       }
       return RequestResponse.success(docName);
     } else {
@@ -314,7 +314,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   T copyDoc<T extends FrappeDocument>(T doc) {
     EmptyDoctypeError.verify(doc.doctype);
     final clone = JSONAble.clone<T>(doc);
-    clone.name = getNewName(doc.doctype);
+    clone.name = getNewName(doc.doctype!);
     clone.docStatus = FrappeDocStatus.Draft;
     clone.isLocal = true;
     clone.unsaved = true;
@@ -347,8 +347,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Throws [InvalidFrappeFieldValue] if [docValue] doesn't comply with [DBFilter.isDBValue].
   @override
-  Future<RequestResponse<T>> setValue<T extends FrappeDocument>(
-      T obj, String docName, String docField, dynamic docValue) async {
+  Future<RequestResponse<T?>> setValue<T extends FrappeDocument>(
+      T obj, String? docName, String docField, dynamic docValue) async {
     EmptyDoctypeError.verify(obj.doctype);
     EmptyDocNameError.verify(docName);
     EmptyDocFieldError.verify(docField);
@@ -364,8 +364,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         contentType: ContentTypeLiterals.APPLICATION_JSON,
         data: params.toJson());
     if (response.isSuccess) {
-      final temp = obj.fromJson<T>(response.data.message);
-      temp.rawResponse = response.data.message;
+      final temp = obj.fromJson<T>(response.data!.message);
+      temp.rawResponse = response.data!.message;
       return RequestResponse.success(temp, rawResponse: response.rawResponse);
     }
     return RequestResponse.fail(handleError('set_value', response.error));
@@ -377,7 +377,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// If a new doc is saved with the same name, a failure is returned.
   @override
-  Future<RequestResponse<T>> saveDoc<T extends FrappeDocument>(T doc) async {
+  Future<RequestResponse<T?>> saveDoc<T extends FrappeDocument>(T doc) async {
     await getFrappe()
         .checkAppInstalled(features: ['saveDoc'], throwError: false);
 
@@ -389,9 +389,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
 
     final response = await Request.initiateRequest(
         url: isRenovationCoreInstalled
-            ? '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(doc.doctype)}/${doc.isLocal ? "" : '${Uri.encodeComponent(doc.name)}'}'
-            : '${config.hostUrl}/api/resource/${Uri.encodeComponent(doc.doctype)}${doc.isLocal ? "" : '/${Uri.encodeComponent(doc.name)}'}',
-        method: doc.isLocal ? HttpMethod.POST : HttpMethod.PUT,
+            ? '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(doc.doctype!)}/${doc.isLocal! ? "" : '${Uri.encodeComponent(doc.name!)}'}'
+            : '${config.hostUrl}/api/resource/${Uri.encodeComponent(doc.doctype!)}${doc.isLocal! ? "" : '/${Uri.encodeComponent(doc.name!)}'}',
+        method: doc.isLocal! ? HttpMethod.POST : HttpMethod.PUT,
         contentType: ContentTypeLiterals.APPLICATION_JSON,
         data: isRenovationCoreInstalled
             ? <String, dynamic>{'doc': doc.toJson()}
@@ -399,11 +399,11 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         isFrappeResponse: false);
 
     if (response.isSuccess) {
-      if (response.data != null && response.data.message is Map) {
-        final savedDoc = doc.fromJson<T>(response.data.message);
+      if (response.data != null && response.data!.message is Map) {
+        final savedDoc = doc.fromJson<T>(response.data!.message);
         savedDoc.isLocal = false;
         savedDoc.unsaved = false;
-        savedDoc.rawResponse = response.data.message;
+        savedDoc.rawResponse = response.data!.message;
         addToLocals(savedDoc);
         return RequestResponse.success(savedDoc,
             rawResponse: response.rawResponse);
@@ -426,14 +426,14 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Throws [NotSubmittableDocError] if the doctype is not submittable based on its meta.
   @override
-  Future<RequestResponse<T>> submitDoc<T extends FrappeDocument>(T doc) async {
+  Future<RequestResponse<T?>> submitDoc<T extends FrappeDocument>(T doc) async {
     EmptyDoctypeError.verify(doc.doctype);
     EmptyDocNameError.verify(doc.name);
 
     final meta =
         await getFrappeMetaController().getDocMeta(doctype: doc.doctype);
 
-    if (meta.isSuccess && !meta.data.isSubmittable) {
+    if (meta.isSuccess && !meta.data!.isSubmittable!) {
       throw NotSubmittableDocError();
     }
 
@@ -447,12 +447,12 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         });
     if (response.isSuccess) {
       if (response.data != null &&
-          response.data.exc == null &&
-          response.data.message is Map) {
-        doc = doc.fromJson(response.data.message);
+          response.data!.exc == null &&
+          response.data!.message is Map) {
+        doc = doc.fromJson(response.data!.message);
         doc.isLocal = false;
         doc.unsaved = false;
-        doc.rawResponse = response.data.message;
+        doc.rawResponse = response.data!.message;
 
         addToLocals(doc);
         return RequestResponse.success(doc, rawResponse: response.rawResponse);
@@ -475,7 +475,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Throws [NotSubmittableDocError] if the doctype is not submittable based on its meta.
   @override
-  Future<RequestResponse<T>> saveSubmitDoc<T extends FrappeDocument>(
+  Future<RequestResponse<T?>> saveSubmitDoc<T extends FrappeDocument>(
       T doc) async {
     await getFrappe().checkAppInstalled(features: ['saveSubmitDoc']);
 
@@ -485,7 +485,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     final meta =
         await getFrappeMetaController().getDocMeta(doctype: doc.doctype);
 
-    if (meta.isSuccess && !meta.data.isSubmittable) {
+    if (meta.isSuccess && !meta.data!.isSubmittable!) {
       throw NotSubmittableDocError();
     }
 
@@ -499,12 +499,12 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         });
     if (response.isSuccess) {
       if (response.data != null &&
-          response.data.exc == null &&
-          response.data.message is Map) {
-        doc = doc.fromJson(response.data.message);
+          response.data!.exc == null &&
+          response.data!.message is Map) {
+        doc = doc.fromJson(response.data!.message);
         doc.isLocal = false;
         doc.unsaved = false;
-        doc.rawResponse = response.data.message;
+        doc.rawResponse = response.data!.message;
 
         addToLocals(doc);
         return RequestResponse.success(doc, rawResponse: response.rawResponse);
@@ -520,7 +520,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Returns a failure, if the document is duplicated or doctype/docname don't exist.
   @override
-  Future<RequestResponse<T>> cancelDoc<T extends FrappeDocument>(T doc) async {
+  Future<RequestResponse<T?>> cancelDoc<T extends FrappeDocument>(T doc) async {
     EmptyDoctypeError.verify(doc.doctype);
     EmptyDocNameError.verify(doc.name);
 
@@ -538,12 +538,12 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         });
     if (response.isSuccess) {
       if (response.data != null &&
-          response.data.exc == null &&
-          response.data.message is Map) {
-        doc = doc.fromJson(response.data.message);
+          response.data!.exc == null &&
+          response.data!.message is Map) {
+        doc = doc.fromJson(response.data!.message);
         doc.isLocal = false;
         doc.unsaved = false;
-        doc.rawResponse = response.data.message;
+        doc.rawResponse = response.data!.message;
 
         addToLocals(doc);
         return RequestResponse.success(doc, rawResponse: response.rawResponse);
@@ -569,10 +569,10 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// If the doctype doesn't exist, a failure is returned.
   @override
-  Future<RequestResponse<List<SearchLinkResponse>>> searchLink(
-      {@required String doctype,
-      @required String txt,
-      Map<String, dynamic> options}) async {
+  Future<RequestResponse<List<SearchLinkResponse>?>> searchLink(
+      {required String doctype,
+      required String txt,
+      Map<String, dynamic>? options}) async {
     EmptyDoctypeError.verify(doctype);
 
     options ??= <String, dynamic>{};
@@ -589,9 +589,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         isFrappeResponse: false);
     if (response.isSuccess &&
         response.data != null &&
-        response.data.message is Map &&
-        response.data.message['results'] is List) {
-      List temp = response.data.message['results'];
+        response.data!.message is Map &&
+        response.data!.message['results'] is List) {
+      List? temp = response.data!.message['results'];
       final results =
           SearchLinkResponse().deserializeList<SearchLinkResponse>(temp);
       return RequestResponse.success(results,
@@ -609,16 +609,16 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Returns failure in case the [doctype] does not exist in the backend.
   @override
-  Future<RequestResponse<bool>> assignDoc(
-      {@required String assignTo,
-      @required String doctype,
-      bool myself = false,
-      DateTime dueDate,
-      String description,
-      String docName,
-      List<String> docNames,
+  Future<RequestResponse<bool?>> assignDoc(
+      {String? assignTo,
+      String? doctype,
+      bool? myself = false,
+      DateTime? dueDate,
+      String? description,
+      String? docName,
+      List<String>? docNames,
       bool notify = false,
-      Priority priority,
+      Priority? priority,
       bool bulkAssign = false}) async {
     // FIXME: possible to assign same doc twice, should be validated
     final args = AssignDocParams(
@@ -633,11 +633,11 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         bulkAssign: bulkAssign,
         notify: notify);
 
-    args.cmd = args.bulkAssign
+    args.cmd = args.bulkAssign!
         ? 'frappe.desk.form.assign_to.add_multiple'
         : 'frappe.desk.form.assign_to.add';
 
-    if (args.myself) args.assignTo = config.coreInstance.auth.currentUser;
+    if (args.myself!) args.assignTo = config.coreInstance.auth.currentUser;
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -645,7 +645,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         contentType: ContentTypeLiterals.APPLICATION_JSON,
         data: (args
               ..name =
-                  args.bulkAssign ? jsonEncode(args.docNames) : args.docName)
+                  args.bulkAssign! ? jsonEncode(args.docNames) : args.docName)
             .toJson());
     if (response.isSuccess) {
       return RequestResponse.success(response.isSuccess);
@@ -656,10 +656,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
 
   /// Sets the assignment to [Status.Cancelled] which means that the task is assigned.
   @override
-  Future<RequestResponse<bool>> completeDocAssignment(
-      {@required String doctype,
-      @required String docName,
-      @required String assignedTo}) async {
+  Future<RequestResponse<bool?>> completeDocAssignment(
+      {String? doctype, String? docName, String? assignedTo}) async {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
     final args = CompleteDocAssignmentParams(
@@ -683,10 +681,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
 
   /// Un-assigns a user from the [doctype] and [docName].
   @override
-  Future<RequestResponse<bool>> unAssignDoc(
-      {@required String doctype,
-      @required String docName,
-      @required String unAssignFrom}) async {
+  Future<RequestResponse<bool?>> unAssignDoc(
+      {String? doctype, String? docName, String? unAssignFrom}) async {
     await getFrappe().checkAppInstalled(features: ['unAssignDoc']);
 
     EmptyDoctypeError.verify(doctype);
@@ -713,9 +709,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Optionally can filter the list by specifying [doctype] and [status].
   @override
-  Future<RequestResponse<List<GetDocsAssignedToUserResponse>>>
+  Future<RequestResponse<List<GetDocsAssignedToUserResponse>?>>
       getDocsAssignedToUser(
-          {@required String assignedTo, String doctype, Status status}) async {
+          {required String assignedTo, String? doctype, Status? status}) async {
     await getFrappe().checkAppInstalled(features: ['getDocsAssignedToUser']);
 
     final args = GetDocsAssignedToUserParams(
@@ -728,7 +724,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         contentType: ContentTypeLiterals.APPLICATION_JSON,
         data: args.toJson());
     if (response.isSuccess) {
-      List result = response.data.message;
+      List result = response.data!.message;
 
       return RequestResponse.success(
           result.isNotEmpty
@@ -743,8 +739,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
 
   /// Returns the users assigned to a document of a certain doctype as list of [ToDo].
   @override
-  Future<RequestResponse<List<ToDo>>> getUsersAssignedToDoc(
-      {@required String doctype, @required String docName}) async {
+  Future<RequestResponse<List<ToDo?>?>> getUsersAssignedToDoc(
+      {required String doctype, required String docName}) async {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
     final response = await getList(ToDo(), filters: {
@@ -774,14 +770,14 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Returns failure if the doctype or docname are invalid.
   @override
-  Future<RequestResponse<String>> addTag(
-      {@required String doctype,
-      @required String docName,
-      @required String tag}) async {
+  Future<RequestResponse<String?>> addTag(
+      {required String doctype,
+      required String docName,
+      required String tag}) async {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
     final args = {
-      'cmd': config.coreInstance.frappe.frappeVersion.major == 12
+      'cmd': config.coreInstance.frappe.frappeVersion!.major == 12
           ? 'frappe.desk.doctype.tag.tag.add_tag'
           : 'frappe.desk.tags.add_tag',
       'dt': doctype,
@@ -796,7 +792,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         data: args);
 
     if (response.isSuccess) {
-      return RequestResponse.success(response.data.message,
+      return RequestResponse.success(response.data!.message,
           rawResponse: response.rawResponse);
     } else {
       return RequestResponse.fail(handleError('add_tag', response.error));
@@ -809,15 +805,15 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Returns failure if the doctype or docname are invalid.
   @override
-  Future<RequestResponse<String>> removeTag(
-      {@required String doctype,
-      @required String docName,
-      @required String tag}) async {
+  Future<RequestResponse<String?>> removeTag(
+      {required String doctype,
+      required String docName,
+      required String tag}) async {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
 
     final args = {
-      'cmd': config.coreInstance.frappe.frappeVersion.major == 12
+      'cmd': config.coreInstance.frappe.frappeVersion!.major == 12
           ? 'frappe.desk.doctype.tag.tag.remove_tag'
           : 'frappe.desk.tags.remove_tag',
       'dt': doctype,
@@ -844,8 +840,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Returns failure if the doctype.
   @override
-  Future<RequestResponse<List<String>>> getTaggedDocs(
-      {@required String doctype, String tag}) async {
+  Future<RequestResponse<List<String>?>> getTaggedDocs(
+      {required String doctype, String? tag}) async {
     EmptyDoctypeError.verify(doctype);
 
     final response = await Request.initiateRequest(
@@ -853,7 +849,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         method: HttpMethod.POST,
         contentType: ContentTypeLiterals.APPLICATION_JSON,
         data: <String, dynamic>{
-          'cmd': config.coreInstance.frappe.frappeVersion.major == 12
+          'cmd': config.coreInstance.frappe.frappeVersion!.major == 12
               ? 'frappe.desk.doctype.tag.tag.get_tagged_docs'
               : 'frappe.desk.tags.get_tagged_docs',
           'doctype': doctype,
@@ -861,7 +857,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         });
 
     if (response.isSuccess) {
-      List result = response.data.message;
+      List result = response.data!.message;
       if (result.isNotEmpty) {
         return RequestResponse.success(List<String>.from(result[0]),
             rawResponse: response.rawResponse);
@@ -879,9 +875,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Returns failure if the doctype.
   @override
-  Future<RequestResponse<List<String>>> getTags(
-      {@required String doctype, String likeTag}) async {
-    if (config.coreInstance.frappe.frappeVersion.major < 12) {
+  Future<RequestResponse<List<String?>?>> getTags(
+      {required String doctype, String? likeTag}) async {
+    if (config.coreInstance.frappe.frappeVersion!.major! < 12) {
       final response = await Request.initiateRequest(
           url: config.hostUrl,
           method: HttpMethod.POST,
@@ -894,7 +890,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
           });
 
       if (response.isSuccess) {
-        List result = response.data.message;
+        List result = response.data!.message;
         return RequestResponse.success(List<String>.from(result),
             rawResponse: response.rawResponse);
       } else {
@@ -909,7 +905,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       ]);
 
       if (response.isSuccess) {
-        final tags = response.data.map((_tag) => _tag.tag).toList();
+        final tags = response.data?.map((_tag) => _tag?.tag).toList();
         return RequestResponse.success(tags, rawResponse: response.rawResponse);
       }
       return RequestResponse.fail(handleError('get_tag', response.error));
@@ -922,8 +918,8 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   ///
   /// Optionally specify the target user. Defaults to `null`.
   @override
-  Future<RequestResponse<FrappeReport>> getReport(
-      {@required String report, dynamic filters, String user}) async {
+  Future<RequestResponse<FrappeReport?>> getReport(
+      {required String report, dynamic filters, String? user}) async {
     await getFrappe().checkAppInstalled(features: ['getReport']);
 
     if (filters != null) {
@@ -943,7 +939,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     );
     if (response.isSuccess && response.data != null) {
       return RequestResponse.success(
-          FrappeReport.fromJson(response.data.message),
+          FrappeReport.fromJson(response.data!.message),
           rawResponse: response.rawResponse);
     } else {
       return RequestResponse.fail(handleError('get_report', response.error));
@@ -951,31 +947,30 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   }
 
   @override
-  ErrorDetail handleError(String errorId, ErrorDetail error) {
+  ErrorDetail handleError(String? errorId, ErrorDetail? error) {
+    error ??= RenovationController.genericError(error);
     switch (errorId) {
       case 'get_doc':
-        if (error.info != null) {
-          if (error.info.httpCode == 404) {
+        if (error.info?.httpCode == 404) {
+          error = handleError('non_existing_doc', error);
+        } else if (error.info?.data != null &&
+            error.info?.data?.exception != null) {
+          if (error.info?.data.exception.contains('DoesNotExistError')) {
             error = handleError('non_existing_doc', error);
-          } else if (error.info.data != null &&
-              error.info?.data?.exception != null) {
-            if (error.info.data.exception.contains('DoesNotExistError')) {
-              error = handleError('non_existing_doc', error);
-            } else if (error.info.data.exception.contains('ImportError')) {
-              error = handleError('non_existing_doctype', error);
-            }
-          } else if (error.info.httpCode == 412) {
-            error = handleError('wrong_input', error);
-          } else {
-            error = handleError(null, error);
+          } else if (error.info?.data.exception.contains('ImportError')) {
+            error = handleError('non_existing_doctype', error);
           }
+        } else if (error.info?.httpCode == 412) {
+          error = handleError('wrong_input', error);
+        } else {
+          error = handleError(null, error);
         }
         break;
       case 'wrong_input':
         error
           ..type = RenovationError.DataFormatError
           ..title = 'Wrong input'
-          ..info = (error.info
+          ..info = ((error.info ?? Information())
             ..httpCode = 412
             ..cause = 'The input arguments are in the wrong type/format'
             ..suggestion =
@@ -983,16 +978,16 @@ class FrappeModelController extends ModelController<FrappeDocument> {
             ..data = error.info);
         break;
       case 'delete_doc':
-        if (error.info.httpCode == 404) {
+        if (error.info?.httpCode == 404) {
           error = handleError('non_existing', error);
         } else {
           error = handleError(null, error);
         }
         break;
       case 'get_report':
-        if (error.info.httpCode == 404 &&
-            error.info.data != null &&
-            error.info.data.excType.contains('DoesNotExistError')) {
+        if (error.info?.httpCode == 404 &&
+            error.info?.data != null &&
+            error.info?.data.excType.contains('DoesNotExistError')) {
           error = handleError('non_existing_doctype', error);
         } else {
           error = handleError(null, error);
@@ -1001,28 +996,27 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       case 'set_value':
       case 'add_tag':
       case 'remove_tag':
-        if (error.info.httpCode == 500) {
+        if (error.info?.httpCode == 500) {
           error = handleError('non_existing_doctype', error);
-        } else if (error.info.httpCode == 404) {
+        } else if (error.info?.httpCode == 404) {
           error = handleError('non_existing_doc', error);
         } else {
           error = handleError(null, error);
         }
         break;
       case 'get_value':
-        if (error.info.httpCode == 200) {
+        if (error.info?.httpCode == 200) {
           error = handleError('non_existing', error);
-        } else if (error.info.httpCode == 500) {
+        } else if (error.info?.httpCode == 500) {
           error = handleError('non_existing_docfield', error);
         } else {
           handleError(null, error);
         }
         break;
       case 'save_doc':
-        if (error.info != null &&
-            error.info.data != null &&
-            error.info.data.exception != null &&
-            error.info.data.exception.contains('DuplicateEntryError')) {
+        if (error.info?.data != null &&
+            error.info?.data.exception != null &&
+            error.info?.data.exception.contains('DuplicateEntryError')) {
           error = handleError('duplicate_document', error);
         } else {
           error = handleError(null, error);
@@ -1031,29 +1025,29 @@ class FrappeModelController extends ModelController<FrappeDocument> {
       case 'submit_doc':
       case 'save_submit_doc':
       case 'cancel_doc':
-        if (error.info.httpCode == 409) {
+        if (error.info?.httpCode == 409) {
           error = handleError('duplicate_document', error);
-        } else if (error.info.httpCode == 500) {
+        } else if (error.info?.httpCode == 500) {
           error = handleError('non_existing_doctype', error);
-        } else if (error.info.httpCode == 404) {
+        } else if (error.info?.httpCode == 404) {
           error = handleError('non_existing_doc', error);
         } else {
           error = handleError(null, error);
         }
         break;
       case 'search_link':
-        if (error.info.httpCode == 404 &&
-            error.info.data != null &&
-            error.info.data.excType == 'DoesNotExistError') {
+        if (error.info?.httpCode == 404 &&
+            error.info?.data != null &&
+            error.info?.data.excType == 'DoesNotExistError') {
           error = handleError('non_existing_doctype', error);
         } else {
           error = handleError(null, error);
         }
         break;
       case 'get_tagged_docs':
-        if (error.info.httpCode == 500 &&
-            error.info.data != null &&
-            error.info.data.exc.contains("doesn't exist")) {
+        if (error.info?.httpCode == 500 &&
+            error.info?.data != null &&
+            error.info?.data.exc.contains("doesn't exist")) {
           error = handleError('non_existing_doctype', error);
         } else {
           error = handleError(null, error);
@@ -1061,7 +1055,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         break;
 
       case 'get_tags':
-        if (error.info.httpCode == 500) {
+        if (error.info?.httpCode == 500) {
           error = handleError('non_existing_doctype', error);
         } else {
           error = handleError(null, error);
@@ -1071,7 +1065,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         error
           ..type = RenovationError.NotFoundError
           ..title = DOCTYPE_OR_DOCNAME_NOT_EXIST_TITLE
-          ..info = (error.info
+          ..info = ((error.info ?? Information())
             ..httpCode = 404
             ..cause = 'Doctype or Docname does not exist'
             ..suggestion = 'Make sure the queried document name is correct'
@@ -1081,7 +1075,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         error
           ..type = RenovationError.NotFoundError
           ..title = DOCNAME_NOT_EXIST_TITLE
-          ..info = (error.info
+          ..info = ((error.info ?? Information())
             ..httpCode = 404
             ..cause = 'Docname does not exist'
             ..suggestion =
@@ -1092,7 +1086,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         error
           ..type = RenovationError.NotFoundError
           ..title = DOCTYPE_NOT_EXIST_TITLE
-          ..info = (error.info
+          ..info = ((error.info ?? Information())
             ..httpCode = 404
             ..cause = 'DocType does not exist'
             ..suggestion =
@@ -1103,7 +1097,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         error
           ..title = 'DocField is not valid'
           ..type = RenovationError.NotFoundError
-          ..info = (error.info
+          ..info = ((error.info ?? Information())
             ..httpCode = 404
             ..cause = 'DocField is not defined for the DocType'
             ..suggestion =
@@ -1114,7 +1108,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         error
           ..title = 'Duplicate document found'
           ..type = RenovationError.DuplicateEntryError
-          ..info = (error.info
+          ..info = ((error.info ?? Information())
             ..httpCode = 409
             ..cause = 'Duplicate doc found'
             ..suggestion =
@@ -1122,9 +1116,9 @@ class FrappeModelController extends ModelController<FrappeDocument> {
             ..data = error.info);
         break;
       case 'get_list':
-        if (error.info.httpCode == 500 &&
-            error.info.data != null &&
-            error.info.data.exc.contains('TableMissingError')) {
+        if (error.info?.httpCode == 500 &&
+            error.info?.data != null &&
+            error.info?.data.exc.contains('TableMissingError')) {
           error = handleError('non_existing_doctype', error);
         }
         break;

@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:meta/meta.dart';
-import 'package:zxcvbn/src/result.dart';
 import 'package:zxcvbn/zxcvbn.dart';
 
 import '../../core/config.dart';
@@ -17,19 +18,19 @@ import 'interfaces.dart';
 /// An extension of [AuthController] containing authentication properties and methods specific to Frappé.
 ///
 /// Authentication methods include standard email/pwd login, OTP login, updating session, etc..
-class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
+class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
   /// If [sessionStatusInfo] is not null, the session and the token will be set locally.
   ///
   /// This can be useful, if the session was stored in "SharedPreferences", for instance where the controller can be initialized with a previous session.
   FrappeAuthController(RenovationConfig config,
-      {FrappeSessionStatusInfo sessionStatusInfo})
+      {FrappeSessionStatusInfo? sessionStatusInfo})
       : super(config, sessionStatusInfo: sessionStatusInfo) {
     final isSessionProvided = sessionStatusInfo != null;
 
     if (isSessionProvided) {
       updateSession(
           sessionStatus: sessionStatusInfo,
-          loggedIn: sessionStatusInfo.loggedIn,
+          loggedIn: sessionStatusInfo!.loggedIn!,
           useTimestamp: sessionStatusInfo.timestamp);
 
       if (sessionStatusInfo.token != null) {
@@ -46,7 +47,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
 
   /// Returns the current JWT token formatted as `TOKEN_HEADER token`.
   @override
-  String getCurrentToken() =>
+  String? getCurrentToken() =>
       currentToken != null ? '$TOKEN_HEADER $currentToken' : null;
 
   /// Enables JWT if the app 'renovation_core' is installed
@@ -63,10 +64,10 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   ///
   /// By default, [sessionStatus] is updated.
   @override
-  Future<RequestResponse<FrappeSessionStatusInfo>> checkLogin(
-      {bool shouldUpdateSession = true}) async {
+  Future<RequestResponse<FrappeSessionStatusInfo?>> checkLogin(
+      {bool? shouldUpdateSession = true}) async {
     var currentSession = getSession();
-    if (currentSession != null && currentSession.loggedIn) {
+    if (currentSession != null && currentSession.loggedIn!) {
       return await verifySessionWithBackend(currentSession,
           shouldUpdateSession: shouldUpdateSession);
     } else {
@@ -84,8 +85,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   ///
   /// [password] is optional.
   @override
-  Future<RequestResponse<FrappeSessionStatusInfo>> login(String email,
-      [String password]) async {
+  Future<RequestResponse<FrappeSessionStatusInfo?>> login(String email,
+      [String? password]) async {
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/login',
         method: HttpMethod.POST,
@@ -97,10 +98,10 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         },
         isFrappeResponse: false);
 
-    FrappeSessionStatusInfo sessionStatusInfo;
+    FrappeSessionStatusInfo? sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse));
+          Request.convertToMap(response.rawResponse!));
 
       await getFrappe()
           .checkAppInstalled(features: ['login'], throwError: false);
@@ -113,11 +114,12 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
             method: HttpMethod.GET,
             isFrappeResponse: false);
         if (logged_user.isSuccess) {
-          sessionStatusInfo.user = logged_user.data.message['message'];
+          sessionStatusInfo.user = logged_user.data!.message['message'];
         }
       }
 
-      sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
+      sessionStatusInfo.rawSession =
+          Request.convertToMap(response.rawResponse!);
     }
     updateSession(
         loggedIn: response.isSuccess, sessionStatus: sessionStatusInfo);
@@ -134,7 +136,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   ///
   /// [pin] is usually a 4-digit.
   @override
-  Future<RequestResponse<FrappeSessionStatusInfo>> pinLogin(
+  Future<RequestResponse<FrappeSessionStatusInfo?>> pinLogin(
       String user, String pin) async {
     await getFrappe().checkAppInstalled(features: ['pinLogin']);
 
@@ -147,14 +149,16 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
           'user': user,
           'pin': pin
         });
-    SessionStatusInfo sessionStatusInfo;
+    SessionStatusInfo? sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse));
-      sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
+          Request.convertToMap(response.rawResponse!));
+      sessionStatusInfo.rawSession =
+          Request.convertToMap(response.rawResponse!);
     }
     updateSession(
-        sessionStatus: sessionStatusInfo, loggedIn: response.isSuccess);
+        sessionStatus: sessionStatusInfo as FrappeSessionStatusInfo?,
+        loggedIn: response.isSuccess);
     return response.isSuccess
         ? RequestResponse.success(sessionStatusInfo,
             rawResponse: response.rawResponse)
@@ -174,31 +178,31 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   /// - The mobile number is wrongly formatted.
   /// - The SMS provider responded with an error.
   @override
-  Future<RequestResponse<SendOTPResponse>> sendOTP(String mobileNo,
-      {bool newOTP = false}) async {
+  Future<RequestResponse<SendOTPResponse?>> sendOTP(String mobileNo,
+      {bool? newOTP = false}) async {
     await getFrappe().checkAppInstalled(features: ['sendOTP']);
 
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/renovation/auth.sms.generate',
         method: HttpMethod.POST,
         contentType: ContentTypeLiterals.APPLICATION_X_WWW_FORM_URLENCODED,
-        data: <String, dynamic>{'mobile': mobileNo, 'newPIN': newOTP ? 1 : 0});
+        data: <String, dynamic>{'mobile': mobileNo, 'newPIN': newOTP! ? 1 : 0});
 
-    SendOTPResponse sendOTPResponse;
+    SendOTPResponse? sendOTPResponse;
 
     if (response.isSuccess) {
       sendOTPResponse =
-          SendOTPResponse.fromJson(Request.convertToMap(response.rawResponse));
+          SendOTPResponse.fromJson(Request.convertToMap(response.rawResponse!));
     }
     if (sendOTPResponse != null && sendOTPResponse.status == 'fail') {
-      response.error = ErrorDetail()
-        ..title = 'SMS was not sent'
-        ..type = RenovationError.BackendSettingError
-        ..info = (Information()
-          ..httpCode = 400
-          ..data = response.data
-          ..cause = 'SMS settings may not be set'
-          ..rawResponse = response.rawResponse);
+      response.error = ErrorDetail(
+          title: 'SMS was not sent',
+          type: RenovationError.BackendSettingError,
+          info: (Information()
+            ..httpCode = 400
+            ..data = response.data
+            ..cause = 'SMS settings may not be set'
+            ..rawResponse = response.rawResponse));
       response.isSuccess = false;
     }
 
@@ -214,7 +218,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   ///
   /// In all cases, it returns the response [VerifyOTPResponse].
   @override
-  Future<RequestResponse<VerifyOTPResponse>> verifyOTP(
+  Future<RequestResponse<VerifyOTPResponse?>> verifyOTP(
       String mobileNo, String otp, bool loginToUser) async {
     await getFrappe().checkAppInstalled(features: ['verifyOTP']);
 
@@ -230,10 +234,10 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
           'use_jwt': _useJwt ? 1 : 0
         });
 
-    VerifyOTPResponse verifyOTPResponse;
+    VerifyOTPResponse? verifyOTPResponse;
 
     if (response.isSuccess) {
-      verifyOTPResponse = VerifyOTPResponse.fromJson(response.data.message);
+      verifyOTPResponse = VerifyOTPResponse.fromJson(response.data!.message);
       if (verifyOTPResponse.status != 'verified') {
         response.isSuccess = false;
       } else {
@@ -243,9 +247,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
           // response.data.user is expected from renovation_core
 
           final sessionStatusInfo =
-              FrappeSessionStatusInfo.fromJson(response.data.message);
+              FrappeSessionStatusInfo.fromJson(response.data!.message);
           sessionStatusInfo.rawSession =
-              Request.convertToMap(response.rawResponse);
+              Request.convertToMap(response.rawResponse!);
 
           updateSession(loggedIn: true, sessionStatus: sessionStatusInfo);
         }
@@ -268,7 +272,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
 
   /// Returns an array of roles assigned to the currently logged in user.
   @override
-  Future<RequestResponse<List<String>>> getCurrentUserRoles() async {
+  Future<RequestResponse<List<String>>?> getCurrentUserRoles() async {
     await getFrappe().checkAppInstalled(features: ['getCurrentUserRoles']);
 
     final response = await Request.initiateRequest(
@@ -277,7 +281,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         method: HttpMethod.GET);
 
     if (response.isSuccess && response.data != null) {
-      final map = Request.convertToMap(response.rawResponse);
+      final map = Request.convertToMap(response.rawResponse!)!;
 
       // Since the return is List<dynamic>
       currentUserRoles = <String>[...map['message']];
@@ -286,9 +290,10 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     }
 
     return response.isSuccess
-        ? RequestResponse.success(currentUserRoles,
+        ? RequestResponse.success(currentUserRoles!,
             rawResponse: response.rawResponse)
-        : handleError('get_current_user_roles', response.error);
+        : handleError('get_current_user_roles', response.error)
+            as FutureOr<RequestResponse<List<String>>?>;
   }
 
   /// Logs out the current user.
@@ -314,9 +319,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @protected
   @visibleForTesting
   void updateSession(
-      {FrappeSessionStatusInfo sessionStatus,
+      {FrappeSessionStatusInfo? sessionStatus,
       bool loggedIn = false,
-      double useTimestamp}) {
+      double? useTimestamp}) {
     // Update when old and new status  don't match
     final old = getSession() ?? FrappeSessionStatusInfo(false, 0);
     final newStatus = sessionStatus ?? FrappeSessionStatusInfo(false, 0);
@@ -325,7 +330,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
       ..loggedIn = loggedIn
       ..timestamp = 0;
     if (loggedIn) {
-      newStatus.currentUser = sessionStatus.user;
+      newStatus.currentUser = sessionStatus!.user;
     }
     newStatus.timestamp = null;
     newStatus.homePage = null;
@@ -346,14 +351,14 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
       newStatus.timestamp =
           useTimestamp ?? (DateTime.now().millisecondsSinceEpoch / 1000);
 
-      if (newStatus.loggedIn) {
+      if (newStatus.loggedIn!) {
         if (token != null) {
           currentToken = token;
           // when simply checking auth status, token isn't returned
           setAuthToken(token);
         }
         if (newStatus.lang != null) {
-          config.coreInstance.translate.setCurrentLanguage(newStatus.lang);
+          config.coreInstance.translate.setCurrentLanguage(newStatus.lang!);
         }
         if (getFrappe().getAppsVersion('renovation_core') != null) {
           config.coreInstance.translate.loadTranslations(lang: newStatus.lang);
@@ -379,20 +384,20 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   @protected
   @visibleForTesting
-  Future<RequestResponse<FrappeSessionStatusInfo>> verifySessionWithBackend(
-      FrappeSessionStatusInfo info,
-      {bool shouldUpdateSession = true}) async {
+  Future<RequestResponse<FrappeSessionStatusInfo?>> verifySessionWithBackend(
+      FrappeSessionStatusInfo? info,
+      {bool? shouldUpdateSession = true}) async {
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/frappe.auth.get_logged_user',
         method: HttpMethod.GET,
         isFrappeResponse: false);
     if (response.isSuccess) {
       final serverSession = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse));
-      serverSession.rawSession = Request.convertToMap(response.rawResponse);
+          Request.convertToMap(response.rawResponse!));
+      serverSession.rawSession = Request.convertToMap(response.rawResponse!);
 
       // check if same login
-      if (serverSession.user != info.currentUser) {
+      if (serverSession.user != info!.currentUser) {
         // login changed
         // notify SessionExpired
         config.logger.e(
@@ -409,7 +414,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
                 suggestion: 'Relogin')));
       } else {
         serverSession.token = info.token;
-        if (shouldUpdateSession) {
+        if (shouldUpdateSession!) {
           updateSession(loggedIn: true, sessionStatus: serverSession);
         }
         return RequestResponse.success(serverSession,
@@ -418,7 +423,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
     } else {
       config.logger.e('Renovation Core INVALID SESSION');
       updateSession(loggedIn: false);
-      return RequestResponse.fail(response.error);
+      return RequestResponse.fail(response.error!);
     }
   }
 
@@ -430,13 +435,13 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   ///
   /// If successful, updates the lang field of the current [sessionStatus].
   @override
-  Future<bool> changeUserLanguage(String lang) async {
-    if (lang == null || lang.trim().isEmpty || lang.trim().length > 2) {
+  Future<bool?> changeUserLanguage(String lang) async {
+    if (lang.trim().isEmpty || lang.trim().length > 2) {
       throw InvalidLanguage();
     }
 
     final sessionStatusInfo = getSession();
-    if (sessionStatusInfo == null || !sessionStatusInfo.loggedIn) {
+    if (sessionStatusInfo == null || !sessionStatusInfo.loggedIn!) {
       throw NotLoggedInUser();
     }
 
@@ -458,17 +463,13 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   ///
   /// Validates for compliance with the Password Policy (zxcvbn).
   @override
-  Future<RequestResponse<bool>> changePassword({
-    @required String oldPassword,
-    @required String newPassword,
+  Future<RequestResponse<bool?>> changePassword({
+    required String oldPassword,
+    required String newPassword,
   }) async {
     await getFrappe().checkAppInstalled(features: ['changePassword']);
 
-    assert(
-        oldPassword != null &&
-            oldPassword.isNotEmpty &&
-            newPassword != null &&
-            newPassword.isNotEmpty,
+    assert(oldPassword.isNotEmpty && newPassword.isNotEmpty,
         'Passwords cannot be empty');
     assert(isLoggedIn, 'Need to be signed in to change password');
 
@@ -501,12 +502,13 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   /// The [type] represents the type of the id such as email or mobile.
   /// The [id] is the actual id such as "abc@example.com" if email.
   @override
-  Future<RequestResponse<ResetPasswordInfo>> getPasswordResetInfo({
-    @required RESET_ID_TYPE type,
-    @required String id,
+  Future<RequestResponse<ResetPasswordInfo?>> getPasswordResetInfo({
+    RESET_ID_TYPE? type,
+    String? id,
   }) async {
     await getFrappe().checkAppInstalled(features: ['getPasswordResetInfo']);
 
+    assert(type != null, 'Type cant be empty');
     assert(id != null && id.isNotEmpty, "ID can't be empty");
     assert(type != null, "ID type can't be null");
 
@@ -523,24 +525,24 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         });
 
     if (response.isSuccess) {
-      if (response.data.message != null) {
+      if (response.data!.message != null) {
         return RequestResponse.success(
-            ResetPasswordInfo.fromJson(response.data.message),
+            ResetPasswordInfo.fromJson(response.data!.message),
             rawResponse: response.rawResponse);
       }
     }
-    return RequestResponse.fail(response.error);
+    return RequestResponse.fail(response.error!);
   }
 
   /// Generates the OTP and sends it through the chosen [medium] and [mediumId].
   ///
   /// This is the first step for resetting a forgotten password.
   @override
-  Future<RequestResponse<GenerateResetOTPResponse>> generatePasswordResetOTP({
-    @required RESET_ID_TYPE idType,
-    @required String id,
-    @required OTP_MEDIUM medium,
-    @required String mediumId,
+  Future<RequestResponse<GenerateResetOTPResponse?>> generatePasswordResetOTP({
+    RESET_ID_TYPE? idType,
+    String? id,
+    OTP_MEDIUM? medium,
+    String? mediumId,
   }) async {
     await getFrappe().checkAppInstalled(features: ['generatePasswordResetOTP']);
 
@@ -566,9 +568,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
 
     if (response.isSuccess) {
       final otpResponse =
-          GenerateResetOTPResponse.fromJson(response.data.message);
+          GenerateResetOTPResponse.fromJson(response.data!.message);
 
-      if (otpResponse.sent) {
+      if (otpResponse.sent!) {
         return RequestResponse.success(otpResponse,
             rawResponse: response.rawResponse);
       } else {
@@ -580,19 +582,19 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         )..data = otpResponse;
       }
     }
-    return RequestResponse.fail(response.error);
+    return RequestResponse.fail(response.error!);
   }
 
   /// Verifies the [otp] sent through [generatePasswordResetOTP].
   ///
   /// This is the second step for resetting a forgotten password.
   @override
-  Future<RequestResponse<VerifyResetOTPResponse>> verifyPasswordResetOTP({
-    @required RESET_ID_TYPE idType,
-    @required String id,
-    @required OTP_MEDIUM medium,
-    @required String mediumId,
-    @required String otp,
+  Future<RequestResponse<VerifyResetOTPResponse?>> verifyPasswordResetOTP({
+    RESET_ID_TYPE? idType,
+    String? id,
+    OTP_MEDIUM? medium,
+    String? mediumId,
+    String? otp,
   }) async {
     await getFrappe().checkAppInstalled(features: ['verifyPasswordResetOTP']);
 
@@ -620,9 +622,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
 
     if (response.isSuccess) {
       final otpResponse =
-          VerifyResetOTPResponse.fromJson(response.data.message);
+          VerifyResetOTPResponse.fromJson(response.data!.message);
 
-      if (otpResponse.verified) {
+      if (otpResponse.verified!) {
         return RequestResponse.success(otpResponse,
             rawResponse: response.rawResponse);
       } else {
@@ -634,16 +636,16 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         )..data = otpResponse;
       }
     }
-    return RequestResponse.fail(response.error);
+    return RequestResponse.fail(response.error!);
   }
 
   /// Updates (resets) the password to the chosen password by passing the [resetToken].
   ///
   /// The final step in the resetting of a forgotten password.
   @override
-  Future<RequestResponse<UpdatePasswordResponse>> updatePasswordWithToken({
-    @required String resetToken,
-    @required String newPassword,
+  Future<RequestResponse<UpdatePasswordResponse?>> updatePasswordWithToken({
+    String? resetToken,
+    String? newPassword,
   }) async {
     await getFrappe().checkAppInstalled(features: ['updatePasswordWithToken']);
 
@@ -665,9 +667,9 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
 
     if (response.isSuccess) {
       final updateResponse =
-          UpdatePasswordResponse.fromJson(response.data.message);
+          UpdatePasswordResponse.fromJson(response.data!.message);
 
-      if (updateResponse.updated) {
+      if (updateResponse.updated!) {
         return RequestResponse.success(updateResponse,
             rawResponse: response.rawResponse);
       } else {
@@ -679,20 +681,20 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         )..data = updateResponse;
       }
     }
-    return RequestResponse.fail(response.error);
+    return RequestResponse.fail(response.error!);
   }
 
   /// Logins in using Google Auth code.
   ///
   /// Optionally pass the [state] which is usually a JWT or base64 encoded data.
   @override
-  Future<RequestResponse<FrappeSessionStatusInfo>> loginViaGoogle({
-    @required String code,
-    String state,
+  Future<RequestResponse<FrappeSessionStatusInfo?>> loginViaGoogle({
+    required String code,
+    String? state,
   }) async {
     await getFrappe().checkAppInstalled(features: ['loginViaGoogle']);
 
-    assert(code != null && code.isNotEmpty, 'Code cannot be empty');
+    assert(code.isNotEmpty, 'Code cannot be empty');
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -706,18 +708,19 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         },
         isFrappeResponse: false);
 
-    FrappeSessionStatusInfo sessionStatusInfo;
+    FrappeSessionStatusInfo? sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse));
-      sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
+          Request.convertToMap(response.rawResponse!));
+      sessionStatusInfo.rawSession =
+          Request.convertToMap(response.rawResponse!);
     }
     updateSession(
         sessionStatus: sessionStatusInfo, loggedIn: response.isSuccess);
     return response.isSuccess
         ? RequestResponse.success(sessionStatusInfo,
             rawResponse: response.rawResponse)
-        : RequestResponse.fail(response.error);
+        : RequestResponse.fail(response.error!);
   }
 
   /// Logins in using Apple Auth code.
@@ -726,15 +729,14 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   ///
   /// Optionally pass the [state] which is usually a JWT or base64 encoded data.
   @override
-  Future<RequestResponse<FrappeSessionStatusInfo>> loginViaApple({
-    @required String code,
-    @required APPLE_OPTION option,
-    String state,
+  Future<RequestResponse<FrappeSessionStatusInfo?>> loginViaApple({
+    required String code,
+    required APPLE_OPTION option,
+    String? state,
   }) async {
     await getFrappe().checkAppInstalled(features: ['loginViaApple']);
 
-    assert(code != null && code.isNotEmpty, 'Code cannot be empty');
-    assert(option != null, 'Apple option must be specified');
+    assert(code.isNotEmpty, 'Code cannot be empty');
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -749,18 +751,19 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         },
         isFrappeResponse: false);
 
-    FrappeSessionStatusInfo sessionStatusInfo;
+    FrappeSessionStatusInfo? sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse));
-      sessionStatusInfo.rawSession = Request.convertToMap(response.rawResponse);
+          Request.convertToMap(response.rawResponse!));
+      sessionStatusInfo.rawSession =
+          Request.convertToMap(response.rawResponse!);
     }
     updateSession(
         sessionStatus: sessionStatusInfo, loggedIn: response.isSuccess);
     return response.isSuccess
         ? RequestResponse.success(sessionStatusInfo,
             rawResponse: response.rawResponse)
-        : RequestResponse.fail(response.error);
+        : RequestResponse.fail(response.error!);
   }
 
   /// Sets the session locally obtained externally and validates against the backend.
@@ -769,20 +772,19 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   ///
   /// The session must be valid. In case the session is to be cleared, use [logout].
   @override
-  Future<RequestResponse<FrappeSessionStatusInfo>> setExternalSession(
-      FrappeSessionStatusInfo sessionStatusInfo) async {
-    assert(sessionStatusInfo != null);
-    assert(sessionStatusInfo.user != null,
+  Future<RequestResponse<FrappeSessionStatusInfo?>> setExternalSession(
+      FrappeSessionStatusInfo? sessionStatusInfo) async {
+    assert(sessionStatusInfo != null || sessionStatusInfo?.user != null,
         'Only a valid session can be set.\nUse .logout() if you want to clear the session');
     if (_useJwt) {
-      assert(sessionStatusInfo.token != null, 'Token missing in the session');
+      assert(sessionStatusInfo?.token != null, 'Token missing in the session');
     }
     // If JWT is used, set the token.
     if (_useJwt) {
-      setAuthToken(sessionStatusInfo.token);
+      setAuthToken(sessionStatusInfo!.token);
     }
     return await verifySessionWithBackend(
-      sessionStatusInfo..currentUser = sessionStatusInfo.user,
+      sessionStatusInfo!..currentUser = sessionStatusInfo.user,
       shouldUpdateSession: true,
     );
   }
@@ -793,7 +795,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @visibleForTesting
   void clearAuthToken() {
     currentToken = null;
-    RenovationRequestOptions.headers.remove('Authorization');
+    RenovationRequestOptions.headers!.remove('Authorization');
   }
 
   /// Sets the authentication token under [currentToken]
@@ -804,22 +806,24 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
   @override
   @protected
   @visibleForTesting
-  void setAuthToken(String token) {
+  void setAuthToken(String? token) {
     currentToken = token;
 
     // Can't use the standard Bearer <token> format since frappe treats that as something else
     // frappe/api.py validate_oauth() checks for the presence of the keyword 'Bearer'
-    RenovationRequestOptions.headers['Authorization'] = '$TOKEN_HEADER $token';
+    RenovationRequestOptions.headers!['Authorization'] = '$TOKEN_HEADER $token';
   }
 
   @override
-  ErrorDetail handleError(String errorId, ErrorDetail error) {
-    if (error == null || error.info == null || error.info.data == null) {
+  ErrorDetail handleError(String? errorId, ErrorDetail? error) {
+    error ??= RenovationController.genericError(error);
+
+    if (error.info?.data == null) {
       error = handleError(null, error);
     } else {
       switch (errorId) {
         case 'verify_otp':
-          errorId = error.info.data?.status;
+          errorId = error.info?.data?.status;
           error = handleError(errorId, error);
           break;
         case 'invalid_pin':
@@ -827,7 +831,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
             ..type = RenovationError.AuthenticationError
             ..title = 'Wrong OTP'
             ..description = 'Entered OTP is wrong'
-            ..info = (error.info
+            ..info = ((error.info ?? Information())
               ..httpCode = 401
               ..cause = 'Wrong OTP entered'
               ..suggestion =
@@ -839,7 +843,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
           error
             ..type = RenovationError.NotFoundError
             ..title = 'User not found'
-            ..info = (error.info
+            ..info = ((error.info ?? Information())
               ..httpCode = 404
               ..cause =
                   'User is either not registered or does not have a mobile number'
@@ -849,14 +853,14 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
         case 'pin_login':
           error
             ..title = 'Incorrect Pin'
-            ..info = (error.info
+            ..info = ((error.info ?? Information())
               ..cause = 'Wrong PIN is entered'
               ..suggestion = 'Re-enter the PIN correctly');
           break;
 
         case 'login':
-          if (error.info.data.message is Map) {
-            switch (error.info.data.message['message']) {
+          if (error.info?.data.message is Map) {
+            switch (error.info?.data.message['message']) {
               case 'User disabled or missing':
                 error = handleError('login_user_non_exist', error);
                 break;
@@ -874,17 +878,17 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
           error
             ..title = 'Incorrect Password'
             ..type = RenovationError.AuthenticationError
-            ..info = (error.info
-              ..cause = error.info.data.message['message']
+            ..info = ((error.info ?? Information())
+              ..cause = error.info?.data.message['message']
               ..suggestion = 'Create the new user or enable it if disabled');
           break;
         case 'login_user_non_exist':
           error
             ..title = 'User not found'
             ..type = RenovationError.NotFoundError
-            ..info = (error.info
+            ..info = ((error.info ?? Information())
               ..httpCode = 404
-              ..cause = error.info.data.message['message']
+              ..cause = error.info?.data.message['message']
               ..suggestion = 'Create the new user or enable it if disabled');
           break;
         case 'send_otp':
@@ -897,16 +901,16 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
           if (error.type == RenovationError.AuthenticationError) {
             error
               ..title = 'Invalid Password'
-              ..info = (error.info
+              ..info = ((error.info ?? Information())
                 ..cause = 'Wrong old password'
                 ..suggestion =
                     'Check that the current password is correct, or reset the password');
-          } else if (error.info.httpCode == 417 &&
-              (error.info.data.serverMessages as String)
+          } else if (error.info?.httpCode == 417 &&
+              (error.info?.data.serverMessages as String)
                   .contains('Invalid Password')) {
             error
               ..title = 'Weak Password'
-              ..info = (error.info
+              ..info = ((error.info ?? Information())
                 ..cause = 'Password does not pass the policy'
                 ..suggestion =
                     'Use stronger password, including uppercase, digits and special characters');
@@ -924,13 +928,13 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo> {
 
   @override
   Result estimatePassword(String password,
-      {String firstName,
-      String lastName,
-      String middleName,
-      String email,
-      String dateOfBirth,
-      List<String> otherInputs}) {
-    assert(password != null && password.isNotEmpty, "Password can't be empty");
+      {String? firstName,
+      String? lastName,
+      String? middleName,
+      String? email,
+      String? dateOfBirth,
+      List<String>? otherInputs}) {
+    assert(password.isNotEmpty, "Password can't be empty");
     var userInputs = <String>[];
     if (firstName != null && firstName.isNotEmpty) {
       userInputs.add(firstName);

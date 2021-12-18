@@ -4,10 +4,15 @@ import 'dart:typed_data';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../../../core.dart';
-import '../../../misc.dart';
-import '../../../storage.dart';
+import '../../core/config.dart';
 import '../../core/errors.dart';
+import '../../core/frappe/renovation.dart';
+import '../../core/interfaces.dart';
+import '../../core/renovation.controller.dart';
+import '../../core/renovation.dart';
+import '../../core/request.dart';
+import '../../misc/socketio.dart';
+import '../../storage/frappe/interfaces.dart';
 import '../interfaces.dart';
 
 /// The following is the client side logic of frappe's socket io upload implementation
@@ -38,22 +43,22 @@ class FrappeSocketIOUploader implements IErrorHandler {
           FrappeUploadStatus()..status = UploadingStatus.ready);
 
   /// The file as a buffer being uploaded
-  Uint8List file;
+  late Uint8List file;
 
   /// The size of the file
-  num fileSize;
+  num? fileSize;
 
   /// The size of the chunk (Set constant)
   static const int chunkSize = 24576;
 
   /// Object holding the events and their handlers
-  Map<String, List<SocketIOHandler>> socketIOCallbacks;
+  Map<String, List<SocketIOHandler>>? socketIOCallbacks;
 
   /// The arguments of the file to be uploaded
-  FrappeUploadFileParams args;
+  late FrappeUploadFileParams args;
 
   /// Holds the reference to the keep-alive timeout
-  Timer keepAliveTimeout;
+  Timer? keepAliveTimeout;
 
   /// Flag to hold whether the upload is started
   bool started = false;
@@ -92,7 +97,7 @@ class FrappeSocketIOUploader implements IErrorHandler {
       _onError(ErrorEvent.name_error);
       return;
     }
-    args.fileName = r.data.message;
+    args.fileName = r.data!.message;
 
     started = false;
     _sendNextChunk(0);
@@ -108,10 +113,10 @@ class FrappeSocketIOUploader implements IErrorHandler {
   void _sendNextChunk(num currentSlice) {
     List<int> data;
     if (currentSlice * chunkSize + chunkSize > file.length) {
-      data = file.sublist(currentSlice * chunkSize, file.length);
+      data = file.sublist(currentSlice * chunkSize as int, file.length);
     } else {
       data = file.sublist(
-          currentSlice * chunkSize, currentSlice * chunkSize + chunkSize);
+          currentSlice * chunkSize as int, currentSlice * chunkSize + chunkSize as int?);
     }
 
     var uploadAcceptSlice = FrappeUploadAcceptSlice.fromJson(<String, dynamic>{
@@ -124,7 +129,7 @@ class FrappeSocketIOUploader implements IErrorHandler {
     _emit('upload-accept-slice', uploadAcceptSlice.toJson());
 
     if (currentSlice > 0) {
-      var progress = (((currentSlice * chunkSize) / fileSize) * 100).round();
+      var progress = (((currentSlice * chunkSize) / fileSize!) * 100).round();
       uploadStatus.add(FrappeUploadStatus()
         ..status = UploadingStatus.uploading
         ..filename = args.fileName
@@ -137,19 +142,19 @@ class FrappeSocketIOUploader implements IErrorHandler {
 
   /// Sets up the listeners of all the events emitted by the socket.io server
   void _setupListeners() async {
-    if (socketIOCallbacks != null && socketIOCallbacks.isNotEmpty) {
+    if (socketIOCallbacks != null && socketIOCallbacks!.isNotEmpty) {
       // setup done already perhaps;
       return;
     }
     _addIOListener('upload-request-slice', (dynamic data) {
       started = true;
-      _sendNextChunk(FrappeUploadRequestSlice.fromJson(data).currentSlice);
+      _sendNextChunk(FrappeUploadRequestSlice.fromJson(data).currentSlice!);
     });
 
     _addIOListener('upload-end', (dynamic data) {
       var uploadEndData = FrappeUploadEnd.fromJson(data);
-      if (uploadEndData.fileUrl.substring(0, 7) == '/public') {
-        uploadEndData.fileUrl = uploadEndData.fileUrl.substring(7);
+      if (uploadEndData.fileUrl!.substring(0, 7) == '/public') {
+        uploadEndData.fileUrl = uploadEndData.fileUrl!.substring(7);
       }
       _onComplete(uploadEndData);
     });
@@ -196,16 +201,16 @@ class FrappeSocketIOUploader implements IErrorHandler {
         contentType: ContentTypeLiterals.APPLICATION_X_WWW_FORM_URLENCODED,
         data: args.toJson());
 
-    RequestResponse<FrappeUploadFileResponse> uploadResponse;
+    RequestResponse<FrappeUploadFileResponse?> uploadResponse;
     if (r.isSuccess) {
-      final dynamic responseObj = r.data.message;
+      final dynamic responseObj = r.data!.message;
       final uploadFileResponse = FrappeUploadFileResponse()
           .fromJson<FrappeUploadFileResponse>(responseObj);
       uploadResponse = RequestResponse.success(uploadFileResponse);
     } else {
       uploadResponse =
           RequestResponse.fail(handleError('on_complete', r.error));
-      uploadResponse.error.description = uploadEnd.fileUrl;
+      uploadResponse.error!.description = uploadEnd.fileUrl;
     }
 
     uploadStatus.add(FrappeUploadStatus()
@@ -223,21 +228,21 @@ class FrappeSocketIOUploader implements IErrorHandler {
   /// @param handler The callback on occurrence of the event
   void _addIOListener(String event, SocketIOHandler handler) {
     socketIOCallbacks ??= {};
-    socketIOCallbacks[event] ??= <SocketIOHandler>[];
+    socketIOCallbacks![event] ??= <SocketIOHandler>[];
 
-    if (socketIOCallbacks[event].contains(handler)) {
+    if (socketIOCallbacks![event]!.contains(handler)) {
       // attached already, return
       return;
     }
 
-    socketIOCallbacks[event].add(handler);
+    socketIOCallbacks![event]!.add(handler);
     _getCore().socketIo.on(event, handler);
   }
 
   /// Removes the listeners and resets `socketIOCallbacks`
   void _stripListeners() {
     socketIOCallbacks?.forEach((String event, List v) {
-      var handlers = socketIOCallbacks[event];
+      var handlers = socketIOCallbacks![event]!;
       for (var handler in handlers) {
         _getCore().socketIo.off(event, handler: handler);
       }
@@ -254,7 +259,7 @@ class FrappeSocketIOUploader implements IErrorHandler {
   /// Validates the file name in the backend
   ///
   /// @returns [Future<RequestResponse<dynamic>>] Returns success if validated, otherwise, failure
-  Future<RequestResponse<FrappeResponse>> _validateFileName() async =>
+  Future<RequestResponse<FrappeResponse?>> _validateFileName() async =>
       await _getCore().call(<String, dynamic>{
         'cmd': 'frappe.utils.file_manager.validate_filename',
         'filename': args.fileName
@@ -272,17 +277,17 @@ class FrappeSocketIOUploader implements IErrorHandler {
 
   /// Getter for the core instance
   Renovation _getCore() {
-    return RenovationConfig.renovationInstance.coreInstance;
+    return RenovationConfig.renovationInstance!.coreInstance;
   }
 
   @override
-  ErrorDetail handleError(String errorId, ErrorDetail error) {
+  ErrorDetail handleError(String errorId, ErrorDetail? error) {
     var err = ErrorDetail();
 
     switch (errorId) {
       case 'on_complete':
       default:
-        err = RenovationController.genericError(error);
+        err = RenovationController.genericError(error!);
     }
 
     return err;

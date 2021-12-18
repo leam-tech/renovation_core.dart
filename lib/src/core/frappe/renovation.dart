@@ -12,26 +12,26 @@ import '../renovation.dart';
 /// Methods to get instances of Frappé controllers
 /// for better code assistance
 FrappeModelController getFrappeModelController() =>
-    Renovation()?.model as FrappeModelController;
+    Renovation().model as FrappeModelController;
 
 FrappeStorageController getFrappeStorageController() =>
-    Renovation()?.storage as FrappeStorageController;
+    Renovation().storage as FrappeStorageController;
 
 FrappeAuthController getFrappeAuthController() =>
-    Renovation()?.auth as FrappeAuthController;
+    Renovation().auth as FrappeAuthController;
 
 FrappeMetaController getFrappeMetaController() =>
-    Renovation()?.meta as FrappeMetaController;
+    Renovation().meta as FrappeMetaController;
 
 FrappePermissionController getFrappePermissionController() =>
-    Renovation()?.perm as FrappePermissionController;
+    Renovation().perm as FrappePermissionController;
 
 FrappeTranslationController getFrappeTranslationController() =>
-    Renovation()?.translate as FrappeTranslationController;
+    Renovation().translate as FrappeTranslationController;
 
 FrappeDefaultsController getFrappeDefaultsController() =>
-    Renovation()?.defaults as FrappeDefaultsController;
+    Renovation().defaults as FrappeDefaultsController;
 
-FrappeLogManager getFrappeLogManager() => Renovation()?.log as FrappeLogManager;
+FrappeLogManager getFrappeLogManager() => Renovation().log as FrappeLogManager;
 
-Frappe getFrappe() => Renovation()?.frappe;
+Frappe getFrappe() => Renovation().frappe;

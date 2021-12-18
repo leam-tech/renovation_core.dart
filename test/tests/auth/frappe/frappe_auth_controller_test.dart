@@ -6,12 +6,12 @@ import '../../../test_manager.dart';
 
 void main() {
   final skip = false;
-  FrappeAuthController frappeAuthController;
+  late FrappeAuthController frappeAuthController;
   final mobileNo = TestManager.mobileNumber;
 
   final validUser = TestManager.secondaryUser;
   final validPwd = TestManager.secondaryUserPwd;
-  final validPin = TestManager.getVariable(EnvVariables.PinNumber);
+  final validPin = TestManager.getVariable(EnvVariables.PinNumber)!;
 
   setUp(() async {
     await TestManager.getTestInstance();
@@ -26,8 +26,8 @@ void main() {
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 401);
-        expect(response.error.type, RenovationError.AuthenticationError);
-        expect(response.error.info.cause, 'Incorrect password');
+        expect(response.error!.type, RenovationError.AuthenticationError);
+        expect(response.error!.info!.cause, 'Incorrect password');
       }, skip: skip);
 
       test('should not login successfully for non-existing user', () async {
@@ -36,8 +36,8 @@ void main() {
 
         expect(response.isSuccess, false);
         expect(response.httpCode, 404);
-        expect(response.error.type, RenovationError.NotFoundError);
-        expect(response.error.info.cause, 'User disabled or missing');
+        expect(response.error!.type, RenovationError.NotFoundError);
+        expect(response.error!.info!.cause, 'User disabled or missing');
       }, skip: skip);
     }, skip: skip);
 
@@ -61,7 +61,7 @@ void main() {
         await frappeAuthController.login(validUser, validPwd);
         final response = await frappeAuthController.checkLogin();
         expect(response.isSuccess, true);
-        expect(response.data.loggedIn, true);
+        expect(response.data!.loggedIn, true);
       });
     });
   });
@@ -114,8 +114,7 @@ void main() {
       }, skip: skip);
 
       test('With other inputs parameter', () {
-        final result = frappeAuthController
-            .estimatePassword('verlineVANDERMARK', otherInputs: ['VANDERMARK']);
+        final result = frappeAuthController.estimatePassword('verlineVANDERMARK', otherInputs: ['VANDERMARK']);
         expect(result.score, 1);
       }, skip: skip);
     }, skip: skip);
@@ -126,7 +125,7 @@ void main() {
       final response = await frappeAuthController.pinLogin(validUser, validPin);
 
       expect(response.isSuccess, true);
-      expect(response.data.currentUser, validUser);
+      expect(response.data!.currentUser, validUser);
       expect(frappeAuthController.isLoggedIn, true);
     });
 
@@ -134,9 +133,9 @@ void main() {
       final response = await frappeAuthController.pinLogin(validUser, '0000');
 
       expect(response.isSuccess, false);
-      expect(response.error.title, 'Incorrect Pin');
-      expect(response.error.type, RenovationError.AuthenticationError);
-      expect(response.error.info.httpCode, 401);
+      expect(response.error!.title, 'Incorrect Pin');
+      expect(response.error!.type, RenovationError.AuthenticationError);
+      expect(response.error!.info!.httpCode, 401);
       expect(frappeAuthController.isLoggedIn, false);
     });
   });
@@ -146,8 +145,8 @@ void main() {
     test('should fail sending SMS if the backend is not setup', () async {
       final response = await frappeAuthController.sendOTP(mobileNo);
       expect(response.isSuccess, false);
-      expect(response.error.type, RenovationError.BackendSettingError);
-      expect(response.error.title, 'SMS was not sent');
+      expect(response.error!.type, RenovationError.BackendSettingError);
+      expect(response.error!.title, 'SMS was not sent');
     });
   });
 
@@ -163,18 +162,18 @@ void main() {
           await frappeAuthController.verifyOTP(mobileNo, '000000', false);
       expect(response.isSuccess, false);
       expect(response.data, isNull);
-      expect(response.error.info.httpCode, 401);
-      expect(response.error.type, RenovationError.AuthenticationError);
-      expect(response.error.title, 'Wrong OTP');
+      expect(response.error!.info!.httpCode, 401);
+      expect(response.error!.type, RenovationError.AuthenticationError);
+      expect(response.error!.title, 'Wrong OTP');
     });
     test('should fail for non-existing user/mobile', () async {
       final response =
           await frappeAuthController.verifyOTP('+9710000000', '000000', false);
       expect(response.isSuccess, false);
       expect(response.data, isNull);
-      expect(response.error.info.httpCode, 404);
-      expect(response.error.type, RenovationError.NotFoundError);
-      expect(response.error.title, 'User not found');
+      expect(response.error!.info!.httpCode, 404);
+      expect(response.error!.type, RenovationError.NotFoundError);
+      expect(response.error!.title, 'User not found');
     });
     test('should successfully verify but not login an unlinked user', () async {
       //TODO:
@@ -186,15 +185,15 @@ void main() {
       await frappeAuthController.login(validUser, validPwd);
       final response = await frappeAuthController.getCurrentUserRoles();
 
-      expect(response.isSuccess, true);
-      expect(response.data.isNotEmpty, true);
+      expect(response?.isSuccess, true);
+      expect(response?.data.isNotEmpty, true);
     });
     test('should get exactly get "Guest" role if not signed in', () async {
       final response = await frappeAuthController.getCurrentUserRoles();
 
-      expect(response.isSuccess, true);
-      expect(response.data.isNotEmpty, true);
-      expect(response.data.first, 'Guest');
+      expect(response?.isSuccess, true);
+      expect(response?.data.isNotEmpty, true);
+      expect(response?.data.first, 'Guest');
     });
   });
 
@@ -212,7 +211,7 @@ void main() {
       await frappeAuthController.login(validUser, validPwd);
       final response = await frappeAuthController.changeUserLanguage('ar');
       expect(response, true);
-      expect(frappeAuthController.getSession().lang, 'ar');
+      expect(frappeAuthController.getSession()!.lang, 'ar');
     });
     test('should throw an Error if the user is not logged in', () async {
       expect(() async => await frappeAuthController.changeUserLanguage('ar'),
@@ -231,11 +230,11 @@ void main() {
 
       expect(frappeAuthController.getCurrentToken(), isNotNull);
       expect(
-          RenovationRequestOptions.headers.containsKey('Authorization'), true);
+          RenovationRequestOptions.headers!.containsKey('Authorization'), true);
       frappeAuthController.clearAuthToken();
       expect(frappeAuthController.getCurrentToken(), isNull);
       expect(
-          RenovationRequestOptions.headers.containsKey('Authorization'), false);
+          RenovationRequestOptions.headers!.containsKey('Authorization'), false);
     });
   });
 
@@ -250,9 +249,9 @@ void main() {
   group('resetSession', () {
     test('should reset the session to not logged in', () async {
       await frappeAuthController.login(validUser, validPwd);
-      expect(frappeAuthController.getSession().loggedIn, true);
+      expect(frappeAuthController.getSession()!.loggedIn, true);
       frappeAuthController.resetSession();
-      expect(frappeAuthController.getSession().loggedIn, false);
+      expect(frappeAuthController.getSession()!.loggedIn, false);
     });
   });
 
@@ -260,9 +259,9 @@ void main() {
     test('should reset currentUserRoles on clearCache', () async {
       await frappeAuthController.login(validUser, validPwd);
       await frappeAuthController.getCurrentUserRoles();
-      expect(frappeAuthController.currentUserRoles.isNotEmpty, true);
+      expect(frappeAuthController.currentUserRoles!.isNotEmpty, true);
       frappeAuthController.clearCache();
-      expect(frappeAuthController.currentUserRoles.isNotEmpty, false);
+      expect(frappeAuthController.currentUserRoles!.isNotEmpty, false);
     });
   });
 

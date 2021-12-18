@@ -14,8 +14,8 @@ part 'interfaces.g.dart';
 class DocPerm extends FrappeDocument {
   DocPerm() : super('DocPerm');
 
-  factory DocPerm.fromJson(Map<String, dynamic> json) =>
-      _$DocPermFromJson(json);
+  factory DocPerm.fromJson(Map<String, dynamic>? json) =>
+      _$DocPermFromJson(json!);
 
   @JsonKey(
       fromJson: FrappeDocFieldConverter.checkToBool,
@@ -80,7 +80,7 @@ class DocPerm extends FrappeDocument {
       toJson: FrappeDocFieldConverter.boolToCheck)
   bool setUserPermissions = false;
   @JsonKey(name: 'permlevel')
-  int permLevel;
+  int? permLevel;
 
   @JsonKey(
       name: 'if_owner',
@@ -88,7 +88,7 @@ class DocPerm extends FrappeDocument {
       toJson: FrappeDocFieldConverter.boolToCheck)
   bool ifOwner = false;
 
-  String role;
+  String? role;
 
   dynamic match;
 
@@ -105,5 +105,5 @@ class DocPerm extends FrappeDocument {
   Map<String, dynamic> toJson() => _$DocPermToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => DocPerm.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => DocPerm.fromJson(json) as T;
 }

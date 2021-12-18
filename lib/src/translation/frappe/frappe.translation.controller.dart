@@ -15,8 +15,8 @@ class FrappeTranslationController extends TranslationController {
   ///
   /// If lang is not passed, the [currentLanguage] is used instead.
   @override
-  Future<RequestResponse<Map<String, String>>> loadTranslations(
-      {String lang}) async {
+  Future<RequestResponse<Map<String, String>?>> loadTranslations(
+      {String? lang}) async {
     await getFrappe().checkAppInstalled(features: ['loadTranslations']);
 
     lang ??= currentLanguage;
@@ -28,22 +28,22 @@ class FrappeTranslationController extends TranslationController {
         data: <String, dynamic>{'lang': lang});
     if (response.isSuccess) {
       setMessagesDict(
-          dict: Map<String, String>.from(response.data.message), lang: lang);
+          dict: Map<String, String>.from(response.data!.message), lang: lang);
     } else {
       return RequestResponse.fail(
           handleError('loadtranslation', response.error));
     }
-    return RequestResponse.success(Map.from(response.data.message),
+    return RequestResponse.success(Map.from(response.data!.message),
         rawResponse: response.rawResponse);
   }
 
   @override
-  ErrorDetail handleError(String errorId, ErrorDetail error) {
+  ErrorDetail handleError(String errorId, ErrorDetail? error) {
     ErrorDetail err;
     switch (errorId) {
       case 'loadtranslation':
       default:
-        err = RenovationController.genericError(error);
+        err = RenovationController.genericError(error!);
     }
     return err;
   }

@@ -94,7 +94,7 @@ class DBFilter {
   /// Checks if the operator (SQL) is valid.
   ///
   /// The allowed operators are defined in [operators].
-  static bool isDBOperator(String operator) => operators.contains(operator);
+  static bool isDBOperator(String? operator) => operators.contains(operator);
 
   /// The allowed operators that can be used in filtering.
   static const List<String> operators = <String>[

@@ -10,8 +10,8 @@ part 'docfield.g.dart';
 class DocField extends FrappeDocument {
   DocField() : super('DocField');
 
-  factory DocField.fromJson(Map<String, dynamic> json) =>
-      _$DocFieldFromJson(json);
+  factory DocField.fromJson(Map<String, dynamic>? json) =>
+      _$DocFieldFromJson(json!);
 
   @JsonKey(ignore: true)
   List<String> docFieldTypes = <String>[
@@ -55,209 +55,209 @@ class DocField extends FrappeDocument {
       name: 'allow_bulk_edit',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool allowBulkEdit;
+  bool? allowBulkEdit;
   @JsonKey(
       name: 'allow_in_quick_entry',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool allowInQuickEntry;
+  bool? allowInQuickEntry;
   @JsonKey(
       name: 'allow_on_submit',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool allowOnSubmit;
+  bool? allowOnSubmit;
   @JsonKey(
       name: 'bold',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool bold;
+  bool? bold;
 
   @JsonKey(
       name: 'in_preview',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool inPreview;
+  bool? inPreview;
 
   /// Whether the field is collapsible in the UI
   @JsonKey(
       name: 'collapsible',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool collapsible;
+  bool? collapsible;
   @JsonKey(name: 'collapsible_depends_on')
-  String collapsibleDependsOn;
+  String? collapsibleDependsOn;
 
-  int columns;
+  int? columns;
   @JsonKey(name: 'default')
-  String defaults;
+  String? defaults;
   @JsonKey(name: 'depends_on')
-  String dependsOn;
+  String? dependsOn;
   @JsonKey(name: 'description')
-  String description;
+  String? description;
 
   @JsonKey(name: 'fetch_from')
-  String fetchFrom;
+  String? fetchFrom;
   @JsonKey(
       name: 'fetch_if_empty',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool fetchIfEmpty;
+  bool? fetchIfEmpty;
 
   /// The name of the field which is the field's identifier
   @JsonKey(name: 'fieldname')
-  String fieldName;
+  String? fieldName;
 
   /// The type of the fields defined in frappe such as `Data`, `Link`, `Select`, etc
   @JsonKey(name: 'fieldtype')
-  String fieldType = '';
+  String? fieldType = '';
 
   /// Whether the field is hidden
   @JsonKey(
       name: 'hidden',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool hidden;
+  bool? hidden;
 
   @JsonKey(
       name: 'ignore_user_permissions',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool ignoreUserPermissions;
+  bool? ignoreUserPermissions;
   @JsonKey(
       name: 'ignore_xss_filter',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool ignoreXssFilter;
+  bool? ignoreXssFilter;
   @JsonKey(
       name: 'in_filter',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool inFilter;
+  bool? inFilter;
   @JsonKey(
       name: 'in_global_search',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool inGlobalSearch;
+  bool? inGlobalSearch;
   @JsonKey(
       name: 'show_preview_popup',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool showPreviewPopup;
+  bool? showPreviewPopup;
 
   /// Whether the field should appear in the list view of the doctype
   @JsonKey(
       name: 'in_list_view',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool inListView;
+  bool? inListView;
 
   /// Whether to include the field in the default filters appearing in list view, for instance
   @JsonKey(
       name: 'in_standard_filter',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool inStandardFilter;
+  bool? inStandardFilter;
   @JsonKey(
       name: 'is_custom_field',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool isCustomField;
+  bool? isCustomField;
 
   /// The human readable label of the field
   ///
   /// For example: `item_name` field would have a label called "Item Name"
 
-  String label;
-  int length;
+  String? label;
+  int? length;
   @JsonKey(name: 'linked_document_type')
-  String linkedDocumentType;
+  String? linkedDocumentType;
   @JsonKey(
       name: 'no_copy',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool noCopy;
+  bool? noCopy;
   @JsonKey(name: 'oldfieldname')
-  String oldFieldName;
+  String? oldFieldName;
   @JsonKey(name: 'oldfieldtype')
-  String oldFieldType;
+  String? oldFieldType;
 
   /// Options contained for the docField.
   ///
   /// Link datatype will hold the doctype of the linked doctype
   /// Select datatype will contain the list of the options delimited by a line break
   @JsonKey(name: 'options')
-  String options;
+  String? options;
   @JsonKey(name: 'permlevel')
-  int permLevel;
-  String precision;
+  int? permLevel;
+  String? precision;
   @JsonKey(
       name: 'print_hide',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool printHide;
+  bool? printHide;
   @JsonKey(
       name: 'print_hide_if_no_value',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool printHideIfNoValue;
+  bool? printHideIfNoValue;
   @JsonKey(name: 'print_width')
-  String printWidth;
+  String? printWidth;
 
   /// Whether the field is not editable and just read-only
   @JsonKey(
       name: 'read_only',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool readOnly;
+  bool? readOnly;
   @JsonKey(
       name: 'remember_last_selected_value',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool rememberLastSelectedValue;
+  bool? rememberLastSelectedValue;
   @JsonKey(
       name: 'report_hide',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool reportHide;
+  bool? reportHide;
 
   /// Whether the field is mandatory
   @JsonKey(
       name: 'reqd',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool required;
+  bool? required;
   @JsonKey(name: 'search_fields')
-  List searchFields;
+  List? searchFields;
   @JsonKey(
       name: 'search_index',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool searchIndex;
+  bool? searchIndex;
   @JsonKey(
       name: 'set_only_once',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool setOnlyOnce;
+  bool? setOnlyOnce;
 
   /// Whether the field is translatable
   @JsonKey(
       name: 'translatable',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool translatable;
+  bool? translatable;
 
   @JsonKey(name: 'trigger')
-  String trigger;
+  String? trigger;
   @JsonKey(
       name: 'unique',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool unique;
+  bool? unique;
   @JsonKey(name: 'width')
-  String width;
+  String? width;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => DocField.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => DocField.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$DocFieldToJson(this);

@@ -14,17 +14,17 @@ class SocketIOClient extends RenovationController {
   /// Returns whether the socket is connected.
   ///
   /// If the socket is `null`, returns `false` otherwise.
-  bool get isConnected => _socket != null ? _socket.connected : false;
+  bool get isConnected => _socket != null ? _socket!.connected : false;
 
   /// The instance of the socket
-  Socket _socket;
+  Socket? _socket;
 
   /// Connect to the socket endpoint in the server.
   ///
   /// If the socket is already connected, the socket will be disconnected before reconnecting.
   ///
   /// By default [requiresAuthorization] is set to `true` which adds "Authorization" headers based on [RenovationRequestOptions].
-  void connect({String url, String path, bool requiresAuthorization = true}) {
+  void connect({String? url, String? path, bool requiresAuthorization = true}) {
     url ??= config.hostUrl;
     path ??= '/socket.io';
 
@@ -32,8 +32,8 @@ class SocketIOClient extends RenovationController {
       'path': path,
       'transports': <String>['websocket'],
       'extraHeaders': requiresAuthorization
-          ? <String, String>{
-              'Authorization': RenovationRequestOptions.headers['Authorization']
+          ? <String, String?>{
+              'Authorization': RenovationRequestOptions.headers!['Authorization']
             }
           : null
     };
@@ -41,30 +41,30 @@ class SocketIOClient extends RenovationController {
     if (_socket != null) {
       // Update the options
       // Need to reuse the same object created earlier
-      _socket.io
+      _socket!.io
         ..uri = url
         ..options = opts;
-      (_socket..disconnect()).connect();
+      (_socket?.disconnect())!.connect();
     } else {
       _socket = io(url, opts);
     }
 
     config.logger.i('LTS-Renovation-Core-Dart Connecting socket on $url$path');
 
-    if (!_socket.hasListeners('connect')) {
-      _socket.on(
+    if (!_socket!.hasListeners('connect')) {
+      _socket!.on(
           'connect',
           (dynamic data) =>
               config.logger.i('Connected socket successfully on $url$path'));
     }
-    if (!_socket.hasListeners('connect_error')) {
-      _socket.on(
+    if (!_socket!.hasListeners('connect_error')) {
+      _socket!.on(
           'connect_error',
           (dynamic connectStatus) =>
               config.logger.e('Connected socket unsuccessful on $url$path'));
     }
-    if (!_socket.hasListeners('connect_timeout')) {
-      _socket.on(
+    if (!_socket!.hasListeners('connect_timeout')) {
+      _socket!.on(
           'connect_timeout',
           (dynamic connectStatus) => config.logger
               .e(<dynamic>['Timeout while connecting', connectStatus]));
@@ -72,7 +72,7 @@ class SocketIOClient extends RenovationController {
   }
 
   /// Gets the reference of the socket in the class
-  Socket get getSocket {
+  Socket? get getSocket {
     if (_socket == null) config.logger.e('Socket not initialized');
     return _socket;
   }
@@ -85,7 +85,7 @@ class SocketIOClient extends RenovationController {
       config.logger.e('Socket is not connected to emit , $event, $data');
       return false;
     }
-    _socket.emit(event, data);
+    _socket!.emit(event, data);
     return true;
   }
 
@@ -93,21 +93,21 @@ class SocketIOClient extends RenovationController {
   ///
   /// On event receive, the callback [handler] will be triggered.
   void on(String event, SocketIOHandler handler) {
-    if (isConnected) _socket.on(event, handler);
+    if (isConnected) _socket!.on(event, handler);
   }
 
   /// Unsubscribe from the event if the socket [isConnected].
   ///
   /// Optionally can specify a [handler] to be triggered after the event is not listened to.
-  void off(String event, {SocketIOHandler handler}) {
-    if (isConnected) _socket.off(event, handler);
+  void off(String event, {SocketIOHandler? handler}) {
+    if (isConnected) _socket!.off(event, handler);
   }
 
   /// Disconnects (if any) the socket and set [_socket] to the instance itself.
   ///
   /// Otherwise, [_socket] is set to `null`.
   void disconnect() =>
-      _socket = isConnected ? _socket = _socket.disconnect() : null;
+      _socket = isConnected ? _socket = _socket!.disconnect() : null;
 
   /// Clears the cache. Currently empty method
   @override

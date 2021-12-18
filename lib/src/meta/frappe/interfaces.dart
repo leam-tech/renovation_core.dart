@@ -13,39 +13,39 @@ part 'interfaces.g.dart';
 class FrappeDocInfo extends JSONAble {
   FrappeDocInfo();
 
-  factory FrappeDocInfo.fromJson(Map<String, dynamic> json) =>
-      _$FrappeDocInfoFromJson(json);
+  factory FrappeDocInfo.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeDocInfoFromJson(json!);
 
-  List<FrappeFile> attachments;
+  List<FrappeFile>? attachments;
 
-  List<FrappeCommunication> communications;
-  List<FrappeComment> comments;
+  List<FrappeCommunication>? communications;
+  List<FrappeComment>? comments;
 
   @JsonKey(name: 'total_comments')
-  int totalComments;
+  int? totalComments;
 
-  List<FrappeVersion> versions;
+  List<FrappeVersion>? versions;
 
-  List<ToDo> assignments;
-  DocPerm permissions;
-  List<FrappeSharedSetting> shared;
+  List<ToDo>? assignments;
+  DocPerm? permissions;
+  List<FrappeSharedSetting>? shared;
 
-  List<FrappeViewLog> views;
+  List<FrappeViewLog>? views;
 
-  List<Map<String, dynamic>> milestones;
+  List<Map<String, dynamic>>? milestones;
 
   @JsonKey(name: 'energy_point_logs')
-  List<Map<String, dynamic>> energyPointLogs;
+  List<Map<String, dynamic>>? energyPointLogs;
 
   @JsonKey(
       name: 'is_document_followed',
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool isDocumentFollowed;
-  String tags;
+  bool? isDocumentFollowed;
+  String? tags;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => FrappeDocInfo.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => FrappeDocInfo.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeDocInfoToJson(this);
@@ -55,51 +55,51 @@ class FrappeDocInfo extends JSONAble {
 class FrappeCommunication extends FrappeDocument {
   FrappeCommunication() : super('Communication');
 
-  factory FrappeCommunication.fromJson(Map<String, dynamic> json) =>
-      _$FrappeCommunicationFromJson(json);
+  factory FrappeCommunication.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeCommunicationFromJson(json!);
 
   @JsonKey(name: 'communication_type')
-  String communicationType;
+  String? communicationType;
 
   @JsonKey(name: 'communication_medium')
-  String communicationMedium;
+  String? communicationMedium;
 
   @JsonKey(name: 'comment_tyoe')
-  String commentType;
+  String? commentType;
 
   @JsonKey(
       name: 'communication_date',
       toJson: FrappeDocFieldConverter.toFrappeDateTime)
-  DateTime communicationDate;
+  DateTime? communicationDate;
 
-  String content;
+  String? content;
 
-  String sender;
+  String? sender;
 
   @JsonKey(name: 'sender_full_name')
-  String senderFullName;
+  String? senderFullName;
 
-  String cc;
-  String bcc;
-  String subject;
+  String? cc;
+  String? bcc;
+  String? subject;
 
   @JsonKey(name: 'delivery_status')
-  String deliveryStatus;
+  String? deliveryStatus;
 
   @JsonKey(name: 'reference_doctype')
-  String referenceDoctype;
+  String? referenceDoctype;
 
   @JsonKey(name: 'reference_name')
-  String referenceName;
+  String? referenceName;
 
   @JsonKey(
       name: 'read_by_recipient',
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool readByRecipient;
+  bool? readByRecipient;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeCommunication.fromJson(json) as T;
 
   @override
@@ -110,49 +110,49 @@ class FrappeCommunication extends FrappeDocument {
 class FrappeComment extends FrappeDocument {
   FrappeComment() : super('Comment');
 
-  factory FrappeComment.fromJson(Map<String, dynamic> json) =>
-      _$FrappeCommentFromJson(json);
+  factory FrappeComment.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeCommentFromJson(json!);
 
   @JsonKey(name: 'comment_email')
-  String commentEmail;
+  String? commentEmail;
 
   @JsonKey(name: 'comment_type')
-  String commentType;
+  String? commentType;
 
-  String subject;
+  String? subject;
 
   @JsonKey(name: 'comment_by')
-  String commentBy;
+  String? commentBy;
 
   @JsonKey(
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool published;
+  bool? published;
 
   @JsonKey(
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool seen;
+  bool? seen;
 
-  String content;
+  String? content;
 
   @JsonKey(name: 'reference_owner')
-  String referenceOwner;
+  String? referenceOwner;
 
   @JsonKey(name: 'reference_doctype')
-  String referenceDoctype;
+  String? referenceDoctype;
 
   @JsonKey(name: 'reference_name')
-  String referenceName;
+  String? referenceName;
 
   @JsonKey(name: 'link_doctype')
-  String linkDoctype;
+  String? linkDoctype;
 
   @JsonKey(name: 'link_name')
-  String linkName;
+  String? linkName;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => FrappeComment.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => FrappeComment.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeCommentToJson(this);
@@ -162,15 +162,15 @@ class FrappeComment extends FrappeDocument {
 class FrappeVersion extends FrappeDocument {
   FrappeVersion() : super('Version');
 
-  factory FrappeVersion.fromJson(Map<String, dynamic> json) =>
-      _$FrappeVersionFromJson(json);
+  factory FrappeVersion.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeVersionFromJson(json!);
 
-  String data;
-  String ref_doctype;
-  String docname;
+  String? data;
+  String? ref_doctype;
+  String? docname;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => FrappeVersion.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => FrappeVersion.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeVersionToJson(this);
@@ -180,30 +180,30 @@ class FrappeVersion extends FrappeDocument {
 class FrappeSharedSetting extends JSONAble {
   FrappeSharedSetting();
 
-  factory FrappeSharedSetting.fromJson(Map<String, dynamic> json) =>
-      _$FrappeSharedSettingFromJson(json);
+  factory FrappeSharedSetting.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeSharedSettingFromJson(json!);
 
-  String user;
+  String? user;
 
   @JsonKey(
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool read;
+  bool? read;
   @JsonKey(
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool write;
+  bool? write;
   @JsonKey(
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool share;
+  bool? share;
   @JsonKey(
       toJson: FrappeDocFieldConverter.boolToCheck,
       fromJson: FrappeDocFieldConverter.checkToBool)
-  bool everyone;
+  bool? everyone;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       FrappeSharedSetting.fromJson(json) as T;
 
   @override
@@ -214,17 +214,17 @@ class FrappeSharedSetting extends JSONAble {
 class FrappeViewLog extends FrappeDocument {
   FrappeViewLog() : super('View Log');
 
-  factory FrappeViewLog.fromJson(Map<String, dynamic> json) =>
-      _$FrappeViewLogFromJson(json);
+  factory FrappeViewLog.fromJson(Map<String, dynamic>? json) =>
+      _$FrappeViewLogFromJson(json!);
 
-  String viewedBy;
+  String? viewedBy;
   @JsonKey(name: 'reference_doctype')
-  String referenceDoctype;
+  String? referenceDoctype;
   @JsonKey(name: 'reference_name')
-  String referenceName;
+  String? referenceName;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) => FrappeViewLog.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) => FrappeViewLog.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeViewLogToJson(this);
@@ -234,14 +234,14 @@ class FrappeViewLog extends FrappeDocument {
 class RenovationReport extends FrappeDocument {
   RenovationReport() : super('Renovation Report');
 
-  factory RenovationReport.fromJson(Map<String, dynamic> json) =>
-      _$RenovationReportFromJson(json);
+  factory RenovationReport.fromJson(Map<String, dynamic>? json) =>
+      _$RenovationReportFromJson(json!);
 
-  String report;
-  List<RenovationReportFilter> filters;
+  String? report;
+  List<RenovationReportFilter>? filters;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       RenovationReport.fromJson(json) as T;
 
   @override
@@ -252,27 +252,27 @@ class RenovationReport extends FrappeDocument {
 class RenovationReportFilter extends FrappeDocument {
   RenovationReportFilter() : super('Renovation Report Filter');
 
-  factory RenovationReportFilter.fromJson(Map<String, dynamic> json) =>
-      _$RenovationReportFilterFromJson(json);
+  factory RenovationReportFilter.fromJson(Map<String, dynamic>? json) =>
+      _$RenovationReportFilterFromJson(json!);
 
   @JsonKey(name: 'default_value')
-  String defaultValue;
+  String? defaultValue;
   @JsonKey(name: 'fieldname')
-  String fieldName;
+  String? fieldName;
   @JsonKey(name: 'fieldtype')
-  String fieldType;
+  String? fieldType;
 
-  String options;
-  String label;
+  String? options;
+  String? label;
 
   @JsonKey(
       name: 'reqd',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
-  bool required;
+  bool? required;
 
   @override
-  T fromJson<T>(Map<String, dynamic> json) =>
+  T fromJson<T>(Map<String, dynamic>? json) =>
       RenovationReportFilter.fromJson(json) as T;
 
   @override
