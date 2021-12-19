@@ -28,15 +28,16 @@ class SocketIOClient extends RenovationController {
     url ??= config.hostUrl;
     path ??= '/socket.io';
 
-    final opts = <dynamic, dynamic>{
-      'path': path,
-      'transports': <String>['websocket'],
-      'extraHeaders': requiresAuthorization
-          ? <String, String?>{
-              'Authorization': RenovationRequestOptions.headers!['Authorization']
-            }
-          : null
-    };
+    final opts = OptionBuilder()
+        .setPath(path)
+        .setTransports(['websocket'])
+        .setExtraHeaders(requiresAuthorization
+            ? <String, dynamic>{
+                'Authorization':
+                    RenovationRequestOptions.headers!['Authorization']
+              }
+            : <String, dynamic>{})
+        .build();
 
     if (_socket != null) {
       // Update the options
@@ -51,24 +52,14 @@ class SocketIOClient extends RenovationController {
 
     config.logger.i('LTS-Renovation-Core-Dart Connecting socket on $url$path');
 
-    if (!_socket!.hasListeners('connect')) {
-      _socket!.on(
-          'connect',
-          (dynamic data) =>
-              config.logger.i('Connected socket successfully on $url$path'));
-    }
-    if (!_socket!.hasListeners('connect_error')) {
-      _socket!.on(
-          'connect_error',
-          (dynamic connectStatus) =>
-              config.logger.e('Connected socket unsuccessful on $url$path'));
-    }
-    if (!_socket!.hasListeners('connect_timeout')) {
-      _socket!.on(
-          'connect_timeout',
-          (dynamic connectStatus) => config.logger
-              .e(<dynamic>['Timeout while connecting', connectStatus]));
-    }
+    _socket!.onConnect((dynamic data) =>
+        config.logger.i('Connected socket successfully on $url$path'));
+
+    _socket!.onConnectError((dynamic connectStatus) =>
+        config.logger.e('Connected socket unsuccessful on $url$path'));
+
+    _socket!.onConnectTimeout((dynamic connectStatus) =>
+        config.logger.e(<dynamic>['Timeout while connecting', connectStatus]));
   }
 
   /// Gets the reference of the socket in the class
