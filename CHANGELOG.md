@@ -1,3 +1,7 @@
+# v2.0.0-dev.0
+## Feature (Breaking Changes)
+- Migration to null safety
+
 # v1.2.4
 ## Feature
 
