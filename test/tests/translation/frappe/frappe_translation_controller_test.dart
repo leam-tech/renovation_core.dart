@@ -47,8 +47,8 @@ void main() {
     test(
         'should successfully load translations non-existing language with empty Map',
         () async {
-      final response = await frappeTranslationController!.loadTranslations(
-          lang: 'non-existing');
+      final response = await frappeTranslationController!
+          .loadTranslations(lang: 'non-existing');
 
       expect(response.isSuccess, true);
       expect(response.data!.isEmpty, true);
@@ -64,14 +64,14 @@ void main() {
     });
 
     test('should return the txt as-is if the translation does not exist', () {
-      final message = frappeTranslationController!.getMessage(
-          txt: 'NON-EXISTING', lang: 'en');
+      final message = frappeTranslationController!
+          .getMessage(txt: 'NON-EXISTING', lang: 'en');
       expect(message, 'NON-EXISTING');
     });
 
     test('should return the txt as-is if the language does not exist', () {
-      final message = frappeTranslationController!.getMessage(
-          txt: 'NON-EXISTING', lang: 'non-existing');
+      final message = frappeTranslationController!
+          .getMessage(txt: 'NON-EXISTING', lang: 'non-existing');
       expect(message, 'NON-EXISTING');
     });
   });

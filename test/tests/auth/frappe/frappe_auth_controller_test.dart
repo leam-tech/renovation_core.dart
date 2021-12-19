@@ -114,7 +114,8 @@ void main() {
       }, skip: skip);
 
       test('With other inputs parameter', () {
-        final result = frappeAuthController.estimatePassword('verlineVANDERMARK', otherInputs: ['VANDERMARK']);
+        final result = frappeAuthController
+            .estimatePassword('verlineVANDERMARK', otherInputs: ['VANDERMARK']);
         expect(result.score, 1);
       }, skip: skip);
     }, skip: skip);
@@ -233,8 +234,8 @@ void main() {
           RenovationRequestOptions.headers!.containsKey('Authorization'), true);
       frappeAuthController.clearAuthToken();
       expect(frappeAuthController.getCurrentToken(), isNull);
-      expect(
-          RenovationRequestOptions.headers!.containsKey('Authorization'), false);
+      expect(RenovationRequestOptions.headers!.containsKey('Authorization'),
+          false);
     });
   });
 

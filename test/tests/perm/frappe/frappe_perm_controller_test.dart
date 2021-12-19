@@ -105,16 +105,16 @@ void main() {
   group('hasPerm', () {
     test('should return true for a System Manager user to create User',
         () async {
-      final response = await frappePermissionController!.hasPerm(
-          doctype: 'User', pType: PermissionType.create);
+      final response = await frappePermissionController!
+          .hasPerm(doctype: 'User', pType: PermissionType.create);
 
       expect(response, true);
     });
 
     test('should return false for a System Manager user to submit User',
         () async {
-      final response = await frappePermissionController!.hasPerm(
-          doctype: 'User', pType: PermissionType.submit);
+      final response = await frappePermissionController!
+          .hasPerm(doctype: 'User', pType: PermissionType.submit);
 
       expect(response, false);
     });
@@ -122,8 +122,8 @@ void main() {
     test(
         'should return true for a System Manager user to write User with permLevel 1',
         () async {
-      final response = await frappePermissionController!.hasPerm(
-          doctype: 'User', pType: PermissionType.write, permLevel: 1);
+      final response = await frappePermissionController!
+          .hasPerm(doctype: 'User', pType: PermissionType.write, permLevel: 1);
 
       expect(response, true);
     });
@@ -131,15 +131,15 @@ void main() {
     test(
         'should return false for a System Manager user to create User with permLevel 1',
         () async {
-      final response = await frappePermissionController!.hasPerm(
-          doctype: 'User', pType: PermissionType.create, permLevel: 1);
+      final response = await frappePermissionController!
+          .hasPerm(doctype: 'User', pType: PermissionType.create, permLevel: 1);
 
       expect(response, false);
     });
 
     test('should return false for non existin permLevel', () async {
-      final response = await frappePermissionController!.hasPerm(
-          doctype: 'User', pType: PermissionType.read, permLevel: 2);
+      final response = await frappePermissionController!
+          .hasPerm(doctype: 'User', pType: PermissionType.read, permLevel: 2);
 
       expect(response, false);
     });

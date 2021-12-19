@@ -151,7 +151,8 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
     var perm =
         perms[permLevel].toJson()[EnumToString.convertToString(pType)] == 1;
     if (permLevel == 0 && docname != null) {
-      final docInfo = await getFrappeMetaController().getDocInfo(doctype: doctype, docname: docname);
+      final docInfo = await getFrappeMetaController()
+          .getDocInfo(doctype: doctype, docname: docname);
       if (docInfo.isSuccess &&
           docInfo.data != null &&
           docInfo.data!.permissions!

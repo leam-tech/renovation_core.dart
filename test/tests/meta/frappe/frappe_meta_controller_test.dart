@@ -45,8 +45,8 @@ void main() {
 
     test('should throw "InvalidFrappeFilter" for invalid filters', () async {
       expect(
-          () async => await frappeMetaController!.getDocCount(
-              doctype: 'User', filters: 'invalid-filter'),
+          () async => await frappeMetaController!
+              .getDocCount(doctype: 'User', filters: 'invalid-filter'),
           throwsA(TypeMatcher<InvalidFrappeFilter>()));
     });
 
@@ -64,15 +64,15 @@ void main() {
   group('Get Document Info', () {
     test('should successfully get document info of an existing document',
         () async {
-      final response = await frappeMetaController!.getDocInfo(
-          doctype: 'User', docname: validUser);
+      final response = await frappeMetaController!
+          .getDocInfo(doctype: 'User', docname: validUser);
       expect(response.isSuccess, true);
       expect(response.data is FrappeDocInfo, true);
     });
 
     test('should return a failure for non-existing doctype', () async {
-      final response = await frappeMetaController!.getDocInfo(
-          doctype: 'NON EXISTING', docname: 'NON EXISTING');
+      final response = await frappeMetaController!
+          .getDocInfo(doctype: 'NON EXISTING', docname: 'NON EXISTING');
       expect(response.isSuccess, false);
       expect(response.error!.info!.httpCode, 404);
       expect(
@@ -80,8 +80,8 @@ void main() {
     });
 
     test('should return a failure for non-existing docname', () async {
-      final response = await frappeMetaController!.getDocInfo(
-          doctype: 'Renovation Review', docname: 'NON EXISTING');
+      final response = await frappeMetaController!
+          .getDocInfo(doctype: 'Renovation Review', docname: 'NON EXISTING');
       expect(response.isSuccess, false);
       expect(response.error!.info!.httpCode, 404);
       expect(
@@ -129,15 +129,15 @@ void main() {
 
     test('should get the standard field for doctype Renovation Review',
         () async {
-      final response = await frappeMetaController!.getFieldLabel(
-          doctype: 'Renovation Review', fieldName: 'name');
+      final response = await frappeMetaController!
+          .getFieldLabel(doctype: 'Renovation Review', fieldName: 'name');
       expect(response, 'Name');
     });
 
     test('should return the field name as-is if the doctype does not exist ',
         () async {
-      final response = await frappeMetaController!.getFieldLabel(
-          doctype: 'NON EXISTING', fieldName: 'reviewed_by');
+      final response = await frappeMetaController!
+          .getFieldLabel(doctype: 'NON EXISTING', fieldName: 'reviewed_by');
       expect(response, 'reviewed_by');
     });
 
@@ -151,7 +151,8 @@ void main() {
 
   group('Get Report Meta', () {
     test('should get the report meta successfully', () async {
-      final response = await frappeMetaController!.getReportMeta(report: 'TEST');
+      final response =
+          await frappeMetaController!.getReportMeta(report: 'TEST');
 
       expect(response.isSuccess, true);
       expect(response.data?.name, 'TEST');

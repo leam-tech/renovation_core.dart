@@ -45,7 +45,8 @@ class FrappeDocInfo extends JSONAble {
   String? tags;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => FrappeDocInfo.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) =>
+      FrappeDocInfo.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeDocInfoToJson(this);
@@ -152,7 +153,8 @@ class FrappeComment extends FrappeDocument {
   String? linkName;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => FrappeComment.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) =>
+      FrappeComment.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeCommentToJson(this);
@@ -170,7 +172,8 @@ class FrappeVersion extends FrappeDocument {
   String? docname;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => FrappeVersion.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) =>
+      FrappeVersion.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeVersionToJson(this);
@@ -224,7 +227,8 @@ class FrappeViewLog extends FrappeDocument {
   String? referenceName;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => FrappeViewLog.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) =>
+      FrappeViewLog.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeViewLogToJson(this);
