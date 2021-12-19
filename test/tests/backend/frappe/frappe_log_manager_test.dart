@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 import '../../../test_manager.dart';
 
 void main() {
-  FrappeLogManager? log;
+  late FrappeLogManager log;
   final validUser = TestManager.primaryUser;
   final validPwd = TestManager.primaryUserPwd;
 
@@ -21,7 +21,7 @@ void main() {
   group('Log Manager', () {
     group('Basic Log ', () {
       test('logging basic info', () async {
-        var response = await log!.info(content: 'Test Info 1');
+        var response = await log.info(content: 'Test Info 1');
 
         final logged = response.data;
         expect(response.isSuccess, true);
@@ -30,7 +30,7 @@ void main() {
         expect(logged?.content, 'Test Info 1');
       });
       test('logging info', () async {
-        var response = await log!.info(
+        var response = await log.info(
             content: 'Test Info 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
         final logged = response.data;
@@ -43,14 +43,14 @@ void main() {
         expect(logged?.tagsList?.contains('TAG2'), true);
       });
       test('failed logging basic info on empty content', () async {
-        expect(() => log!.info(content: ''),
+        expect(() => log.info(content: ''),
             throwsA(TypeMatcher<EmptyContentError>()));
       });
     });
 
     group('Error Log', () {
       test('logging basic error', () async {
-        var response = await log!.error(content: 'Test error 1');
+        var response = await log.error(content: 'Test error 1');
 
         final logged = response.data;
         expect(response.isSuccess, true);
@@ -59,7 +59,7 @@ void main() {
         expect(logged?.content, 'Test error 1');
       });
       test('logging error', () async {
-        var response = await log!.error(
+        var response = await log.error(
             content: 'Test error 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
         final logged = response.data;
@@ -72,14 +72,14 @@ void main() {
         expect(logged?.tagsList?.contains('TAG2'), true);
       });
       test('failed logging basic error on empty content', () async {
-        expect(() => log!.error(content: ''),
+        expect(() => log.error(content: ''),
             throwsA(TypeMatcher<EmptyContentError>()));
       });
     });
 
     group('Warning Log', () {
       test('logging basic warning', () async {
-        var response = await log!.warning(content: 'Test warning 1');
+        var response = await log.warning(content: 'Test warning 1');
 
         final logged = response.data;
         expect(response.isSuccess, true);
@@ -88,7 +88,7 @@ void main() {
         expect(logged?.content, 'Test warning 1');
       });
       test('logging warning', () async {
-        var response = await log!.warning(
+        var response = await log.warning(
             content: 'Test warning 2', tags: ['TAG1', 'TAG2'], title: 'TitleA');
 
         final logged = response.data;
@@ -101,7 +101,7 @@ void main() {
         expect(logged?.tagsList?.contains('TAG2'), true);
       });
       test('failed logging basic warning on empty content', () async {
-        expect(() => log!.warning(content: ''),
+        expect(() => log.warning(content: ''),
             throwsA(TypeMatcher<EmptyContentError>()));
       });
     });
@@ -113,7 +113,7 @@ void main() {
       });
 
       test('Successful Request Log', () async {
-        var r = await log!.logRequest(r: response);
+        var r = await log.logRequest(r: response);
         expect(r.isSuccess, true);
         final logged = r.data;
         expect(logged?.type, 'Request');
@@ -121,7 +121,7 @@ void main() {
         expect(logged?.response != null, true);
       });
       test('Request Log on empty response', () async {
-        expect(() => log!.logRequest(r: response = null),
+        expect(() => log.logRequest(r: response = null),
             throwsA(TypeMatcher<EmptyResponseError>()));
       });
     });

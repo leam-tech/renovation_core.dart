@@ -9,7 +9,7 @@ import 'package:test/test.dart';
 import '../../../test_manager.dart';
 
 void main() {
-  FrappeStorageController? frappeStorageController;
+  late FrappeStorageController frappeStorageController;
   Renovation? renovation;
 
   final newFolder = 'New Folder';
@@ -30,7 +30,7 @@ void main() {
         'should throw MissingFileError when file is null wihin FrappeUploadParams',
         () async {
       expect(
-          () => frappeStorageController!.validateUploadFileArgs(
+          () => frappeStorageController.validateUploadFileArgs(
               FrappeUploadFileParams(file: null, fileName: 'test')),
           throwsA(TypeMatcher<MissingFileError>()));
     });
@@ -39,7 +39,7 @@ void main() {
         'should throw MissingFileNameError when file is null wihin FrappeUploadParams',
         () async {
       expect(
-          () => frappeStorageController!.validateUploadFileArgs(
+          () => frappeStorageController.validateUploadFileArgs(
               FrappeUploadFileParams(file: File(''), fileName: '')),
           throwsA(TypeMatcher<MissingFileNameError>()));
     });
@@ -47,20 +47,20 @@ void main() {
 
   group('getUrl', () {
     test('should return null if the input is null', () {
-      final fullUrl = frappeStorageController!.getUrl(null);
+      final fullUrl = frappeStorageController.getUrl(null);
       expect(fullUrl, isNull);
     });
 
     test('should return the url as-is since it contains http', () {
       final fullUrl =
-          frappeStorageController!.getUrl('http://test.com/image.jpeg');
+          frappeStorageController.getUrl('http://test.com/image.jpeg');
       expect(fullUrl, 'http://test.com/image.jpeg');
     });
 
     test(
         'should return the url appended with hostURL if the input is file path',
         () {
-      final fullUrl = frappeStorageController!.getUrl('/image.jpeg');
+      final fullUrl = frappeStorageController.getUrl('/image.jpeg');
       expect(fullUrl, Renovation().config.hostUrl+ '/image.jpeg');
     });
   });
@@ -68,8 +68,7 @@ void main() {
   group('checkFolderExists', () {
     test('should return success and true value for data for existing folder',
         () async {
-      final response = await frappeStorageController!
-          .checkFolderExists('Home/$existingFolder');
+      final response = await frappeStorageController.checkFolderExists('Home/$existingFolder');
       expect(response.isSuccess, true);
       expect(response.data, true);
     });
@@ -78,7 +77,7 @@ void main() {
         'should return success and false value for data for non-existing folder',
         () async {
       final response =
-          await frappeStorageController!.checkFolderExists('Home/non_existing');
+          await frappeStorageController.checkFolderExists('Home/non_existing');
       expect(response.isSuccess, true);
       expect(response.data, false);
     });
@@ -87,7 +86,7 @@ void main() {
   group('createFolder', () {
     test('should return a failure if the folder name includes a forward slash',
         () async {
-      final response = await frappeStorageController!.createFolder(
+      final response = await frappeStorageController.createFolder(
           folderName: 'main/subdirectory');
 
       expect(response.isSuccess, false);
@@ -98,14 +97,14 @@ void main() {
     test('should create folder successfully in backend with parent folder',
         () async {
       final response =
-          await frappeStorageController!.createFolder(folderName: newFolder);
+          await frappeStorageController.createFolder(folderName: newFolder);
 
       expect(response.isSuccess, true);
       expect(response.data, true);
     });
 
     test('should fail to create folder if folder already exists', () async {
-      final response = await frappeStorageController!.createFolder(
+      final response = await frappeStorageController.createFolder(
           folderName: existingFolder!);
 
       expect(response.isSuccess, false);
@@ -115,7 +114,7 @@ void main() {
     });
 
     tearDown(() async {
-      await renovation!.call(<String, dynamic>{
+      await renovation?.call(<String, dynamic>{
         'cmd': 'frappe.desk.reportview.delete_items',
         'doctype': 'File',
         'items': jsonEncode(['Home/$newFolder'])
@@ -125,7 +124,7 @@ void main() {
 
   group('uploadViaHTTP', () {
     test('should upload file successfully', () async {
-      final response = await frappeStorageController!.uploadViaHTTP(
+      final response = await frappeStorageController.uploadViaHTTP(
           FrappeUploadFileParams(
               file: File(path.absolute('test/assets/sample.txt')),
               fileName: 'sample.txt'));
@@ -136,7 +135,7 @@ void main() {
     });
 
     test('should upload file successfully as a private file', () async {
-      final response = await frappeStorageController!.uploadViaHTTP(
+      final response = await frappeStorageController.uploadViaHTTP(
           FrappeUploadFileParams(
               file: File(path.absolute('test/assets/sample.txt')),
               fileName: 'sample.txt',
@@ -160,8 +159,7 @@ void main() {
 
       final file = File(path.absolute('test/assets/socketio_image.jpg'));
       await expectLater(
-          frappeStorageController!
-              .uploadFile(FrappeUploadFileParams(
+          frappeStorageController.uploadFile(FrappeUploadFileParams(
                   file: file, fileName: 'socketio_upload_test'))
               .stream
               .map((s) => s.status),
