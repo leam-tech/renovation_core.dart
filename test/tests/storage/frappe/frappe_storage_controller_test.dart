@@ -61,7 +61,7 @@ void main() {
         'should return the url appended with hostURL if the input is file path',
         () {
       final fullUrl = frappeStorageController!.getUrl('/image.jpeg');
-      expect(fullUrl, Renovation().config.hostUrl+ '/image.jpeg');
+      expect(fullUrl, Renovation().config.hostUrl + '/image.jpeg');
     });
   });
 
@@ -87,8 +87,8 @@ void main() {
   group('createFolder', () {
     test('should return a failure if the folder name includes a forward slash',
         () async {
-      final response = await frappeStorageController!.createFolder(
-          folderName: 'main/subdirectory');
+      final response = await frappeStorageController!
+          .createFolder(folderName: 'main/subdirectory');
 
       expect(response.isSuccess, false);
       expect(response.httpCode, 412);
@@ -105,8 +105,8 @@ void main() {
     });
 
     test('should fail to create folder if folder already exists', () async {
-      final response = await frappeStorageController!.createFolder(
-          folderName: existingFolder!);
+      final response = await frappeStorageController!
+          .createFolder(folderName: existingFolder!);
 
       expect(response.isSuccess, false);
       expect(response.error!.info!.httpCode, 409);

@@ -47,7 +47,8 @@ class GetListParams extends JSONAble with FrappeAPI {
   Map<String, dynamic> toJson() => _$GetListParamsToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => GetListParams.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) =>
+      GetListParams.fromJson(json) as T;
 }
 
 @JsonSerializable()
