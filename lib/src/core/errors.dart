@@ -17,7 +17,7 @@ abstract class IErrorHandler {
 
 /// Model class holding the details of an error along with the original request
 class ErrorDetail {
-  ErrorDetail({this.title, this.description, this.type, this.info}){
+  ErrorDetail({this.title, this.description, this.type, this.info}) {
     info ??= Information();
   }
 
