@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
 
 import '../../core/errors.dart';
 import '../document.dart';
@@ -9,37 +10,65 @@ abstract class FrappeDocument extends RenovationDocument {
 
   factory FrappeDocument.fromJson(Map<String, dynamic> json) =>
       throw JSONAbleMethodsNotImplemented();
+
+  @nonVirtual
   String? doctype;
+
+  @nonVirtual
   String? name;
+
+  @nonVirtual
   String? owner;
+
+  @nonVirtual
   @JsonKey(
       name: 'docstatus',
       fromJson: FrappeDocFieldConverter.intToFrappeDocStatus,
       toJson: FrappeDocFieldConverter.frappeDocStatusToInt)
   FrappeDocStatus? docStatus = FrappeDocStatus.Draft;
+
+  @nonVirtual
   @JsonKey(
       name: '__islocal',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
   bool? isLocal;
+
+  @nonVirtual
   @JsonKey(
       name: '__unsaved',
       fromJson: FrappeDocFieldConverter.checkToBool,
       toJson: FrappeDocFieldConverter.boolToCheck)
   bool? unsaved;
+
+  @nonVirtual
   @JsonKey(name: 'amended_from')
   String? amendedFrom;
+
+  @nonVirtual
   @JsonKey(fromJson: FrappeDocFieldConverter.idxFromString)
   int? idx;
+
+  @nonVirtual
   String? parent;
+
+  @nonVirtual
   @JsonKey(name: 'parenttype')
   String? parentType;
+
+  @nonVirtual
   @JsonKey(toJson: FrappeDocFieldConverter.toFrappeDateTime)
   DateTime? creation;
+
+  @nonVirtual
   @JsonKey(name: 'parentfield')
   String? parentField;
+
+  @nonVirtual
   @JsonKey(toJson: FrappeDocFieldConverter.toFrappeDateTime)
   DateTime? modified;
+
+  @nonVirtual
   @JsonKey(name: 'modified_by')
   String? modifiedBy;
 
