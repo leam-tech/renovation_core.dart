@@ -1,6 +1,6 @@
 name: renovation_core
 description: The missing SDK developers have been longing for to interact with Frappe/ERPNext
-version: 2.0.0-dev.0
+version: 2.0.0-dev.1
 homepage: https://github.com/leam-tech/renovation_core.dart
 
 environment:

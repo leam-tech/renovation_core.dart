@@ -1,3 +1,12 @@
+# v2.0.0-dev.1
+## Feature
+- Use nonVirtual annotation
+
+## Fixes
+- Null safety updates in tests
+- Reformatting code to improve pub.dev score
+
+
 # v2.0.0-dev.0
 ## Feature (Breaking Changes)
 - Migration to null safety
