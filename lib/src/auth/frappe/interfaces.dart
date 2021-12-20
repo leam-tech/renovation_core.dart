@@ -47,7 +47,8 @@ class VerifyOTPResponse extends JSONAble {
 
 @JsonSerializable()
 class FrappeSessionStatusInfo extends SessionStatusInfo {
-  FrappeSessionStatusInfo(bool loggedIn, double? timestamp, {String? currentUser})
+  FrappeSessionStatusInfo(bool loggedIn, double? timestamp,
+      {String? currentUser})
       : super(loggedIn, timestamp, currentUser: currentUser);
 
   factory FrappeSessionStatusInfo.fromJson(Map<String, dynamic>? json) =>
@@ -180,7 +181,8 @@ class ResetInfoHint extends JSONAble {
   String? sms;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => ResetInfoHint.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) =>
+      ResetInfoHint.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$ResetInfoHintToJson(this);

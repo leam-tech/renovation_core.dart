@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
 import 'package:renovation_core/core.dart';
 import 'package:renovation_core/storage.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 import '../../../test_manager.dart';
@@ -61,14 +61,15 @@ void main() {
         'should return the url appended with hostURL if the input is file path',
         () {
       final fullUrl = frappeStorageController.getUrl('/image.jpeg');
-      expect(fullUrl, Renovation().config.hostUrl+ '/image.jpeg');
+      expect(fullUrl, Renovation().config.hostUrl + '/image.jpeg');
     });
   });
 
   group('checkFolderExists', () {
     test('should return success and true value for data for existing folder',
         () async {
-      final response = await frappeStorageController.checkFolderExists('Home/$existingFolder');
+      final response = await frappeStorageController
+          .checkFolderExists('Home/$existingFolder');
       expect(response.isSuccess, true);
       expect(response.data, true);
     });
@@ -159,7 +160,8 @@ void main() {
 
       final file = File(path.absolute('test/assets/socketio_image.jpg'));
       await expectLater(
-          frappeStorageController.uploadFile(FrappeUploadFileParams(
+          frappeStorageController
+              .uploadFile(FrappeUploadFileParams(
                   file: file, fileName: 'socketio_upload_test'))
               .stream
               .map((s) => s.status),

@@ -79,7 +79,8 @@ void main() {
 
   group('setMessageDict', () {
     test('should set the dictionary successfully', () {
-      frappeTranslationController.setMessagesDict(dict: {'TESTING': 'TRANSLATION'}, lang: 'en');
+      frappeTranslationController
+          .setMessagesDict(dict: {'TESTING': 'TRANSLATION'}, lang: 'en');
 
       expect(frappeTranslationController.getMessage(txt: 'TESTING'),
           'TRANSLATION');
@@ -88,7 +89,8 @@ void main() {
 
   group('extendDictionary', () {
     test('should extend the existing map successfully', () {
-      frappeTranslationController.extendDictionary(dict: {'TESTING-EXTENSION': 'TRANSLATION'});
+      frappeTranslationController
+          .extendDictionary(dict: {'TESTING-EXTENSION': 'TRANSLATION'});
       expect(frappeTranslationController.getMessage(txt: 'TESTING-EXTENSION'),
           'TRANSLATION');
     });

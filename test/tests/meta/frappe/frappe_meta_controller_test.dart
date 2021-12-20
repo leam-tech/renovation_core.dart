@@ -34,7 +34,8 @@ void main() {
       expect(response.data, 0);
     });
     test('should get document count successfully with filters', () async {
-      final response = await frappeMetaController.getDocCount(doctype: 'Chat Profile', filters: {
+      final response = await frappeMetaController
+          .getDocCount(doctype: 'Chat Profile', filters: {
         'name': ['LIKE', validUser]
       });
 

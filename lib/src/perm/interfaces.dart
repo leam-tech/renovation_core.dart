@@ -27,7 +27,8 @@ class BasicPermInfo extends JSONAble {
   String? user;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => BasicPermInfo.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic>? json) =>
+      BasicPermInfo.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$BasicPermInfoToJson(this);

@@ -115,8 +115,8 @@ class FrappeSocketIOUploader implements IErrorHandler {
     if (currentSlice * chunkSize + chunkSize > file.length) {
       data = file.sublist(currentSlice * chunkSize as int, file.length);
     } else {
-      data = file.sublist(
-          currentSlice * chunkSize as int, currentSlice * chunkSize + chunkSize as int?);
+      data = file.sublist(currentSlice * chunkSize as int,
+          currentSlice * chunkSize + chunkSize as int?);
     }
 
     var uploadAcceptSlice = FrappeUploadAcceptSlice.fromJson(<String, dynamic>{

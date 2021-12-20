@@ -33,7 +33,8 @@ class SocketIOClient extends RenovationController {
       'transports': <String>['websocket'],
       'extraHeaders': requiresAuthorization
           ? <String, String?>{
-              'Authorization': RenovationRequestOptions.headers!['Authorization']
+              'Authorization':
+                  RenovationRequestOptions.headers!['Authorization']
             }
           : null
     };
