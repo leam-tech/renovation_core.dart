@@ -139,10 +139,17 @@ class Renovation {
       };
 
       frappe = Frappe(config);
-
       translate = FrappeTranslationController(config);
-      auth = FrappeAuthController(config,
-          sessionStatusInfo: sessionStatusInfo as FrappeSessionStatusInfo?);
+      model = FrappeModelController(config);
+      meta = FrappeMetaController(config);
+      perm = FrappePermissionController(config);
+      storage = FrappeStorageController(config);
+      defaults = FrappeDefaultsController(config);
+      log = FrappeLogManager(config);
+      auth = FrappeAuthController(
+        config,
+        sessionStatusInfo: sessionStatusInfo as FrappeSessionStatusInfo?,
+      );
 
       // Manage sessions using cookies instead of JWT
       if (!useJWT) {
@@ -159,13 +166,6 @@ class Renovation {
       } else {
         getFrappeAuthController().enableJWT();
       }
-
-      model = FrappeModelController(config);
-      meta = FrappeMetaController(config);
-      perm = FrappePermissionController(config);
-      storage = FrappeStorageController(config);
-      defaults = FrappeDefaultsController(config);
-      log = FrappeLogManager(config);
 
 //      unawaited(frappe.loadAppVersions());
       // TODO:
@@ -194,9 +194,7 @@ class Renovation {
       perm,
       frappe
     ]) {
-      if (renovationController != null) {
-        renovationController.clearCache();
-      }
+      renovationController?.clearCache();
     }
   }
 }
