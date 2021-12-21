@@ -48,18 +48,18 @@ class SocketIOClient extends RenovationController {
       (_socket?.disconnect())!.connect();
     } else {
       _socket = io(url, opts);
+
+      _socket?.onConnect((dynamic data) =>
+          config.logger.i('Connected socket successfully on $url$path'));
+
+      _socket?.onConnectError((dynamic connectStatus) =>
+          config.logger.e('Connected socket unsuccessful on $url$path'));
+
+      _socket?.onConnectTimeout((dynamic connectStatus) => config.logger
+          .e(<dynamic>['Timeout while connecting', connectStatus]));
     }
 
     config.logger.i('LTS-Renovation-Core-Dart Connecting socket on $url$path');
-
-    _socket!.onConnect((dynamic data) =>
-        config.logger.i('Connected socket successfully on $url$path'));
-
-    _socket!.onConnectError((dynamic connectStatus) =>
-        config.logger.e('Connected socket unsuccessful on $url$path'));
-
-    _socket!.onConnectTimeout((dynamic connectStatus) =>
-        config.logger.e(<dynamic>['Timeout while connecting', connectStatus]));
   }
 
   /// Gets the reference of the socket in the class
