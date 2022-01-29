@@ -49,7 +49,7 @@ Map<String, dynamic> _$VerifyOTPResponseToJson(VerifyOTPResponse instance) {
 FrappeSessionStatusInfo _$FrappeSessionStatusInfoFromJson(
         Map<String, dynamic> json) =>
     FrappeSessionStatusInfo(
-      json['loggedIn'] as bool?,
+      json['loggedIn'] as bool,
       (json['timestamp'] as num?)?.toDouble(),
       currentUser: json['currentUser'] as String?,
     )
@@ -67,7 +67,9 @@ FrappeSessionStatusInfo _$FrappeSessionStatusInfoFromJson(
 
 Map<String, dynamic> _$FrappeSessionStatusInfoToJson(
     FrappeSessionStatusInfo instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    'loggedIn': instance.loggedIn,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -75,7 +77,6 @@ Map<String, dynamic> _$FrappeSessionStatusInfoToJson(
     }
   }
 
-  writeNotNull('loggedIn', instance.loggedIn);
   writeNotNull('timestamp', instance.timestamp);
   writeNotNull('currentUser', instance.currentUser);
   writeNotNull('rawSession', instance.rawSession);
