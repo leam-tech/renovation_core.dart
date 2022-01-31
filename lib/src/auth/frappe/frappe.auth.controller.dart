@@ -28,7 +28,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     if (sessionStatusInfo != null) {
       updateSession(
           sessionStatus: sessionStatusInfo,
-          loggedIn: sessionStatusInfo.loggedIn,
+          loggedIn: sessionStatusInfo.loggedIn == true,
           useTimestamp: sessionStatusInfo.timestamp);
 
       if (sessionStatusInfo.token != null) {
@@ -318,7 +318,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
   @visibleForTesting
   void updateSession(
       {FrappeSessionStatusInfo? sessionStatus,
-      bool? loggedIn = false,
+      bool loggedIn = false,
       double? useTimestamp}) {
     // Update when old and new status  don't match
     final old = getSession() ?? FrappeSessionStatusInfo(false, 0);
@@ -327,7 +327,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     newStatus
       ..loggedIn = loggedIn
       ..timestamp = 0;
-    if (loggedIn == true) {
+    if (loggedIn) {
       newStatus.currentUser = sessionStatus!.user;
     }
     newStatus.timestamp = null;
