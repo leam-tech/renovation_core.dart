@@ -1,3 +1,7 @@
+# v2.0.0-dev.2
+## Fixes
+- `SessionStatusInfo.loggedIn` made nullable
+
 # v2.0.0-dev.1
 ## Feature
 - Use nonVirtual annotation
