@@ -47,7 +47,7 @@ class VerifyOTPResponse extends JSONAble {
 
 @JsonSerializable()
 class FrappeSessionStatusInfo extends SessionStatusInfo {
-  FrappeSessionStatusInfo(bool loggedIn, double? timestamp,
+  FrappeSessionStatusInfo(bool? loggedIn, double? timestamp,
       {String? currentUser})
       : super(loggedIn, timestamp, currentUser: currentUser);
 

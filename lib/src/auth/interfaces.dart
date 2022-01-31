@@ -5,7 +5,7 @@ abstract class SessionStatusInfo extends JSONAble {
   SessionStatusInfo(this.loggedIn, this.timestamp, {this.currentUser});
 
   /// Whether the user is logged in or not.
-  bool loggedIn;
+  bool? loggedIn;
 
   /// The timestamp of the session when updated.
   double? timestamp;
