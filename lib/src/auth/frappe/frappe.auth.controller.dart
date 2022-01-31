@@ -25,12 +25,10 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
   FrappeAuthController(RenovationConfig config,
       {FrappeSessionStatusInfo? sessionStatusInfo})
       : super(config, sessionStatusInfo: sessionStatusInfo) {
-    final isSessionProvided = sessionStatusInfo != null;
-
-    if (isSessionProvided) {
+    if (sessionStatusInfo != null) {
       updateSession(
           sessionStatus: sessionStatusInfo,
-          loggedIn: sessionStatusInfo!.loggedIn,
+          loggedIn: sessionStatusInfo.loggedIn,
           useTimestamp: sessionStatusInfo.timestamp);
 
       if (sessionStatusInfo.token != null) {
@@ -67,7 +65,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
   Future<RequestResponse<FrappeSessionStatusInfo?>> checkLogin(
       {bool? shouldUpdateSession = true}) async {
     var currentSession = getSession();
-    if (currentSession != null && currentSession.loggedIn) {
+    if (currentSession != null && currentSession.loggedIn == true) {
       return await verifySessionWithBackend(currentSession,
           shouldUpdateSession: shouldUpdateSession);
     } else {
@@ -320,7 +318,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
   @visibleForTesting
   void updateSession(
       {FrappeSessionStatusInfo? sessionStatus,
-      bool loggedIn = false,
+      bool? loggedIn = false,
       double? useTimestamp}) {
     // Update when old and new status  don't match
     final old = getSession() ?? FrappeSessionStatusInfo(false, 0);
@@ -329,7 +327,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     newStatus
       ..loggedIn = loggedIn
       ..timestamp = 0;
-    if (loggedIn) {
+    if (loggedIn == true) {
       newStatus.currentUser = sessionStatus!.user;
     }
     newStatus.timestamp = null;
@@ -351,7 +349,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
       newStatus.timestamp =
           useTimestamp ?? (DateTime.now().millisecondsSinceEpoch / 1000);
 
-      if (newStatus.loggedIn) {
+      if (newStatus.loggedIn == true) {
         if (token != null) {
           currentToken = token;
           // when simply checking auth status, token isn't returned
@@ -441,7 +439,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     }
 
     final sessionStatusInfo = getSession();
-    if (sessionStatusInfo == null || !sessionStatusInfo.loggedIn) {
+    if (sessionStatusInfo == null || sessionStatusInfo.loggedIn != true) {
       throw NotLoggedInUser();
     }
 
