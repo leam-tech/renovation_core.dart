@@ -342,7 +342,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
       final token = newStatus.token;
 
       // lets clear cache before everything else
-      getCore().clearCache();
+      core.clearCache();
 
       // its better to update the BehaviorSubject before doing anything else
       final session = newStatus;
@@ -356,10 +356,10 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
           setAuthToken(token);
         }
         if (newStatus.lang != null) {
-          config.coreInstance.translate.setCurrentLanguage(newStatus.lang!);
+          core.translate.setCurrentLanguage(newStatus.lang!);
         }
         if (getFrappe().getAppsVersion('renovation_core') != null) {
-          config.coreInstance.translate.loadTranslations(lang: newStatus.lang);
+          core.translate.loadTranslations(lang: newStatus.lang);
         }
         currentUser = newStatus.currentUser;
       } else {
@@ -443,7 +443,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
       throw NotLoggedInUser();
     }
 
-    final response = await getCore().model.setValue(
+    final response = await core.model.setValue(
         User(), sessionStatusInfo.user, 'language', lang.toLowerCase());
 
     if (response.isSuccess) {

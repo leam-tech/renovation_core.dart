@@ -38,7 +38,7 @@ class FrappePermissionController extends PermissionController<FrappeDocument> {
 
     basicPerms = BasicPermInfo()..isLoading = true;
 
-    final user = config.coreInstance.auth.currentUser ?? 'Guest';
+    final user = core.auth.currentUser ?? 'Guest';
 
     final response = await Request.initiateRequest(
         url: config.hostUrl +

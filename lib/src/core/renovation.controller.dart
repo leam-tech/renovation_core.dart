@@ -45,8 +45,8 @@ abstract class RenovationController implements IErrorHandler {
   void clearCache();
 
   /// Returns the configured host URL towards the backend
-  String getHostUrl() => config.hostUrl;
+  String get hostUrl => config.hostUrl;
 
   /// Gets the reference to the [Renovation] instance
-  Renovation getCore() => config.coreInstance;
+  Renovation get core => config.coreInstance;
 }

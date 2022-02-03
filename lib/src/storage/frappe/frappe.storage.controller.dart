@@ -61,7 +61,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
         case UploadingStatus.ready:
           break;
         case UploadingStatus.error:
-          config.coreInstance.config.logger.w([
+          core.config.logger.w([
             'LTS-Renovation-Core',
             'Frappe SocketIO Upload error',
             EnumToString.convertToString(uploadStatus.error)
@@ -80,7 +80,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
           await obs.close();
           break;
         case UploadingStatus.uploading:
-          config.coreInstance.config.logger
+          core.config.logger
               .i(['Upload Progress', uploadStatus.progress.toString()]);
           obs.add(FrappeUploadStatus()
             ..filename = uploadStatus.filename
@@ -168,7 +168,7 @@ class FrappeStorageController extends StorageController<FrappeUploadFileParams,
   /// It calls `getList()` of [FrappeModelController].
   @override
   Future<RequestResponse<bool?>> checkFolderExists(String folderDir) async {
-    final response = await config.coreInstance.model.getList(FrappeFile(),
+    final response = await core.model.getList(FrappeFile(),
         fields: ['name'], filters: {'is_folder': 1, 'name': folderDir});
     if (response.isSuccess) {
       return RequestResponse.success(response.data?.isNotEmpty);

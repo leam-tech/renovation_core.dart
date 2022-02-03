@@ -120,7 +120,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     var url =
         '${config.hostUrl}/api/resource/${Uri.encodeComponent(obj.doctype!)}/${Uri.encodeComponent(docName)}';
     if (getFrappe().getAppsVersion('renovation_core') != null) {
-      unawaited(config.coreInstance.meta.getDocMeta(doctype: obj.doctype));
+      unawaited(core.meta.getDocMeta(doctype: obj.doctype));
       url =
           '${config.hostUrl}/api/method/renovation/doc/${Uri.encodeComponent(obj.doctype!)}/${Uri.encodeComponent(docName)}';
     }
@@ -637,7 +637,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         ? 'frappe.desk.form.assign_to.add_multiple'
         : 'frappe.desk.form.assign_to.add';
 
-    if (args.myself!) args.assignTo = config.coreInstance.auth.currentUser;
+    if (args.myself!) args.assignTo = core.auth.currentUser;
 
     final response = await Request.initiateRequest(
         url: config.hostUrl,
@@ -777,7 +777,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     EmptyDoctypeError.verify(doctype);
     EmptyDocNameError.verify(docName);
     final args = {
-      'cmd': config.coreInstance.frappe.frappeVersion!.major == 12
+      'cmd': core.frappe.frappeVersion?.major == 12
           ? 'frappe.desk.doctype.tag.tag.add_tag'
           : 'frappe.desk.tags.add_tag',
       'dt': doctype,
@@ -813,7 +813,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
     EmptyDocNameError.verify(docName);
 
     final args = {
-      'cmd': config.coreInstance.frappe.frappeVersion!.major == 12
+      'cmd': core.frappe.frappeVersion?.major == 12
           ? 'frappe.desk.doctype.tag.tag.remove_tag'
           : 'frappe.desk.tags.remove_tag',
       'dt': doctype,
@@ -849,7 +849,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
         method: HttpMethod.POST,
         contentType: ContentTypeLiterals.APPLICATION_JSON,
         data: <String, dynamic>{
-          'cmd': config.coreInstance.frappe.frappeVersion!.major == 12
+          'cmd': core.frappe.frappeVersion?.major == 12
               ? 'frappe.desk.doctype.tag.tag.get_tagged_docs'
               : 'frappe.desk.tags.get_tagged_docs',
           'doctype': doctype,
@@ -877,7 +877,7 @@ class FrappeModelController extends ModelController<FrappeDocument> {
   @override
   Future<RequestResponse<List<String?>?>> getTags(
       {required String doctype, String? likeTag}) async {
-    if (config.coreInstance.frappe.frappeVersion!.major! < 12) {
+    if (core.frappe.frappeVersion!.major! < 12) {
       final response = await Request.initiateRequest(
           url: config.hostUrl,
           method: HttpMethod.POST,
