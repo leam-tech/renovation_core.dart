@@ -19,8 +19,8 @@ class GetListParams extends JSONAble with FrappeAPI {
       this.tableFieldsFrappe,
       this.withLinkFieldsFrappe});
 
-  factory GetListParams.fromJson(Map<String, dynamic>? json) =>
-      _$GetListParamsFromJson(json!);
+  factory GetListParams.fromJson(Map<String, dynamic> json) =>
+      _$GetListParamsFromJson(json);
 
   String? doctype;
   String? fields;
@@ -47,16 +47,15 @@ class GetListParams extends JSONAble with FrappeAPI {
   Map<String, dynamic> toJson() => _$GetListParamsToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
-      GetListParams.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic> json) => GetListParams.fromJson(json) as T;
 }
 
 @JsonSerializable()
 class GetValueParams extends JSONAble with FrappeAPI {
   GetValueParams(this.doctype, this.docname, this.docfield);
 
-  factory GetValueParams.fromJson(Map<String, dynamic>? json) =>
-      _$GetValueParamsFromJson(json!);
+  factory GetValueParams.fromJson(Map<String, dynamic> json) =>
+      _$GetValueParamsFromJson(json);
 
   String? doctype;
   @JsonKey(name: 'filters')
@@ -65,7 +64,7 @@ class GetValueParams extends JSONAble with FrappeAPI {
   String? docfield;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       GetValueParams.fromJson(json) as T;
 
   @override
@@ -76,8 +75,8 @@ class GetValueParams extends JSONAble with FrappeAPI {
 class SetValueParams extends JSONAble with FrappeAPI {
   SetValueParams(this.doctype, this.docname, this.docfield, this.value);
 
-  factory SetValueParams.fromJson(Map<String, dynamic>? json) =>
-      _$SetValueParamsFromJson(json!);
+  factory SetValueParams.fromJson(Map<String, dynamic> json) =>
+      _$SetValueParamsFromJson(json);
 
   String? doctype;
   @JsonKey(name: 'name')
@@ -87,7 +86,7 @@ class SetValueParams extends JSONAble with FrappeAPI {
   dynamic value;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       SetValueParams.fromJson(json) as T;
 
   @override
@@ -98,13 +97,13 @@ class SetValueParams extends JSONAble with FrappeAPI {
 class SearchLinkResponse extends JSONAble {
   SearchLinkResponse();
 
-  factory SearchLinkResponse.fromJson(Map<String, dynamic>? json) =>
-      _$SearchLinkResponseFromJson(json!);
+  factory SearchLinkResponse.fromJson(Map<String, dynamic> json) =>
+      _$SearchLinkResponseFromJson(json);
   String? description;
   String? value;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       SearchLinkResponse.fromJson(json) as T;
 
   @override
@@ -125,8 +124,8 @@ class AssignDocParams extends JSONAble with FrappeAPI {
       this.priority,
       this.bulkAssign = false});
 
-  factory AssignDocParams.fromJson(Map<String, dynamic>? json) =>
-      _$AssignDocParamsFromJson(json!);
+  factory AssignDocParams.fromJson(Map<String, dynamic> json) =>
+      _$AssignDocParamsFromJson(json);
 
   String? name;
   @JsonKey(name: 'assign_to')
@@ -151,7 +150,7 @@ class AssignDocParams extends JSONAble with FrappeAPI {
   bool? bulkAssign;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       AssignDocParams.fromJson(json) as T;
 
   @override
@@ -163,8 +162,8 @@ class GetDocsAssignedToUserParams extends JSONAble with FrappeAPI {
   GetDocsAssignedToUserParams(
       {required this.assignedTo, this.doctype, this.status});
 
-  factory GetDocsAssignedToUserParams.fromJson(Map<String, dynamic>? json) =>
-      _$GetDocsAssignedToUserParamsFromJson(json!);
+  factory GetDocsAssignedToUserParams.fromJson(Map<String, dynamic> json) =>
+      _$GetDocsAssignedToUserParamsFromJson(json);
 
   @JsonKey(name: 'user')
   String? assignedTo;
@@ -172,7 +171,7 @@ class GetDocsAssignedToUserParams extends JSONAble with FrappeAPI {
   Status? status;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       GetDocsAssignedToUserParams.fromJson(json) as T;
 
   @override
@@ -193,8 +192,8 @@ class GetDocsAssignedToUserResponse extends JSONAble {
       this.doctype,
       this.docname});
 
-  factory GetDocsAssignedToUserResponse.fromJson(Map<String, dynamic>? json) =>
-      _$GetDocsAssignedToUserResponseFromJson(json!);
+  factory GetDocsAssignedToUserResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetDocsAssignedToUserResponseFromJson(json);
 
   /// Time to finish task (yyyy-mm-dd)
   DateTime? dueDate;
@@ -215,7 +214,7 @@ class GetDocsAssignedToUserResponse extends JSONAble {
   String? docname;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       GetDocsAssignedToUserResponse.fromJson(json) as T;
 
   @override
@@ -234,8 +233,8 @@ class CompleteDocAssignmentParams extends JSONAble with FrappeAPI {
   CompleteDocAssignmentParams(
       {required this.doctype, required this.name, required this.assignedTo});
 
-  factory CompleteDocAssignmentParams.fromJson(Map<String, dynamic>? json) =>
-      _$CompleteDocAssignmentParamsFromJson(json!);
+  factory CompleteDocAssignmentParams.fromJson(Map<String, dynamic> json) =>
+      _$CompleteDocAssignmentParamsFromJson(json);
 
   String? doctype;
   String? name;
@@ -243,7 +242,7 @@ class CompleteDocAssignmentParams extends JSONAble with FrappeAPI {
   String? assignedTo;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       CompleteDocAssignmentParams.fromJson(json) as T;
 
   @override
@@ -254,7 +253,7 @@ class CompleteDocAssignmentParams extends JSONAble with FrappeAPI {
 class ToDo extends FrappeDocument {
   ToDo() : super('ToDo');
 
-  factory ToDo.fromJson(Map<String, dynamic>? json) => _$ToDoFromJson(json!);
+  factory ToDo.fromJson(Map<String, dynamic> json) => _$ToDoFromJson(json);
 
   Status? status;
   Priority? priority;
@@ -274,7 +273,7 @@ class ToDo extends FrappeDocument {
   String? assignedByFullName;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => ToDo.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic> json) => ToDo.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$ToDoToJson(this);
@@ -284,15 +283,15 @@ class ToDo extends FrappeDocument {
 class FrappeReport extends JSONAble {
   FrappeReport();
 
-  factory FrappeReport.fromJson(Map<String, dynamic>? json) =>
-      _$FrappeReportFromJson(json!);
+  factory FrappeReport.fromJson(Map<String, dynamic> json) =>
+      _$FrappeReportFromJson(json);
 
   List<List<dynamic>>? result;
 
   List<FrappeReportColumn>? columns;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => FrappeReport.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic> json) => FrappeReport.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeReportToJson(this);
@@ -302,8 +301,8 @@ class FrappeReport extends JSONAble {
 class FrappeReportColumn extends JSONAble {
   FrappeReportColumn();
 
-  factory FrappeReportColumn.fromJson(Map<String, dynamic>? json) =>
-      _$FrappeReportColumnFromJson(json!);
+  factory FrappeReportColumn.fromJson(Map<String, dynamic> json) =>
+      _$FrappeReportColumnFromJson(json);
 
   String? label;
   String? type;
@@ -311,7 +310,7 @@ class FrappeReportColumn extends JSONAble {
   dynamic options;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       FrappeReportColumn.fromJson(json) as T;
 
   @override
@@ -322,8 +321,8 @@ class FrappeReportColumn extends JSONAble {
 class FrappeLog extends FrappeDocument {
   FrappeLog() : super('Renovation Log');
 
-  factory FrappeLog.fromJson(Map<String, dynamic>? json) =>
-      _$FrappeLogFromJson(json!);
+  factory FrappeLog.fromJson(Map<String, dynamic> json) =>
+      _$FrappeLogFromJson(json);
 
   String? title;
 
@@ -341,7 +340,7 @@ class FrappeLog extends FrappeDocument {
   List<String>? tagsList;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => FrappeLog.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic> json) => FrappeLog.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeLogToJson(this);
@@ -351,13 +350,13 @@ class FrappeLog extends FrappeDocument {
 class FrappeLogTag extends FrappeDocument {
   FrappeLogTag() : super('Renovation Log Tag Selector');
 
-  factory FrappeLogTag.fromJson(Map<String, dynamic>? json) =>
-      _$FrappeLogTagFromJson(json!);
+  factory FrappeLogTag.fromJson(Map<String, dynamic> json) =>
+      _$FrappeLogTagFromJson(json);
 
   String? tag;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => FrappeLogTag.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic> json) => FrappeLogTag.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$FrappeLogTagToJson(this);
@@ -367,8 +366,8 @@ class FrappeLogTag extends FrappeDocument {
 class TagLink extends FrappeDocument {
   TagLink() : super('Tag Link');
 
-  factory TagLink.fromJson(Map<String, dynamic>? json) =>
-      _$TagLinkFromJson(json!);
+  factory TagLink.fromJson(Map<String, dynamic> json) =>
+      _$TagLinkFromJson(json);
 
   @JsonKey(name: 'document_type')
   String? documentType;
@@ -381,7 +380,7 @@ class TagLink extends FrappeDocument {
   String? title;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => TagLink.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic> json) => TagLink.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$TagLinkToJson(this);

@@ -11,8 +11,8 @@ part 'docfield.g.dart';
 class DocField extends FrappeDocument {
   DocField() : super('DocField');
 
-  factory DocField.fromJson(Map<String, dynamic>? json) =>
-      _$DocFieldFromJson(json!);
+  factory DocField.fromJson(Map<String, dynamic> json) =>
+      _$DocFieldFromJson(json);
 
   @nonVirtual
   @JsonKey(ignore: true)
@@ -337,7 +337,7 @@ class DocField extends FrappeDocument {
   String? width;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => DocField.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic> json) => DocField.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$DocFieldToJson(this);

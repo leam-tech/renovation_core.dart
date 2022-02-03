@@ -8,8 +8,8 @@ part 'interfaces.g.dart';
 class BasicPermInfo extends JSONAble {
   BasicPermInfo();
 
-  factory BasicPermInfo.fromJson(Map<String, dynamic>? json) =>
-      _$BasicPermInfoFromJson(json!);
+  factory BasicPermInfo.fromJson(Map<String, dynamic> json) =>
+      _$BasicPermInfoFromJson(json);
 
   List<String>? can_search;
   List<String>? can_email;
@@ -27,7 +27,7 @@ class BasicPermInfo extends JSONAble {
   String? user;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       BasicPermInfo.fromJson(json) as T;
 
   @override

@@ -99,7 +99,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     FrappeSessionStatusInfo? sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse!));
+          Request.convertToMap(response.rawResponse!)!);
 
       await getFrappe()
           .checkAppInstalled(features: ['login'], throwError: false);
@@ -150,7 +150,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     SessionStatusInfo? sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse!));
+          Request.convertToMap(response.rawResponse!)!);
       sessionStatusInfo.rawSession =
           Request.convertToMap(response.rawResponse!);
     }
@@ -189,8 +189,8 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     SendOTPResponse? sendOTPResponse;
 
     if (response.isSuccess) {
-      sendOTPResponse =
-          SendOTPResponse.fromJson(Request.convertToMap(response.rawResponse!));
+      sendOTPResponse = SendOTPResponse.fromJson(
+          Request.convertToMap(response.rawResponse!)!);
     }
     if (sendOTPResponse != null && sendOTPResponse.status == 'fail') {
       response.error = ErrorDetail(
@@ -391,7 +391,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
         isFrappeResponse: false);
     if (response.isSuccess) {
       final serverSession = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse!));
+          Request.convertToMap(response.rawResponse!)!);
       serverSession.rawSession = Request.convertToMap(response.rawResponse!);
 
       // check if same login
@@ -709,7 +709,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     FrappeSessionStatusInfo? sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse!));
+          Request.convertToMap(response.rawResponse!)!);
       sessionStatusInfo.rawSession =
           Request.convertToMap(response.rawResponse!);
     }
@@ -752,7 +752,7 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     FrappeSessionStatusInfo? sessionStatusInfo;
     if (response.isSuccess) {
       sessionStatusInfo = FrappeSessionStatusInfo.fromJson(
-          Request.convertToMap(response.rawResponse!));
+          Request.convertToMap(response.rawResponse!)!);
       sessionStatusInfo.rawSession =
           Request.convertToMap(response.rawResponse!);
     }
