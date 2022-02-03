@@ -27,9 +27,11 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
       : super(config, sessionStatusInfo: sessionStatusInfo) {
     if (sessionStatusInfo != null) {
       updateSession(
-          sessionStatus: sessionStatusInfo,
-          loggedIn: sessionStatusInfo.loggedIn == true,
-          useTimestamp: sessionStatusInfo.timestamp);
+        sessionStatus: sessionStatusInfo,
+        loggedIn: sessionStatusInfo.loggedIn == true,
+        useTimestamp: sessionStatusInfo.timestamp,
+        clearCache: false,
+      );
 
       if (sessionStatusInfo.token != null) {
         setAuthToken(sessionStatusInfo.token);
@@ -316,10 +318,12 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
   @override
   @protected
   @visibleForTesting
-  void updateSession(
-      {FrappeSessionStatusInfo? sessionStatus,
-      bool loggedIn = false,
-      double? useTimestamp}) {
+  void updateSession({
+    FrappeSessionStatusInfo? sessionStatus,
+    bool loggedIn = false,
+    double? useTimestamp,
+    bool clearCache = true,
+  }) {
     // Update when old and new status  don't match
     final old = getSession() ?? FrappeSessionStatusInfo(false, 0);
     final newStatus = sessionStatus ?? FrappeSessionStatusInfo(false, 0);
@@ -341,8 +345,10 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
     if (!identical(old, newStatus)) {
       final token = newStatus.token;
 
-      // lets clear cache before everything else
-      core.clearCache();
+      if (clearCache) {
+        // lets clear cache before everything else
+        core.clearCache();
+      }
 
       // its better to update the BehaviorSubject before doing anything else
       final session = newStatus;
