@@ -89,12 +89,11 @@ RenovationReview _$RenovationReviewFromJson(Map<String, dynamic> json) =>
       ..reviewedByDoctypeDoc = json['reviewed_by_doctype_doc'] == null
           ? null
           : DocType.fromJson(
-              json['reviewed_by_doctype_doc'] as Map<String, dynamic>?)
+              json['reviewed_by_doctype_doc'] as Map<String, dynamic>)
       ..reviewedDoctype = json['reviewed_doctype'] as String?
       ..reviewedEntity = json['reviewed_entity'] as String?
       ..reviews = (json['reviews'] as List<dynamic>?)
-          ?.map(
-              (e) => RenovationReviewItem.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => RenovationReviewItem.fromJson(e as Map<String, dynamic>))
           .toList();
 
 Map<String, dynamic> _$RenovationReviewToJson(RenovationReview instance) {

@@ -9,29 +9,29 @@ part of 'interfaces.dart';
 FrappeDocInfo _$FrappeDocInfoFromJson(Map<String, dynamic> json) =>
     FrappeDocInfo()
       ..attachments = (json['attachments'] as List<dynamic>?)
-          ?.map((e) => FrappeFile.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => FrappeFile.fromJson(e as Map<String, dynamic>))
           .toList()
       ..communications = (json['communications'] as List<dynamic>?)
-          ?.map((e) => FrappeCommunication.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => FrappeCommunication.fromJson(e as Map<String, dynamic>))
           .toList()
       ..comments = (json['comments'] as List<dynamic>?)
-          ?.map((e) => FrappeComment.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => FrappeComment.fromJson(e as Map<String, dynamic>))
           .toList()
       ..totalComments = json['total_comments'] as int?
       ..versions = (json['versions'] as List<dynamic>?)
-          ?.map((e) => FrappeVersion.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => FrappeVersion.fromJson(e as Map<String, dynamic>))
           .toList()
       ..assignments = (json['assignments'] as List<dynamic>?)
-          ?.map((e) => ToDo.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => ToDo.fromJson(e as Map<String, dynamic>))
           .toList()
       ..permissions = json['permissions'] == null
           ? null
-          : DocPerm.fromJson(json['permissions'] as Map<String, dynamic>?)
+          : DocPerm.fromJson(json['permissions'] as Map<String, dynamic>)
       ..shared = (json['shared'] as List<dynamic>?)
-          ?.map((e) => FrappeSharedSetting.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => FrappeSharedSetting.fromJson(e as Map<String, dynamic>))
           .toList()
       ..views = (json['views'] as List<dynamic>?)
-          ?.map((e) => FrappeViewLog.fromJson(e as Map<String, dynamic>?))
+          ?.map((e) => FrappeViewLog.fromJson(e as Map<String, dynamic>))
           .toList()
       ..milestones = (json['milestones'] as List<dynamic>?)
           ?.map((e) => e as Map<String, dynamic>)
@@ -405,8 +405,8 @@ RenovationReport _$RenovationReportFromJson(Map<String, dynamic> json) =>
       ..modifiedBy = json['modified_by'] as String?
       ..report = json['report'] as String?
       ..filters = (json['filters'] as List<dynamic>?)
-          ?.map((e) =>
-              RenovationReportFilter.fromJson(e as Map<String, dynamic>?))
+          ?.map(
+              (e) => RenovationReportFilter.fromJson(e as Map<String, dynamic>))
           .toList();
 
 Map<String, dynamic> _$RenovationReportToJson(RenovationReport instance) {

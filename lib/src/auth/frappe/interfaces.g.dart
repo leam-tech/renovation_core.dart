@@ -128,7 +128,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User()
       : DateTime.parse(json['last_login'] as String)
   ..userImage = json['user_image'] as String?
   ..blockModules = (json['block_modules'] as List<dynamic>?)
-      ?.map((e) => BlockModule.fromJson(e as Map<String, dynamic>?))
+      ?.map((e) => BlockModule.fromJson(e as Map<String, dynamic>))
       .toList();
 
 Map<String, dynamic> _$UserToJson(User instance) {
@@ -239,7 +239,7 @@ ResetPasswordInfo _$ResetPasswordInfoFromJson(Map<String, dynamic> json) =>
           (json['medium'] as List<dynamic>?)?.map((e) => e as String).toList()
       ..hints = json['hints'] == null
           ? null
-          : ResetInfoHint.fromJson(json['hints'] as Map<String, dynamic>?);
+          : ResetInfoHint.fromJson(json['hints'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$ResetPasswordInfoToJson(ResetPasswordInfo instance) {
   final val = <String, dynamic>{};

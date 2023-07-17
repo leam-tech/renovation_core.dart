@@ -322,7 +322,7 @@ FrappeReport _$FrappeReportFromJson(Map<String, dynamic> json) => FrappeReport()
       ?.map((e) => e as List<dynamic>)
       .toList()
   ..columns = (json['columns'] as List<dynamic>?)
-      ?.map((e) => FrappeReportColumn.fromJson(e as Map<String, dynamic>?))
+      ?.map((e) => FrappeReportColumn.fromJson(e as Map<String, dynamic>))
       .toList();
 
 Map<String, dynamic> _$FrappeReportToJson(FrappeReport instance) {
@@ -388,7 +388,7 @@ FrappeLog _$FrappeLogFromJson(Map<String, dynamic> json) => FrappeLog()
   ..request = json['request'] as String?
   ..response = json['response'] as String?
   ..tags = (json['tags'] as List<dynamic>?)
-      ?.map((e) => FrappeLogTag.fromJson(e as Map<String, dynamic>?))
+      ?.map((e) => FrappeLogTag.fromJson(e as Map<String, dynamic>))
       .toList()
   ..tagsList =
       (json['tags_list'] as List<dynamic>?)?.map((e) => e as String).toList();

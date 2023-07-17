@@ -11,7 +11,7 @@ FCMNotification _$FCMNotificationFromJson(Map<String, dynamic> json) =>
       ..notification = json['notification'] == null
           ? null
           : NotificationMessage.fromJson(
-              json['notification'] as Map<String, dynamic>?)
+              json['notification'] as Map<String, dynamic>)
       ..data = json['data'] as Map<String, dynamic>?
       ..title = json['title'] as String?
       ..body = json['body'] as String?
