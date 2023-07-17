@@ -74,7 +74,7 @@ class Frappe extends RenovationController implements FCMController {
         ]);
       }
       Request.setClientId(r.data);
-      await config.coreInstance.init(config.hostUrl, clientId: r.data);
+      await core.init(config.hostUrl, clientId: r.data);
     } else {
       final fetchedID = await fetchId();
       if (fetchedID.isSuccess) {
@@ -294,7 +294,7 @@ class Frappe extends RenovationController implements FCMController {
   ///
   /// If loading fails, a failure is returned.
   Future<RequestResponse<bool?>> loadAppVersions() async {
-    final response = await config.coreInstance.call(
+    final response = await core.call(
         <String, dynamic>{'cmd': 'renovation_core.utils.site.get_versions'});
 
     appVersionsLoaded = true;

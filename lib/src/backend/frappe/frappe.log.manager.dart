@@ -111,7 +111,7 @@ class FrappeLogManager extends RenovationController implements LogManager {
 
     tags ?? _defaultTags;
 
-    final logResponse = await config.coreInstance.call(<String, dynamic>{
+    final logResponse = await core.call(<String, dynamic>{
       'cmd': cmd,
       'content': content,
       'title': title,

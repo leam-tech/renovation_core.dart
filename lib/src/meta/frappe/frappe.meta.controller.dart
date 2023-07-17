@@ -148,7 +148,7 @@ class FrappeMetaController extends MetaController {
             metas[dmeta.name] = dmeta;
             // append __messages for translations
 
-            config.coreInstance.translate.extendDictionary(
+            core.translate.extendDictionary(
                 dict: dmeta.messages != null
                     ? dmeta.messages?.cast<String, String>()
                     : null);
@@ -159,8 +159,7 @@ class FrappeMetaController extends MetaController {
         metas.forEach((String? k, DocType v) {
           if (v.isTable == null || !v.isTable!) {
             // perm for normal doctypes only, not for Child docs
-            config.coreInstance.perm
-                .hasPerm(doctype: k, pType: PermissionType.read);
+            core.perm.hasPerm(doctype: k, pType: PermissionType.read);
           }
         });
         return RequestResponse.success(docTypeCache[doctype],
@@ -205,7 +204,7 @@ class FrappeMetaController extends MetaController {
         label = toTitleCase(label);
       }
     }
-    return config.coreInstance.translate.getMessage(txt: label);
+    return core.translate.getMessage(txt: label);
   }
 
   /// Returns the meta details of a Frappé report as a [RenovationReport].
@@ -214,7 +213,7 @@ class FrappeMetaController extends MetaController {
   @override
   Future<RequestResponse<RenovationReport?>> getReportMeta(
           {required String report}) async =>
-      await config.coreInstance.model.getDoc(RenovationReport(), report);
+      await core.model.getDoc(RenovationReport(), report);
 
   ///Clears all docMeta from the cache
   @override

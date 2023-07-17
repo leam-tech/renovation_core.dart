@@ -28,7 +28,7 @@ class FrappeDefaultsController extends DefaultsController {
       {required String key, String? parent = '__default'}) async {
     await getFrappe().checkAppInstalled(features: ['getDefault']);
 
-    if (!config.coreInstance.auth.isLoggedIn) throw NotLoggedInUser();
+    if (!core.auth.isLoggedIn) throw NotLoggedInUser();
 
     if (_renovationCustomSettings.contains(key)) {
       key = 'renovation:$key';
@@ -60,7 +60,7 @@ class FrappeDefaultsController extends DefaultsController {
       {required String key,
       required dynamic value,
       String? parent = '__default'}) async {
-    if (!config.coreInstance.auth.isLoggedIn) throw NotLoggedInUser();
+    if (!core.auth.isLoggedIn) throw NotLoggedInUser();
 
     dynamic _value;
 

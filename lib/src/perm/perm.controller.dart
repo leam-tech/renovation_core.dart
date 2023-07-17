@@ -2,8 +2,8 @@ import '../core/config.dart';
 import '../core/renovation.controller.dart';
 import '../core/request.dart';
 import '../model/document.dart';
-import 'interfaces.dart';
 import 'frappe/interfaces.dart';
+import 'interfaces.dart';
 
 /// Class containing permission properties/caches & methods
 abstract class PermissionController<K extends RenovationDocument>
@@ -153,8 +153,7 @@ abstract class PermissionController<K extends RenovationDocument>
   bool _validateBasicPerms() {
     if (basicPerms == null || basicPerms!.isLoading!) {
       return false;
-    } else if (basicPerms != null &&
-        basicPerms!.user != config.coreInstance.auth.currentUser) {
+    } else if (basicPerms!.user != core.auth.currentUser) {
       config.logger.e('renovation_core: Basic Perm Mismatch');
       basicPerms = null;
       return false;

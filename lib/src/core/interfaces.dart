@@ -9,8 +9,8 @@ part 'interfaces.g.dart';
 class FrappeResponse extends JSONAble {
   FrappeResponse();
 
-  factory FrappeResponse.fromJson(Map<String, dynamic>? json) =>
-      _$FrappeResponseFromJson(json!);
+  factory FrappeResponse.fromJson(Map<String, dynamic> json) =>
+      _$FrappeResponseFromJson(json);
 
   @JsonKey(name: '_server_messages')
   String? serverMessages;
@@ -35,6 +35,6 @@ class FrappeResponse extends JSONAble {
   Map<String, dynamic> toJson() => _$FrappeResponseToJson(this);
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) =>
+  T fromJson<T>(Map<String, dynamic> json) =>
       FrappeResponse.fromJson(json) as T;
 }

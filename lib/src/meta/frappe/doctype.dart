@@ -13,8 +13,8 @@ part 'doctype.g.dart';
 class DocType extends FrappeDocument {
   DocType() : super('Doctype');
 
-  factory DocType.fromJson(Map<String, dynamic>? json) =>
-      _$DocTypeFromJson(json!);
+  factory DocType.fromJson(Map<String, dynamic> json) =>
+      _$DocTypeFromJson(json);
 
   /// Hidden fields
   @nonVirtual
@@ -410,7 +410,7 @@ class DocType extends FrappeDocument {
   bool isLoading = false;
 
   @override
-  T fromJson<T>(Map<String, dynamic>? json) => DocType.fromJson(json) as T;
+  T fromJson<T>(Map<String, dynamic> json) => DocType.fromJson(json) as T;
 
   @override
   Map<String, dynamic> toJson() => _$DocTypeToJson(this);

@@ -168,7 +168,7 @@ class Request {
 
   static FrappeResponse _buildFrappeResponse(
       Response<dynamic> response, bool isFrappeResponse) {
-    Map<String, dynamic>? jsonResponse;
+    var jsonResponse = <String, dynamic>{};
     final isJsonResponse = response.headers[Headers.contentTypeHeader]![0] ==
         ContentType.json.value;
     if (isJsonResponse) {
@@ -180,7 +180,7 @@ class Request {
         frappeResponse = FrappeResponse.fromJson(jsonResponse);
       } else {
         frappeResponse
-          ..message = jsonResponse!['data'] ?? jsonResponse
+          ..message = jsonResponse['data'] ?? jsonResponse
           ..serverMessages = jsonResponse['server_messages']
           ..exc = jsonResponse['exc']
           ..excType = jsonResponse['exc_type']
