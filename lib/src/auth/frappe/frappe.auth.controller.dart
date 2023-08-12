@@ -179,14 +179,18 @@ class FrappeAuthController extends AuthController<FrappeSessionStatusInfo?> {
   /// - The SMS provider responded with an error.
   @override
   Future<RequestResponse<SendOTPResponse?>> sendOTP(String mobileNo,
-      {bool? newOTP = false}) async {
+      {bool? newOTP = false, String? smsHash}) async {
     await getFrappe().checkAppInstalled(features: ['sendOTP']);
 
     final response = await Request.initiateRequest(
         url: config.hostUrl + '/api/method/renovation/auth.sms.generate',
         method: HttpMethod.POST,
         contentType: ContentTypeLiterals.APPLICATION_X_WWW_FORM_URLENCODED,
-        data: <String, dynamic>{'mobile': mobileNo, 'newPIN': newOTP! ? 1 : 0});
+        data: <String, dynamic>{
+          'mobile': mobileNo,
+          'newPIN': newOTP! ? 1 : 0,
+          'sms_hash': smsHash
+        });
 
     SendOTPResponse? sendOTPResponse;
 
