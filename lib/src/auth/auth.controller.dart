@@ -73,7 +73,7 @@ abstract class AuthController<K extends SessionStatusInfo?>
   ///
   /// If [newOTP] is `true`, a previously sent OTP, won't be used. Instead a fresh one will be generated.
   Future<RequestResponse<SendOTPResponse?>> sendOTP(String mobileNo,
-      {bool? newOTP});
+      {bool? newOTP, String? smsHash});
 
   /// Verifies the [otp] entered by the user against the one sent through [sendOTP].
   Future<RequestResponse<VerifyOTPResponse?>> verifyOTP(
